@@ -6,6 +6,8 @@ class AppStrings {
   static String login = 'تسجيل الدخول';
   static String appName = 'Valet';
   static String appProposal = 'العثور على مكان لوقوف السيارات دون أي متاعب';
+  static String enterPassword = 'أدخل كلمة السر';
+  static String enterPhone = 'أدخل رقم هاتفك';
 
 }
 // localization

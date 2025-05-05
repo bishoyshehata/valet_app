@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/custom_bottun.dart';
 import '../../components/text/text_utils.dart';
@@ -70,7 +71,7 @@ class OnBoardignScreen extends StatelessWidget {
                           elevation: 3,
 
                           onTap: () {
-                            // Get.offAllNamed(Routes.login);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
                           }, shadowColor: ColorManager.white,
                         ))
                   ]),

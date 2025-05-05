@@ -10,6 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final Color? backgroundColor;
   final Color? shadowColor;
+  final Color? titleColor;
   final double elevation;
   final bool centerTitle;
 
@@ -17,11 +18,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.title,
     this.leading,
+    this.titleColor,
     this.actions,
     this.backgroundColor,
     this.shadowColor,
     this.elevation = 1,
     this.centerTitle = true,
+
   });
 
   @override
@@ -35,7 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       title: TextUtils(
         text: title,
-        color: ColorManager.white,
+        color: titleColor,
         fontWeight: FontWeightManager.semiBold,
         overFlow: TextOverflow.ellipsis,
         noOfLines: 1,

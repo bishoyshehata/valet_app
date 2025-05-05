@@ -1,6 +1,7 @@
 class AssetsManager {
   // images
   static String onBoarding = 'assets/images/onboarding.png';
+  static String login = 'assets/images/login.png';
 
 
 }class LottieManager {
