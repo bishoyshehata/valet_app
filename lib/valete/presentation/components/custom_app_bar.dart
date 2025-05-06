@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
-import '../resources/colors_manager.dart';
 import '../resources/font_manager.dart';
-// If you're using custom font weight manager
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
