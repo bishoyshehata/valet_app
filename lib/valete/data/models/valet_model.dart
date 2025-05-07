@@ -1,7 +1,7 @@
 import 'package:valet_app/valete/domain/entities/valet.dart';
 
 class ValetModel extends Valet {
-  ValetModel({
+  const ValetModel({
     required super.id,
     required super.phone,
     required super.name,
@@ -10,10 +10,10 @@ class ValetModel extends Valet {
 
   factory ValetModel.fromJson(Map<String, dynamic> json) {
     return ValetModel(
-      id: json['id'],
-      phone: json['phone'],
-      name: json['name'],
-      role: json['role'],
+      id: json['data']['id'],
+      phone: json['data']['phone'],
+      name: json['data']['name'],
+      role: json['data']['role'],
     );
   }
 }

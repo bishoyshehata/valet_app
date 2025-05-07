@@ -11,14 +11,15 @@ abstract class LoginEvents extends Equatable{
 
 class PhoneChanged extends LoginEvents {
   final String phone;
-  PhoneChanged(this.phone);
+  const PhoneChanged(this.phone);
 }
-
 class PasswordChanged extends LoginEvents {
   final String password;
-  PasswordChanged(this.password);
+  const PasswordChanged(this.password);
 }
 
 class LoginSubmitted extends LoginEvents {}
 
 class TogglePasswordVisibility extends LoginEvents {}
+
+class ResetLoginStatus extends LoginEvents {}

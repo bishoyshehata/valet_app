@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:valet_app/valete/data/models/valet_model.dart';
+import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/valet.dart';
 
 class LoginStates extends Equatable {
@@ -7,63 +7,81 @@ class LoginStates extends Equatable {
   final String password;
   final bool isPhoneValid;
   final bool isPasswordValid;
-  final bool isSubmitting;
-  final bool isSuccess;
   final String? errorMessage;
-  final Valet? data ;
+  final Valet? data;
+  final LoginStatus loginStatus;
   final bool isPasswordObscured;
-
+  final bool hasInteractedWithPhone;
+  final bool hasInteractedWithPassword;
 
   const LoginStates({
     required this.phone,
     required this.password,
-    required this.isSubmitting,
-    required this.isSuccess,
     required this.errorMessage,
     required this.isPhoneValid,
     required this.isPasswordValid,
+    required this.loginStatus,
     required this.data,
-    this.isPasswordObscured = true,
-
+    required this.isPasswordObscured,
+    required this.hasInteractedWithPassword,
+    required this.hasInteractedWithPhone,
   });
 
   @override
-  List<Object?> get props => [phone, password, isSubmitting,isSuccess,errorMessage,isPasswordValid, isPhoneValid,data];
+  List<Object?> get props => [
+    phone,
+    password,
+    errorMessage,
+    isPasswordValid,
+    isPhoneValid,
+    data,
+    loginStatus,
+    isPasswordObscured,
+    hasInteractedWithPassword,
+    hasInteractedWithPhone,
+  ];
+
   factory LoginStates.initial() {
-    return LoginStates(
+    return const LoginStates(
       phone: '',
       password: '',
-      isSubmitting: false,
       isPhoneValid: false,
       isPasswordValid: false,
-      isSuccess: false,
       errorMessage: null,
-      data:null ,
+      loginStatus: LoginStatus.initial,
+      data: null,
+      isPasswordObscured: true,
+      hasInteractedWithPhone: false,
+      hasInteractedWithPassword: false,
     );
   }
 
   LoginStates copyWith({
     String? phone,
     String? password,
-    bool? isSubmitting,
-    bool? isSuccess,
     bool? isPhoneValid,
     bool? isPasswordValid,
     String? errorMessage,
-    Valet ? data
-
+    Valet? data,
+    LoginStatus? loginStatus,
+    bool? isPasswordObscured,
+    bool? hasInteractedWithPhone,
+    bool? hasInteractedWithPassword,
   }) {
     return LoginStates(
       phone: phone ?? this.phone,
       password: password ?? this.password,
-      isSubmitting: isSubmitting ?? this.isSubmitting,
       isPhoneValid: isPhoneValid ?? this.isPhoneValid,
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
-      isSuccess: isSuccess ?? this.isSuccess,
-      errorMessage: errorMessage,
-      data: data
+      errorMessage: errorMessage ?? this.errorMessage,
+      data: data ?? this.data,
+      loginStatus: loginStatus ?? this.loginStatus,
+      isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
+      hasInteractedWithPhone: hasInteractedWithPhone ?? this.hasInteractedWithPhone,
+      hasInteractedWithPassword: hasInteractedWithPassword ?? this.hasInteractedWithPassword,
     );
   }
-  bool get isFormValid => isPhoneValid && isPasswordValid;
 
+  bool get isFormValid =>
+      isPhoneValid && isPasswordValid && hasInteractedWithPhone && hasInteractedWithPassword;
 }

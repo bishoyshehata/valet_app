@@ -1,4 +1,5 @@
 
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/data/repository/repository.dart';
@@ -11,8 +12,10 @@ class ServicesLocator {
 
   void onInit(){
 
+    /// Dio
+    sl.registerLazySingleton<Dio>(() => Dio());
     /// DataSources
-    sl.registerLazySingleton<IValetDataSource>(() => ValetDataSource(),);
+    sl.registerLazySingleton<IValetDataSource>(() => ValetDataSource(sl()),);
     /// Repository
     sl.registerLazySingleton<IValetRepository>(() => ValetRepository(sl()),);
     /// NowPlaying UseCases

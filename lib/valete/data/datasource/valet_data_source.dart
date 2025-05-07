@@ -1,32 +1,45 @@
 import 'package:dio/dio.dart';
+import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/core/network/api_constants.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
-
 import '../../../core/error/exceptions.dart';
-import '../../../core/network/error_message_model.dart';
 
 abstract class IValetDataSource {
-Future<ValetModel> login (String phone , String password);
+  Future<ValetModel> login(String phone, String password);
 }
-
 class ValetDataSource extends IValetDataSource {
+  final Dio dio;
+
+  ValetDataSource(this.dio);
+
   @override
-  Future<ValetModel> login (String phone , String password) async {
-    final response = await Dio().post(ApiConstants.baseUrl,
-      data: {
+  Future<ValetModel> login(String phone, String password) async {
+    try {
+      final response = await dio.post(ApiConstants.baseUrl, data: {
         'phone': phone,
         'password': password,
-        'MobileName': "requestModel.mobileName",
-        'MobileModel': "requestModel.mobileModel",
-        'OSVersion': "requestModel.osVersion",
-        'DeviceId': "requestModel.deviceId",
-        'DeviceToken':"deviceToken" ,
+        'MobileName': 'Pixel 6',
+        'MobileModel': 'Pixel',
+        'OSVersion': 'Android 12',
+        'DeviceId': 'xyz-123',
+        'DeviceToken': 'abc-456',
       },
-    );
-    if(response.statusCode == 200){
-      return ValetModel.fromJson(response.data);
-    }
-    throw ServerException(errorMessageModel: ErrorMessageModel.fromjson(response.data));
-  }
+        options: Options(
+          validateStatus: (status) => true,
+    ),
+      );
 
+      if (response.statusCode == 200) {
+        return ValetModel.fromJson(response.data);
+      } else {
+        throw ServerFailure( response.data['messages'][0]);
+      }
+    } on ServerException catch (e) {
+
+        throw ServerException(
+            errorMessageModel: e.errorMessageModel
+        );
+
+    }
+  }
 }

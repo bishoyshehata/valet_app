@@ -3,6 +3,7 @@ class AssetsManager {
   static String onBoarding = 'assets/images/onboarding.png';
   static String login = 'assets/images/login.png';
   static String background = 'assets/images/background.png';
+  static String car = 'assets/images/car.png';
 
 
 }class LottieManager {
