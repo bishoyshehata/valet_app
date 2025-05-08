@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:valet_app/valete/presentation/components/custom_app_bar.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import '../../components/text/text_utils.dart';
 import '../../resources/assets_manager.dart';
+import '../../resources/font_manager.dart';
 import '../../resources/strings_manager.dart';
 
 enum VehicleType { car, motorcycle, bicycle, truck }
@@ -64,21 +67,115 @@ class _OrderScreenState extends State<OrderScreen> {
             ),
             Column(
               children: [
-
                 Card(
                   margin: EdgeInsets.symmetric(
                     horizontal: AppMargin.m16,
-                    vertical: AppMargin.m16,
+                    vertical: AppMargin.m10,
                   ),
                   color: ColorManager.darkPrimary,
                   elevation: 5,
                   shadowColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSizeHeight.s20),
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
 
                   child: Column(
                     children: [
+                      Container(
+                        alignment: Alignment.centerRight,
+                        margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
+                        padding: EdgeInsets.only(right: AppPadding.p5),
+                        decoration: BoxDecoration(
+                          border: Border(right: BorderSide(color: ColorManager.primary, width: 3)),
+                        ),
+                        child: RichText(
+                          textDirection: TextDirection.rtl,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'التوجه إلى جراج : ',
+                                style: GoogleFonts.cairo(
+                                  color: ColorManager.white,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'المحلة الكبرى',
+                                style: GoogleFonts.cairo(
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        margin: EdgeInsets.only(bottom: AppMargin.m16, right: AppMargin.m24),
+                        padding: EdgeInsets.only(right: AppPadding.p5),
+                        decoration: BoxDecoration(
+                          border: Border(right: BorderSide(color: ColorManager.primary, width: 3)),
+                        ),
+                        child: RichText(
+                          textDirection: TextDirection.rtl,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'بالباكية : ',
+                                style: GoogleFonts.cairo(
+                                  color: ColorManager.white,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'P-5',
+                                style: GoogleFonts.cairo(
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: AppMargin.m16,
+                    vertical: AppMargin.m10,
+                  ),
+                  color: ColorManager.darkPrimary,
+                  elevation: 5,
+                  shadowColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                  ),
+
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerRight,
+                        margin: EdgeInsets.only(bottom: AppMargin.m16,top: AppMargin.m16 , right: AppMargin.m24),
+                        padding: EdgeInsets.only(right: AppPadding.p5,),
+                        decoration: BoxDecoration(
+                            border: Border(right: BorderSide(color: ColorManager.primary,width: 3))
+                        ),
+                        child: TextUtils(
+                          text: "قم بإختيار نوع المركبة",
+                          color: ColorManager.white,
+                          fontSize: FontSize.s20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       // اختيار نوع المركبة
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -90,7 +187,7 @@ class _OrderScreenState extends State<OrderScreen> {
                               onTap: () {
                                 setState(() {
                                   selectedVehicleType = type;
-                                      print(type);
+                                  print(type);
                                 });
                               },
                               child: Column(
@@ -117,6 +214,25 @@ class _OrderScreenState extends State<OrderScreen> {
                           }).toList(),
                         ),
                       ),
+
+
+                    ],
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: AppMargin.m16,
+                    vertical: AppMargin.m10,
+                  ),
+                  color: ColorManager.darkPrimary,
+                  elevation: 5,
+                  shadowColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                  ),
+
+                  child: Column(
+                    children: [
                       Stack(
                         children: [
                           Container(
@@ -134,21 +250,21 @@ class _OrderScreenState extends State<OrderScreen> {
                               ),
                             ),
                             child:
-                                _image != null
-                                    ? ClipRect(
-                                  clipBehavior: Clip.antiAlias,
-                                  child: Image.file(
-                                        _image!,
-                                        height: AppSizeHeight.s150,
-                                        width: AppSizeWidth.sMaxWidth,
-                                        fit: BoxFit.fill,
-                                      ),
-                                    )
-                                    : Icon(
-                                      Icons.image,
-                                      size: AppSizeHeight.s100,
-                                      color: ColorManager.darkPrimary,
-                                    ),
+                            _image != null
+                                ? ClipRect(
+                              clipBehavior: Clip.antiAlias,
+                              child: Image.file(
+                                _image!,
+                                height: AppSizeHeight.s150,
+                                width: AppSizeWidth.sMaxWidth,
+                                fit: BoxFit.fill,
+                              ),
+                            )
+                                : Icon(
+                              Icons.image,
+                              size: AppSizeHeight.s100,
+                              color: ColorManager.darkPrimary,
+                            ),
                           ),
                           Positioned(
                             bottom: AppSizeHeight.s15,
@@ -172,6 +288,8 @@ class _OrderScreenState extends State<OrderScreen> {
                     ],
                   ),
                 ),
+
+
               ],
             ),
           ],
