@@ -4,6 +4,7 @@ class AssetsManager {
   static String login = 'assets/images/login.png';
   static String background = 'assets/images/background.png';
   static String car = 'assets/images/car.png';
+  static String scanMe = 'assets/images/scan_me.png';
 
 
 
