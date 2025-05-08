@@ -48,48 +48,44 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: TextFormField(
-        style: TextStyle(color: textColor ?? ColorManager.white ),
-        keyboardType: keyboard,
-        controller: controller,
-        autofocus: true,
-        onChanged: onChanged,
+    return TextFormField(
+      style: TextStyle(color: textColor ?? ColorManager.white ),
+      keyboardType: keyboard,
+      controller: controller,
+      onChanged: onChanged,
 
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: validator,cursorColor:cursorColor ?? ColorManager.white,
-        obscureText: obscureText ?? false,
-        decoration: InputDecoration(
-          errorText: errorText,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: validator,cursorColor:cursorColor ?? ColorManager.white,
+      obscureText: obscureText ?? false,
+      decoration: InputDecoration(
+        errorText: errorText,
 
-          fillColor: backgroundColor ?? ColorManager.background,
-          filled: true,
-          prefixIcon: icon,
-          suffixIcon: suffixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(radius ?? 25),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(radius ?? 25),
-            borderSide: BorderSide(color: ColorManager.white),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(radius ?? 25),
-            borderSide: BorderSide(color: ColorManager.white,width: 1),
-          ),
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: hintTextColor ?? ColorManager.white,
-            fontSize:hintSize,
-          ),
-          labelText: labelText,
-          labelStyle:TextStyle(
-            color: labelTextColor ?? ColorManager.white,
-            fontSize:labelSize,
-          ),
-
+        fillColor: backgroundColor ?? ColorManager.background,
+        filled: true,
+        prefixIcon: icon,
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius ?? 25),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius ?? 25),
+          borderSide: BorderSide(color: ColorManager.white),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius ?? 25),
+          borderSide: BorderSide(color: ColorManager.white,width: 1),
+        ),
+        hintText: hintText,
+        hintStyle: TextStyle(
+          color: hintTextColor ?? ColorManager.white,
+          fontSize:hintSize,
+        ),
+        labelText: labelText,
+        labelStyle:TextStyle(
+          color: labelTextColor ?? ColorManager.white,
+          fontSize:labelSize,
+        ),
+
       ),
     );
   }

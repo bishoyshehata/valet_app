@@ -1,5 +1,6 @@
 class ApiConstants {
-  static const baseUrl = 'https://iti.vps.kirellos.com/api/login';
+  static const baseUrl = 'https://valet.vps.kirellos.com';
+  static const loginEndPoint = '/api/Valet/Login';
 
 
 

@@ -8,17 +8,24 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   LoginUseCase loginUseCase;
 
   LoginBloc(this.loginUseCase) : super(LoginStates.initial()) {
-    on<PhoneChanged>((event, emit) {
-      final isValid = _validatePhone(event.phone);
-      emit(
-        state.copyWith(
-          loginStatus: LoginStatus.initial,
-          phone: event.phone,
-          isPhoneValid: isValid,
-          hasInteractedWithPhone: true,
-        ),
-      );
+
+
+    on<CompletePhoneChanged>((event, emit) {
+      final isValid = validatePhoneByCountry(event.countryCode, event.phoneNumber);
+
+      emit(state.copyWith(
+        completePhoneNumber: '+${event.countryCode}${event.phoneNumber}',
+        isPhoneValid: isValid,
+        loginStatus: LoginStatus.initial,
+        hasInteractedWithPhone: true,
+        phoneErrorMessage : isValid ? null : 'رقم الهاتف غير صحيح بالنسبة للدولة المختارة',
+      ));
     });
+
+
+
+
+
     on<PasswordChanged>((event, emit) {
       final isValid = _validatePassword(event.password);
       emit(
@@ -46,19 +53,16 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
       emit(state.copyWith(loginStatus: LoginStatus.loading));
 
       if (state.isFormValid) {
-        final result = await loginUseCase.login(state.phone, state.password);
+        final result = await loginUseCase.login(state.completePhoneNumber.replaceFirst("+", ''), state.password);
         result.fold(
               (error) {
-            emit( state.copyWith(
+            emit(state.copyWith(
               loginStatus: LoginStatus.error,
               errorMessage: error.message,
-
             ));
           },
               (valet) {
-                return emit(
-                    state.copyWith(loginStatus: LoginStatus.success, data: valet)
-                );
+            emit(state.copyWith(loginStatus: LoginStatus.success, data: valet));
           },
         );
       } else {
@@ -69,15 +73,34 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
           ),
         );
       }
-
     });
+
+  }
+}
+bool validatePhoneByCountry(String countryCode, String nationalNumber) {
+  print('🔍 Validating for countryCode: $countryCode | number: $nationalNumber');
+
+  switch (countryCode) {
+    case '20':
+      final isValid = nationalNumber.startsWith(RegExp(r'^(10|11|12|15)'));
+      print('✅ Egypt validation: $isValid');
+      return isValid;
+    case '966':
+      final isValid = nationalNumber.startsWith('5');
+      print('✅ KSA validation: $isValid');
+      return isValid;
+    case '971':
+      final isValid = nationalNumber.startsWith('5');
+      print('✅ UAE validation: $isValid');
+      return isValid;
+    default:
+      print('⚠️ Unknown country, accepted by default');
+      return true;
   }
 }
 
-bool _validatePhone(String phone) {
-  final regex = RegExp(r'^(010|011|012|015)[0-9]{8}$');
-  return regex.hasMatch(phone);
-}
+
+
 
 bool _validatePassword(String password) {
   return password.length >= 8;

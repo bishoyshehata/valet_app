@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:valet_app/valete/presentation/components/custom_app_bar.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
-
 import '../../resources/assets_manager.dart';
 import '../../resources/strings_manager.dart';
 
@@ -89,7 +88,10 @@ class _OrderScreenState extends State<OrderScreen> {
                             IconData icon = _getVehicleIcon(type);
                             return GestureDetector(
                               onTap: () {
-                                setState(() => selectedVehicleType = type);
+                                setState(() {
+                                  selectedVehicleType = type;
+                                      print(type);
+                                });
                               },
                               child: Column(
                                 children: [
@@ -188,7 +190,5 @@ IconData _getVehicleIcon(VehicleType type) {
       return Icons.directions_bike;
     case VehicleType.truck:
       return Icons.local_shipping;
-    default:
-      return Icons.local_parking;
-  }
+    }
 }

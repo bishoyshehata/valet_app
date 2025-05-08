@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
+import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import 'core/services/services_locator.dart';
 
 void main() {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Valet App',
-          home: ValetHomeScreen(),
+          home: LoginScreen(),
         );
       },
     );

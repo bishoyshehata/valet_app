@@ -3,7 +3,6 @@ import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/valet.dart';
 
 class LoginStates extends Equatable {
-  final String phone;
   final String password;
   final bool isPhoneValid;
   final bool isPasswordValid;
@@ -13,9 +12,9 @@ class LoginStates extends Equatable {
   final bool isPasswordObscured;
   final bool hasInteractedWithPhone;
   final bool hasInteractedWithPassword;
-
+  final String completePhoneNumber;
+  final String? phoneErrorMessage;
   const LoginStates({
-    required this.phone,
     required this.password,
     required this.errorMessage,
     required this.isPhoneValid,
@@ -25,11 +24,13 @@ class LoginStates extends Equatable {
     required this.isPasswordObscured,
     required this.hasInteractedWithPassword,
     required this.hasInteractedWithPhone,
+    required this.completePhoneNumber,
+    required this.phoneErrorMessage
   });
 
   @override
   List<Object?> get props => [
-    phone,
+    completePhoneNumber,
     password,
     errorMessage,
     isPasswordValid,
@@ -39,11 +40,12 @@ class LoginStates extends Equatable {
     isPasswordObscured,
     hasInteractedWithPassword,
     hasInteractedWithPhone,
+    phoneErrorMessage
   ];
 
   factory LoginStates.initial() {
     return const LoginStates(
-      phone: '',
+      completePhoneNumber: '',
       password: '',
       isPhoneValid: false,
       isPasswordValid: false,
@@ -53,15 +55,17 @@ class LoginStates extends Equatable {
       isPasswordObscured: true,
       hasInteractedWithPhone: false,
       hasInteractedWithPassword: false,
+      phoneErrorMessage: null,
     );
   }
 
   LoginStates copyWith({
-    String? phone,
+    String? completePhoneNumber,
     String? password,
     bool? isPhoneValid,
     bool? isPasswordValid,
     String? errorMessage,
+    String? phoneErrorMessage,
     Valet? data,
     LoginStatus? loginStatus,
     bool? isPasswordObscured,
@@ -69,7 +73,7 @@ class LoginStates extends Equatable {
     bool? hasInteractedWithPassword,
   }) {
     return LoginStates(
-      phone: phone ?? this.phone,
+      completePhoneNumber: completePhoneNumber ?? this.completePhoneNumber,
       password: password ?? this.password,
       isPhoneValid: isPhoneValid ?? this.isPhoneValid,
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
@@ -79,6 +83,7 @@ class LoginStates extends Equatable {
       isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
       hasInteractedWithPhone: hasInteractedWithPhone ?? this.hasInteractedWithPhone,
       hasInteractedWithPassword: hasInteractedWithPassword ?? this.hasInteractedWithPassword,
+      phoneErrorMessage: phoneErrorMessage,
     );
   }
 

@@ -15,13 +15,9 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<ValetModel> login(String phone, String password) async {
     try {
-      final response = await dio.post(ApiConstants.baseUrl, data: {
+      final response = await dio.post(ApiConstants.baseUrl +ApiConstants.loginEndPoint, data: {
         'phone': phone,
         'password': password,
-        'MobileName': 'Pixel 6',
-        'MobileModel': 'Pixel',
-        'OSVersion': 'Android 12',
-        'DeviceId': 'xyz-123',
         'DeviceToken': 'abc-456',
       },
         options: Options(

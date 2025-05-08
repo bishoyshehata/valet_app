@@ -6,6 +6,7 @@ class AssetsManager {
   static String car = 'assets/images/car.png';
 
 
+
 }class LottieManager {
   // images
   static String logo = 'assets/lottie/valete_logo.json';
