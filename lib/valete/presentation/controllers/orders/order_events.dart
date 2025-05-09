@@ -15,3 +15,10 @@ class PickImageEvent extends OrderEvent {
   // TODO: implement props
   List<Object?> get props => [];
 }
+class LoadImageEvent extends OrderEvent {
+  final String base64Image;
+  LoadImageEvent(this.base64Image);
+
+  @override
+  List<Object> get props => [base64Image];
+}

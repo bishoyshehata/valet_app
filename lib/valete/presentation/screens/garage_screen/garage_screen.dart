@@ -23,6 +23,12 @@ class GarageScreen extends StatelessWidget {
         textDirection:TextDirection.rtl,
         child: Scaffold(
           appBar: CustomAppBar(
+            actions: [
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_forward_ios_sharp, color: ColorManager.primary),
+              ),
+            ],
             title: "موقف السيارات",
             centerTitle: true,
             titleColor: ColorManager.white,
