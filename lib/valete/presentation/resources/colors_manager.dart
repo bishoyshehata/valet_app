@@ -13,4 +13,5 @@ class ColorManager {
   static Color success = const Color(0xff28a745);
   static Color error = const Color(0xffdc3545);
   static Color warning = const Color(0xffe8853f);
+  static Color blue = const Color(0xff0d8d91);
 }

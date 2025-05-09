@@ -1,216 +1,158 @@
 import 'package:flutter/material.dart';
-import 'package:valet_app/valete/presentation/components/custom_app_bar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
-import 'package:valet_app/valete/presentation/resources/font_manager.dart';
-import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import '../../../data/models/garage/garage_model.dart';
+import '../../components/text/text_utils.dart';
+import '../../controllers/garage/garage_bloc.dart';
+import '../../controllers/garage/garage_events.dart';
+import '../../controllers/garage/garage_states.dart';
 import '../../resources/colors_manager.dart';
+import '../../resources/font_manager.dart';
+import '../../resources/values_manager.dart';
+import '../../components/custom_app_bar.dart';
 
-enum VehicleType { car, motorcycle, bicycle, truck }
 
-class GarageScreen extends StatefulWidget {
-  @override
-  _GarageScreenState createState() => _GarageScreenState();
-}
-
-class _GarageScreenState extends State<GarageScreen> {
-  bool showExtraSlots = false;
-  VehicleType selectedVehicleType = VehicleType.car;
-
-  final List<ParkingSlot> extraSlots = List.generate(
-    8,
-    (index) => ParkingSlot(id: 19 + index, isOccupied: index.isEven),
-  );
-
-  final List<ParkingSlot> slots = List.generate(
-    18,
-    (index) => ParkingSlot(
-      id: index + 1,
-      isOccupied: [2, 4, 5, 7, 8, 11, 12, 14, 15].contains(index + 1),
-      isSelected: (index + 1) == 2,
-    ),
-  );
+class GarageScreen extends StatelessWidget {
+  const GarageScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black87,
-      appBar: CustomAppBar(
-        title: "موقف السيارات",
-        centerTitle: true,
-        titleColor: ColorManager.white,
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocProvider(
+      create: (_) => GarageBloc(),
+      child: Directionality(
+        textDirection:TextDirection.rtl,
+        child: Scaffold(
+          appBar: CustomAppBar(
+            title: "موقف السيارات",
+            centerTitle: true,
+            titleColor: ColorManager.white,
+          ),
+          body: BlocBuilder<GarageBloc, GarageState>(
+            builder: (context, state) {
+              return Stack(
                 children: [
-                  Text(
-                    showExtraSlots
-                        ? 'إخفاء الأماكن الإضافية'
-                        : 'عرض الأماكن الإضافية',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: FontSize.s17,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  SizedBox(
+                    width: AppSizeWidth.sMaxWidth,
+                    height: AppSizeHeight.sMaxInfinite,
+                    child: Image.asset(AssetsManager.background, fit: BoxFit.cover),
                   ),
-                  Switch(
-                    value: showExtraSlots,
-                    onChanged: (val) {
-                      setState(() => showExtraSlots = val);
-                    },
-                    activeColor: ColorManager.primary,
+                  CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextUtils(
+                                text: state.showExtraSlots ? 'إخفاء الأماكن الإضافية' : 'عرض الأماكن الإضافية',
+                                color: ColorManager.white,
+                                fontSize: FontSize.s17,
+                                fontWeight: FontWeight.bold,
+                              ),
+
+                              Switch(
+                                value: state.showExtraSlots,
+                                onChanged: (_) =>
+                                    context.read<GarageBloc>().add(ToggleExtraSlotsEvent()),
+                                activeColor: ColorManager.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      if (state.showExtraSlots) ...[
+
+                        SliverPadding(
+                          padding: EdgeInsets.all(AppPadding.p10),
+                          sliver: SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) => MiniParkingSlotWidget(slot: state.extraSlots[index]),
+                              childCount: state.extraSlots.length,
+                            ),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              mainAxisExtent: 100,
+                            ),
+                          ),
+                        ),
+                      ],
+
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          child: TextUtils(
+                            text: "الجراج الرئيسي",
+                            color: ColorManager.white,
+                            fontSize: FontSize.s17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      SliverPadding(
+                        padding: EdgeInsets.all(12),
+                        sliver: SliverGrid(
+                          delegate: SliverChildBuilderDelegate(
+                                (context, index) => ParkingSlotWidget(slot: state.mainSlots[index]),
+                            childCount: state.mainSlots.length,
+                          ),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            mainAxisExtent: 100,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ),
+              );
+            },
           ),
-
-          if (showExtraSlots) ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  'الأماكن الإضافية',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: FontSize.s20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.all(AppPadding.p10),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  return MiniParkingSlotWidget(slot: extraSlots[index]);
-                }, childCount: extraSlots.length),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  mainAxisExtent: 100, // تصغير ارتفاع العناصر
-                ),
-              ),
-            ),
-          ],
-
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Text(
-                'الجراج الرئيسي',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: FontSize.s20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-
-          SliverPadding(
-            padding: EdgeInsets.all(12),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                return ParkingSlotWidget(slot: slots[index]);
-              }, childCount: slots.length),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                mainAxisExtent: 100, // التحكم في ارتفاع العنصر
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
-
-class ParkingSlot {
-  final int id;
-  final bool isOccupied;
-  final bool isSelected;
-
-  ParkingSlot({
-    required this.id,
-    this.isOccupied = false,
-    this.isSelected = false,
-  });
-}
-
 class ParkingSlotWidget extends StatelessWidget {
   final ParkingSlot slot;
 
-  const ParkingSlotWidget({super.key, required this.slot});
+  const ParkingSlotWidget({Key? key, required this.slot}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bool isOccupied = slot.isOccupied;
-    final bool isSelected = slot.isSelected;
+    return Card(
+      color: slot.isOccupied ? ColorManager.primary : ColorManager.darkGrey, // تغيير اللون حسب حالة الإشغال
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // عرض الاسم
+            TextUtils(
+              text: slot.name,
+              color:slot.isOccupied ?  ColorManager.darkPrimary : ColorManager.white ,
+              fontSize: FontSize.s15,
+              fontWeight: FontWeight.bold,
+            ),
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        color:
-            isOccupied
-                ? ColorManager.primary.withOpacity(0.8)
-                : Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? ColorManager.white : Colors.grey.shade600,
-          width: isSelected ? 3 : 1.5,
+            // عرض صورة السيارة إذا كان slot مشغول
+            slot.isOccupied?
+              Image.asset(
+               AssetsManager.car, // استبدل بالمسار الصحيح لصورة السيارة
+                height: AppSizeHeight.s45,
+              ):Icon(
+              Icons.local_parking,
+              color:Colors.cyanAccent ,
+              size: AppSizeHeight.s25,
+            ),
+
+          ],
         ),
-        boxShadow: [
-          if (isSelected)
-            BoxShadow(
-              color: Colors.cyanAccent.withOpacity(0.4),
-              blurRadius: 8,
-              spreadRadius: 1,
-              offset: Offset(0, 2),
-            ),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isOccupied)
-            Positioned(
-              bottom: 8,
-              child: Image.asset(
-                AssetsManager.car,
-                height: AppSizeHeight.s50,
-                fit: BoxFit.contain,
-              ),
-            ),
-          Positioned(
-            top: 8,
-            child: Text(
-              'P${slot.id.toString().padLeft(2, '0')}',
-              style: TextStyle(
-                color:
-                    isSelected ? ColorManager.background : ColorManager.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          if (!isOccupied)
-            Positioned(
-              bottom: 12,
-              child: Icon(
-                Icons.local_parking,
-                color: isSelected ? Colors.cyanAccent : ColorManager.primary,
-                size: AppSizeHeight.s40,
-              ),
-            ),
-        ],
       ),
     );
   }
@@ -219,69 +161,37 @@ class ParkingSlotWidget extends StatelessWidget {
 class MiniParkingSlotWidget extends StatelessWidget {
   final ParkingSlot slot;
 
-  const MiniParkingSlotWidget({super.key, required this.slot});
+  const MiniParkingSlotWidget({Key? key, required this.slot}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bool isOccupied = slot.isOccupied;
-    final bool isSelected = slot.isSelected;
+    return Card(
+      color: slot.isOccupied ? ColorManager.primary :ColorManager.darkGrey, // تغيير اللون حسب حالة الإشغال
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // عرض الاسم
+            TextUtils(
+              text: slot.name,
+              color:slot.isOccupied ?  ColorManager.darkPrimary : ColorManager.white ,
+              fontSize: FontSize.s15,
+              fontWeight: FontWeight.bold,
+            ),
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      decoration: BoxDecoration(
-        color:
-            isOccupied
-                ? ColorManager.primary.withOpacity(0.8)
-                : Colors.grey.shade800,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSelected ? ColorManager.primary : Colors.grey.shade600,
-          width: isSelected ? 3 : 1.5,
+            // عرض صورة السيارة إذا كان slot مشغول
+            slot.isOccupied?
+            Image.asset(
+              AssetsManager.car, // استبدل بالمسار الصحيح لصورة السيارة
+              height: AppSizeHeight.s35,
+            ):Icon(
+              Icons.local_parking,
+              color:Colors.cyanAccent ,
+              size: AppSizeHeight.s25,
+            ),
+
+          ],
         ),
-        boxShadow: [
-          if (isSelected)
-            BoxShadow(
-              color: Colors.cyanAccent.withOpacity(0.4),
-              blurRadius: 8,
-              spreadRadius: 1,
-              offset: Offset(0, 2),
-            ),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isOccupied)
-            Positioned(
-              bottom: 8,
-              child: Image.asset(
-                AssetsManager.car,
-                height: AppSizeHeight.s40,
-                fit: BoxFit.contain,
-              ),
-            ),
-          Positioned(
-            top: 8,
-            child: Text(
-              'P${slot.id.toString().padLeft(2, '0')}',
-              style: TextStyle(
-                color:
-                    isSelected ? ColorManager.background : ColorManager.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          if (!isOccupied)
-            Positioned(
-              bottom: 12,
-              child: Icon(
-                Icons.local_parking,
-                color: isSelected ? Colors.cyanAccent : ColorManager.primary,
-                size: AppSizeHeight.s25,
-              ),
-            ),
-        ],
       ),
     );
   }

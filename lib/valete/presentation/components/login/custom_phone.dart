@@ -27,7 +27,7 @@ class CustomPhoneField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntlPhoneField(
-
+      textAlign: TextAlign.right,
       decoration: InputDecoration(
 
         labelText: labelText ?? 'رقم الهاتف',

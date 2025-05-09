@@ -106,8 +106,7 @@ class LoginScreen extends StatelessWidget {
 
                             SizedBox(height: AppSizeHeight.s100),
 
-                            // // Phone field
-
+                            // Phone field
                             CustomPhoneField(
                               labelText: AppStrings.enterPhone,
                               labelSize: 15,
@@ -124,20 +123,7 @@ class LoginScreen extends StatelessWidget {
                                   print(state.completePhoneNumber.replaceFirst('+', ''));
                                 }
                             ),
-
-                            // CustomTextFormField(
-                            //   labelText: AppStrings.enterPhone,
-                            //   keyboard: TextInputType.number,
-                            //   onChanged: (value) => context.read<LoginBloc>().add(PhoneChanged(value)),
-                            //   errorText: state.hasInteractedWithPhone && !state.isPhoneValid
-                            //       ? 'Invalid phone number'
-                            //       : null,
-                            //   icon: Icon(Icons.phone_outlined, color: ColorManager.white),
-                            // ),
-
-
                             SizedBox(height: AppSizeHeight.s20),
-
                             // Password field
                             CustomTextFormField(
                               labelText: AppStrings.enterPassword,

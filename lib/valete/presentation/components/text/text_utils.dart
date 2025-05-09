@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 
 import 'get_font_style.dart';
 
@@ -35,7 +36,7 @@ class TextUtils extends StatelessWidget {
         fontFamily: fontFamily,
         fontSize: fontSize ?? 14,
         fontWeight: fontWeight ?? FontWeight.normal,
-        color: color ?? Colors.black,
+        color: color ?? ColorManager.darkPrimary,
       ),
     );
   }

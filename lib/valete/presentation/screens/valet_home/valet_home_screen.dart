@@ -37,7 +37,6 @@ class ValetHomeScreen extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
 
-        backgroundColor: Colors.black87,
         appBar: CustomAppBar(
           title: '${AppStrings.welcome} Valet Name',
           titleColor: ColorManager.white,
