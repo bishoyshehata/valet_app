@@ -27,9 +27,9 @@ class CustomPhoneField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntlPhoneField(
+
       textAlign: TextAlign.right,
       decoration: InputDecoration(
-
         labelText: labelText ?? 'رقم الهاتف',
         labelStyle: TextStyle(
           color: labelTextColor ?? ColorManager.white,
@@ -54,6 +54,7 @@ class CustomPhoneField extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
           borderSide: BorderSide(color: ColorManager.white, width: 1),
         ),
+
       ),
       initialCountryCode: initialCountryCode,
       countries: [
