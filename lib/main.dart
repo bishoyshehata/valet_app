@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Valet App',
-          home:SplashScreen(),
+          home:LoginScreen(),
         );
       },
     );

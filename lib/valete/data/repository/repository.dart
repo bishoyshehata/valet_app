@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
+import 'package:valet_app/valete/domain/entities/create_order.dart';
 import 'package:valet_app/valete/domain/entities/valet.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
@@ -13,6 +14,16 @@ class ValetRepository extends IValetRepository {
   Future<Either<Failure, Valet>> login(String phone, String password) async {
     try {
       final result = await valetDataSource.login(phone, password);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CreateOrder>> createOrder() async{
+    try {
+      final result = await valetDataSource.createOrder();
       return Right(result);
     } on ServerFailure catch (failure) {
       return Left(ServerFailure(failure.message));

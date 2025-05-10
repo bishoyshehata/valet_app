@@ -10,9 +10,13 @@ class SelectVehicleType extends OrderEvent {
   List<Object?> get props =>[vehicleType];
 }
 
+class CreateOrderEvent extends OrderEvent{
+  @override
+  List<Object?> get props => [];
+}
+
 class PickImageEvent extends OrderEvent {
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 class LoadImageEvent extends OrderEvent {
