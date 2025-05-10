@@ -9,7 +9,6 @@ class SelectVehicleType extends OrderEvent {
   @override
   List<Object?> get props =>[vehicleType];
 }
-
 class CreateOrderEvent extends OrderEvent{
   @override
   List<Object?> get props => [];
@@ -18,11 +17,4 @@ class CreateOrderEvent extends OrderEvent{
 class PickImageEvent extends OrderEvent {
   @override
   List<Object?> get props => [];
-}
-class LoadImageEvent extends OrderEvent {
-  final String base64Image;
-  LoadImageEvent(this.base64Image);
-
-  @override
-  List<Object> get props => [base64Image];
 }

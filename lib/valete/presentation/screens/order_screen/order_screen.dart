@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
@@ -17,6 +20,7 @@ import '../../resources/font_manager.dart';
 import '../../resources/strings_manager.dart';
 import '../garage_screen/garage_screen.dart';
 import 'image_full_screen.dart';
+import 'package:shimmer/shimmer.dart';
 
 class OrderScreen extends StatelessWidget {
   const OrderScreen({super.key});
@@ -25,88 +29,125 @@ class OrderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<OrderBloc>(
       create: (context) {
-        return OrderBloc(sl<CreateOrderUseCase>())
-          ..add(
-            LoadImageEvent(
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAzQAAAM0AQAAAABFCVraAAAD70lEQVR4nO3cUXLbMAwEUN+g979lb9CkmSgkF5SafLgN1McPjyyZXAYD7EIgw8evv9J+PuCwGz8QP/gAj9IFeio/kFfJE+XX3he8Z3lv9L6tfqDuoo6k/qae+MymDstu/ED84AM8ShfoqfxAXvVd8sRHth8fD16v4t7vrq99j4/5J3UAOOzGD8QPPsCjdKGvno77y+jvwy3zmXsMnDoAHHbjB+IHH+BRutBfT0cGER8xXAw831sGgMNu/ED84AM8Shdup6en6ca4B4fd+IH4wQd4lC78j3oayxXlKjIXOOzGD8QPPsCjdOFmelq+RqZxtJjAxQBw2I0fiB98gEfpQms9jVbXLP70UQeAw278QPzgAzxKF1rr6SfaewpyVCfmBGVJQUqDw278QPzgAzxKF7rq6eg/Vip25YgBEWWLmA8cduMH4gcf4FG60F9Pd0sYy56G8lFhY+8DHHbjB+IHH+BRutBcTyMPibb7Z4mTNs8WDrvxA/GDD/AoXWisp/PPloOXLn6yHNG4y1LgsBs/ED/4AI/ShdZ6OpKRi6pDPbFxfjq6vV1d1kPgsBs/ED/4AI/ShRZ6WtcsdhBlpN0Cx2UeAofd+IH4wQd4lC7009PdqUpRk4gUZN8DDrvxA/GDD/AoXeiup7t/koxZRB4S9wIWDrvxA/GDD/AoXbiNnr5d1a0L5Wksa9QcBg678QPxgw/wKF3or6clyYgHy7ELu6/z9EoPOOzGD8QPPsCjdKGnntZ0Y1zFEkZM6it1Cjjsxg/EDz7Ao3Shj57GdoZNLpE1iXkWAVFSFTjsxg/EDz7Ao3Sho56WoxNGh2OQ/bLGyVM47MYPxA8+wKN0ob+ezrWGY5DodfofE2W2JYeBw278QPzgAzxKFzrq6QA7zTT2mx3GVHa5CRx24wfiBx/gUbrQWk+XOkXA7p/ujlgYYHDYjR+IH3yAR+lCdz2NzYtzchFbF07mEzjrXwCH3fiB+MEHeJQudNTTXYv8ItKSMpUDcd40CYfd+IH4wQd4lC401tMY7rprwJYjmOCwGz8QP/gAj9KFm+hp1CmWU5UCMbY97CsWn1zHgMNu/ED84AM8She+t56OX0RCEYiBHaPDYTd+IH7wAR6lCzfW09jY8NHrsZ/AyX5JOOzGD8QPPsCjdOFeehppyTFcVDF2X+cGh934gfjBB3iULjTW0wK7jF5SkKhJXJwBDYfd+IH4wQd4lC701NO6ILEpOCwrFUcr2Jd5CBx24wfiBx/gUbrQRU+f2eCwGz8QP/gAj9IFeio/kFfJE+XX3he8Z3lv9L6tfqDuoo6k/qae+NymDstu/ED84AM8ShfoqfxAXvVP88QXaUbDGPol1zIAAAAASUVORK5CYII=",
-            ),
-          )
-          ..add(CreateOrderEvent());
+        return OrderBloc(sl<CreateOrderUseCase>())..add(CreateOrderEvent());
       },
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-          backgroundColor: ColorManager.background,
-          appBar: CustomAppBar(
-            actions: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.arrow_forward_ios_sharp,
-                  color: ColorManager.primary,
-                ),
-              ),
-            ],
-            title: AppStrings.makeOrder,
-            centerTitle: true,
-            titleColor: ColorManager.white,
-            leading: Icon(Icons.edit_note, color: ColorManager.primary),
-          ),
-          body: Stack(
-            children: [
-              SizedBox(
-                width: AppSizeWidth.sMaxWidth,
+      child: BlocBuilder<OrderBloc, OrderState>(
+        buildWhen:
+            (previous, current) =>
+                previous.createOrderState != current.createOrderState,
+        builder: (context, state) {
+          switch (state.createOrderState) {
+            case RequestState.loading:
+              return SizedBox(
                 height: AppSizeHeight.sMaxInfinite,
-                child: Image.asset(AssetsManager.background, fit: BoxFit.cover),
-              ),
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildGarageInfoCard(),
-                    _buildVehicleTypeSelector(context),
-                    _buildQrSection(context),
-                    _buildImageCaptureSection(context),
-                    SizedBox(height: AppSizeHeight.s10),
-                    BlocBuilder<OrderBloc, OrderState>(
-                      builder: (context, state) {
-                        print("ssssssssssssssssssssssssssssssssssssssss${state.createOrderState}");
-                        return CustomButton(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GarageScreen(),
-                              ),
-                            );
-                          },
-                          btnColor: ColorManager.darkPrimary,
-                          shadowColor: ColorManager.white,
-                          width: MediaQuery.of(context).size.width * .9,
-                          radius: AppSizeHeight.s10,
-                          borderColor: ColorManager.white,
-                          elevation: 5,
-                          widget: TextUtils(
-                            text: "تفعيل الطلب",
-                            color: ColorManager.primary,
-                            fontSize: FontSize.s17,
-                            fontWeight: FontWeight.bold,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder:
+                      (context, index) => Shimmer.fromColors(
+                        baseColor: Colors.grey[850]!,
+                        highlightColor: Colors.grey[800]!,
+                        child: Container(
+                          height: 190.0,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: AppSizeHeight.s20),
-                  ],
+                        ),
+                      ),
+                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                  itemCount: 4,
                 ),
-              ),
-            ],
-          ),
-        ),
+              );
+
+            case RequestState.loaded:
+              return Directionality(
+                textDirection: TextDirection.rtl,
+                child: Scaffold(
+                  backgroundColor: ColorManager.background,
+                  appBar: CustomAppBar(
+                    actions: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(
+                          Icons.arrow_forward_ios_sharp,
+                          color: ColorManager.primary,
+                        ),
+                      ),
+                    ],
+                    title: AppStrings.makeOrder,
+                    centerTitle: true,
+                    titleColor: ColorManager.white,
+                    leading: Icon(Icons.edit_note, color: ColorManager.primary),
+                  ),
+                  body: Stack(
+                    children: [
+                      SizedBox(
+                        width: AppSizeWidth.sMaxWidth,
+                        height: AppSizeHeight.sMaxInfinite,
+                        child: Image.asset(
+                          AssetsManager.background,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _buildGarageInfoCard(
+                              state.data!.garageName,
+                              state.data!.spotName,
+                            ),
+                            _buildVehicleTypeSelector(context),
+                            _buildQrSection(context,state.data!.qr),
+                            _buildImageCaptureSection(context),
+                            SizedBox(height: AppSizeHeight.s10),
+                            BlocBuilder<OrderBloc, OrderState>(
+                              builder: (context, state) {
+                                print(
+                                  "ssssssssssssssssssssssssssssssssssssssss${state.createOrderState}",
+                                );
+                                return CustomButton(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GarageScreen(),
+                                      ),
+                                    );
+                                  },
+                                  btnColor: ColorManager.darkPrimary,
+                                  shadowColor: ColorManager.white,
+                                  width: MediaQuery.of(context).size.width * .9,
+                                  radius: AppSizeHeight.s10,
+                                  borderColor: ColorManager.white,
+                                  elevation: 5,
+                                  widget: TextUtils(
+                                    text: "تفعيل الطلب",
+                                    color: ColorManager.primary,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: AppSizeHeight.s20),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            case RequestState.error:
+              // TODO: Handle this case.
+              throw UnimplementedError();
+          }
+        },
       ),
     );
   }
 
   /// widgets
-  Widget _buildGarageInfoCard() {
+  Widget _buildGarageInfoCard(String garage, String spot) {
     return Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
@@ -141,7 +182,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: "المحلة الكبرى",
+                    text: garage,
                     style: TextStyle(
                       color: ColorManager.primary,
                       fontSize: FontSize.s15,
@@ -176,7 +217,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: "P-5",
+                    text: spot,
                     style: TextStyle(
                       color: ColorManager.primary,
                       fontSize: FontSize.s15,
@@ -275,7 +316,10 @@ class OrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQrSection(BuildContext context) {
+  Widget _buildQrSection(BuildContext context ,String qr) {
+    String base64String = qr.replaceFirst('data:image/png;base64,', '');
+    Uint8List qrBytes = base64Decode(base64String);
+
     return Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
@@ -309,19 +353,7 @@ class OrderScreen extends StatelessWidget {
             height: MediaQuery.of(context).size.height * .25,
             alignment: Alignment.center,
             margin: EdgeInsets.symmetric(vertical: AppMargin.m16),
-            child: BlocBuilder<OrderBloc, OrderState>(
-              builder: (context, state) {
-                if (state.isLoading) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (state.imageBytes != null) {
-                  return Center(child: Image.memory(state.imageBytes!));
-                }
-
-                return Center(child: Text('لم يتم تحميل الصورة'));
-              },
-            ),
+            child: Center(child: Image.memory(qrBytes)),
           ),
         ],
       ),

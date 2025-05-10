@@ -17,20 +17,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(selectedVehicleType: event.vehicleType));
       // print(event.vehicleType.name);
     });
-
-    // LoadImageEvent
-    on<LoadImageEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true));
-      // تحويل الـ base64 إلى Uint8List
-      try {
-        Uint8List imageBytes = base64Decode(
-            event.base64Image.replaceFirst('data:image/png;base64,', ''));
-        emit(state.copyWith(imageBytes: imageBytes, isLoading: false));
-      } catch (e) {
-        emit(state.copyWith(isLoading: false));
-      }
-    });
-
     on<PickImageEvent>((event, emit) async {
       final picker = ImagePicker();
       final XFile? pickedFile = await picker.pickImage(
