@@ -85,23 +85,22 @@ class LoginScreen extends StatelessWidget {
                             SizedBox(height: AppSizeHeight.s30),
 
                             // Logo
-                            SizedBox(
-                              height: AppSizeHeight.s65,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              // textBaseline: TextBaseline.alphabetic,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
 
-                                  TextUtils(
-                                    text: AppStrings.appName,
-                                    fontSize: FontSize.s70,
-                                    fontFamily: 'modak',
+                                TextUtils(
+                                  text: AppStrings.appName,
+                                  fontSize: FontSize.s70,
+                                  fontFamily: 'modak',
+                                  color: ColorManager.primary,
+                                ),
+                                Icon(Icons.garage_rounded,
                                     color: ColorManager.primary,
-                                  ),   Icon(Icons.garage_rounded,
-                                      color: ColorManager.primary,
-                                      size: AppSizeHeight.s60),
-                                ],
-                              ),
+                                    size: AppSizeHeight.s60),
+                              ],
                             ),
 
                             SizedBox(height: AppSizeHeight.s100),
@@ -120,7 +119,6 @@ class LoginScreen extends StatelessWidget {
                                       countryCode: phone.countryCode.replaceFirst('+', ''), // ex: 20
                                     ),
                                   );
-                                  print(state.completePhoneNumber.replaceFirst('+', ''));
                                 }
                             ),
                             SizedBox(height: AppSizeHeight.s20),

@@ -26,7 +26,7 @@ class PasswordChanged extends LoginEvents {
 class LoginSubmitted extends LoginEvents {
   final String countryCode;
 
-  LoginSubmitted({required this.countryCode});
+ const LoginSubmitted({required this.countryCode});
 
   @override
   List<Object?> get props => [countryCode];

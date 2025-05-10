@@ -14,7 +14,7 @@ class CustomPhoneField extends StatelessWidget {
   final String? hintText; // في الأعلى
 
   const CustomPhoneField({
-    Key? key,
+    super.key,
     this.initialCountryCode = 'EG',
     this.labelText,
     this.labelSize,
@@ -22,7 +22,7 @@ class CustomPhoneField extends StatelessWidget {
     this.onChanged,
     this.errorText,
     this.hintText
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

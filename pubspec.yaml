@@ -30,7 +30,7 @@ dependencies:
   dio: ^5.8.0+1
   dartz: ^0.10.1
   intl_phone_field: ^3.2.0
-
+  socket_io_client: ^3.1.2
 
 
 dev_dependencies:

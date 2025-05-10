@@ -13,7 +13,7 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
       mainSlots: List.generate(
         18,
             (index) => ParkingSlot(
-              name: "P "+ "${index+1}",
+              name: "P ""${index+1}",
           id: index + 1,
           isOccupied: [2, 4, 5, 7, 8, 11, 12, 14, 15].contains(index + 1),
           isSelected: (index + 1) == 2,
@@ -21,7 +21,7 @@ class GarageBloc extends Bloc<GarageEvent, GarageState> {
       ),
       extraSlots: List.generate(
         8,
-            (index) => ParkingSlot(id: 19 + index, isOccupied: index.isEven, name: "P "+ "${19+index}"),
+            (index) => ParkingSlot(id: 19 + index, isOccupied: index.isEven, name: "P ""${19+index}"),
       ),
     ),
   ) {

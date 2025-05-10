@@ -31,6 +31,8 @@ class ValetHomeScreen extends StatelessWidget {
     Garage(name: "جراج أكتوبر", totalSpots: 60, occupied: 45),
   ];
 
+  ValetHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -110,12 +112,12 @@ class GarageCard extends StatelessWidget {
   final VoidCallback onRequestParking;
 
   const GarageCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.totalSpots,
     required this.occupied,
     required this.onRequestParking,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

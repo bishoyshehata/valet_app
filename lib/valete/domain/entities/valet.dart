@@ -2,17 +2,15 @@ import 'package:equatable/equatable.dart';
 
 abstract class Valet extends Equatable {
   final int id;
-
   final String phone;
-
   final String name;
-
   final String? deviceToken;
-
   final String whatsapp;
-
-  final String status;
-
+  final String password;
+  final String addedOn;
+  final String? companyName;
+  final int status;
+  final int companyId;
   final String accessToken;
 
   const Valet({
@@ -23,8 +21,24 @@ abstract class Valet extends Equatable {
     required this.deviceToken,
     required this.status,
     required this.whatsapp,
+    required this.password,
+    required this.addedOn,
+    required this.companyName,
+    required this.companyId,
   });
 
   @override
-  List<Object> get props => [id, name, phone,accessToken,deviceToken ?? "",status, whatsapp];
+  List<Object> get props => [
+    id,
+    name,
+    phone,
+    accessToken,
+    deviceToken ?? "",
+    status,
+    whatsapp,
+    password,
+    addedOn,
+    companyName ?? "",
+    companyId,
+  ];
 }

@@ -128,7 +128,7 @@ class GarageScreen extends StatelessWidget {
 class ParkingSlotWidget extends StatelessWidget {
   final ParkingSlot slot;
 
-  const ParkingSlotWidget({Key? key, required this.slot}) : super(key: key);
+  const ParkingSlotWidget({super.key, required this.slot});
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +167,7 @@ class ParkingSlotWidget extends StatelessWidget {
 class MiniParkingSlotWidget extends StatelessWidget {
   final ParkingSlot slot;
 
-  const MiniParkingSlotWidget({Key? key, required this.slot}) : super(key: key);
+  const MiniParkingSlotWidget({super.key, required this.slot});
 
   @override
   Widget build(BuildContext context) {

@@ -78,23 +78,18 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
   }
 }
 bool validatePhoneByCountry(String countryCode, String nationalNumber) {
-  print('🔍 Validating for countryCode: $countryCode | number: $nationalNumber');
 
   switch (countryCode) {
     case '20':
       final isValid = nationalNumber.startsWith(RegExp(r'^(10|11|12|15)'));
-      print('✅ Egypt validation: $isValid');
       return isValid;
     case '966':
       final isValid = nationalNumber.startsWith('5');
-      print('✅ KSA validation: $isValid');
       return isValid;
     case '971':
       final isValid = nationalNumber.startsWith('5');
-      print('✅ UAE validation: $isValid');
       return isValid;
     default:
-      print('⚠️ Unknown country, accepted by default');
       return true;
   }
 }

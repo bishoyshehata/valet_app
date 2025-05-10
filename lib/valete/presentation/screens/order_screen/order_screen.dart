@@ -189,7 +189,6 @@ class OrderScreen extends StatelessWidget {
                     return GestureDetector(
                       onTap: () {
                         context.read<OrderBloc>().add(SelectVehicleType(type));
-                        print(type.name);
                       },
                       child: Column(
                         children: [
