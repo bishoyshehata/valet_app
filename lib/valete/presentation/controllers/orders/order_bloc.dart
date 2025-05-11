@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
@@ -31,8 +29,19 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       final order = await createOrderUseCase.createOrder();
       order.fold((error) =>
           emit(state.copyWith(createOrderState: RequestState.error,
-              createOrderError: error.message)), (data) =>emit(state.copyWith(createOrderState: RequestState.loaded,
-          data: data)) ,);
+              createOrderError: error.message)), (data) {
+        emit(state.copyWith(createOrderState: RequestState.loaded,
+            data: data));
+      },);
     });
+
+    on<UpdatePhoneNumberEvent>((event, emit) {
+      emit(state.copyWith(phoneNumber: event.phoneNumber));
+    });
+
+
+
   }
 }
+
+

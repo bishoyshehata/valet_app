@@ -18,3 +18,10 @@ class PickImageEvent extends OrderEvent {
   @override
   List<Object?> get props => [];
 }
+class UpdatePhoneNumberEvent extends OrderEvent {
+  final String phoneNumber;
+  UpdatePhoneNumberEvent(this.phoneNumber);
+
+  @override
+  List<Object?> get props =>[phoneNumber];
+}

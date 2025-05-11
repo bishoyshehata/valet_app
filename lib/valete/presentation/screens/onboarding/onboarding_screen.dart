@@ -44,7 +44,7 @@ class OnBoardignScreen extends StatelessWidget {
                               text: AppStrings.appName,
                               fontSize: FontSize.s70,
                               fontFamily: 'modak',
-                              color: ColorManager.primary,
+                              color: ColorManager.white,
 
 
                             ),
@@ -64,8 +64,8 @@ class OnBoardignScreen extends StatelessWidget {
                         alignment: Alignment.center,
                         height: mediaQuery.height * 0.2,
                         child: CustomButton(
-                          widget: TextUtils(text: AppStrings.login, color: ColorManager.primary,fontWeight: FontWeightManager.bold,),
-                          btnColor: ColorManager.background,
+                          widget: TextUtils(text: AppStrings.login, color: ColorManager.white,fontWeight: FontWeightManager.bold,),
+                          btnColor: ColorManager.lightPrimary,
                           elevation: 3,
 
                           onTap: () {

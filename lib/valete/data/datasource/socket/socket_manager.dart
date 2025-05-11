@@ -1,22 +1,39 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-void initSocket(String saiesId) {
-  IO.Socket socket = IO.io('http://<node-server-ip>:3000', <String, dynamic>{
-    'transports': ['websocket'],
-    'autoConnect': false,
-  });
+import '../../../presentation/controllers/orders/order_bloc.dart';
+import '../../../presentation/controllers/orders/order_events.dart';
 
-  socket.connect();
+class SocketService {
+  void initSocket({
+    required String saiesId,
+    required Function(String phoneNumber) onPhoneReceived,
+  }) {
+    IO.Socket socket = IO.io(
+      'https://valet.node.vps.kirellos.com',
+      <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+        'secure': true,
+        'reconnection': false,
+      },
+    );
 
-  socket.onConnect((_) {
-    print('Connected to Node.js');
-    socket.emit('register', saiesId);
-  });
+    socket.connect();
 
-  socket.on('receive-phone', (phone) {
-    print('Received phone number: $phone');
-    socket.disconnect(); // يقفل بعد الاستلام
-  });
+    socket.onConnect((_) {
+      print('✅ Connected');
+      socket.emit('register', saiesId);
+    });
 
-  socket.onDisconnect((_) => print('Disconnected'));
+    socket.on('receive-phone', (phone) {
+      print('📞 Received phone number: $phone');
+      onPhoneReceived(phone); // use callback
+      socket.disconnect();
+    });
+
+    socket.onDisconnect((_) => print('❌ Disconnected'));
+    socket.onError((error) => print('🔥 Error: $error'));
+  }
 }

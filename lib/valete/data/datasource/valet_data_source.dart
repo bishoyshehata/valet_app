@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/core/network/api_constants.dart';
+import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
 import '../../../core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,6 +36,8 @@ class ValetDataSource extends IValetDataSource {
 
         final result =  ValetModel.fromJson(response.data);
         prefs.setString('accessToken', result.accessToken);
+        prefs.setString('valetId', result.id.toString());
+
         return result ;
       } else {
         throw ServerFailure( response.data['messages'][0]);
@@ -66,6 +69,7 @@ class ValetDataSource extends IValetDataSource {
       );
 
       if (response.statusCode == 200) {
+
         return CreateOrderModel.fromJson(response.data['data']);
       } else {
         throw ServerFailure( response.data['messages'][0]);

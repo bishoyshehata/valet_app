@@ -12,6 +12,8 @@ class OrderState {
   final RequestState createOrderState;
   final String createOrderError;
   final CreateOrder? data;
+  final String phoneNumber;
+
   OrderState({
     this.data,
      this.createOrderState = RequestState.loading,
@@ -19,7 +21,9 @@ class OrderState {
     required this.selectedVehicleType,
     this.image,
     this.imageBytes,
-    this.isLoading = false
+    this.isLoading = false,
+    this.phoneNumber = 'رقم هاتف العميل',
+
   });
 
   OrderState copyWith({
@@ -30,6 +34,8 @@ class OrderState {
     RequestState? createOrderState,
      String? createOrderError,
      CreateOrder? data,
+    String? phoneNumber,
+
   }) {
     return OrderState(
       selectedVehicleType: selectedVehicleType ?? this.selectedVehicleType,
@@ -39,6 +45,8 @@ class OrderState {
       createOrderState: createOrderState ?? this.createOrderState,
       createOrderError: createOrderError ?? this.createOrderError,
       data: data ?? this.data,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+
     );
   }
 }

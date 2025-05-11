@@ -35,86 +35,77 @@ class GarageScreen extends StatelessWidget {
           ),
           body: BlocBuilder<GarageBloc, GarageState>(
             builder: (context, state) {
-              return Stack(
-                children: [
-                  SizedBox(
-                    width: AppSizeWidth.sMaxWidth,
-                    height: AppSizeHeight.sMaxInfinite,
-                    child: Image.asset(AssetsManager.background, fit: BoxFit.cover),
-                  ),
-                  CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextUtils(
-                                text: state.showExtraSlots ? 'إخفاء الأماكن الإضافية' : 'عرض الأماكن الإضافية',
-                                color: ColorManager.white,
-                                fontSize: FontSize.s17,
-                                fontWeight: FontWeight.bold,
-                              ),
-
-                              Switch(
-                                value: state.showExtraSlots,
-                                onChanged: (_) =>
-                                    context.read<GarageBloc>().add(ToggleExtraSlotsEvent()),
-                                activeColor: ColorManager.primary,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      if (state.showExtraSlots) ...[
-
-                        SliverPadding(
-                          padding: EdgeInsets.all(AppPadding.p10),
-                          sliver: SliverGrid(
-                            delegate: SliverChildBuilderDelegate(
-                                  (context, index) => MiniParkingSlotWidget(slot: state.extraSlots[index]),
-                              childCount: state.extraSlots.length,
-                            ),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              mainAxisExtent: 100,
-                            ),
-                          ),
-                        ),
-                      ],
-
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          child: TextUtils(
-                            text: "الجراج الرئيسي",
+              return CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextUtils(
+                            text: state.showExtraSlots ? 'إخفاء الأماكن الإضافية' : 'عرض الأماكن الإضافية',
                             color: ColorManager.white,
                             fontSize: FontSize.s17,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
-                      ),
 
-                      SliverPadding(
-                        padding: EdgeInsets.all(12),
-                        sliver: SliverGrid(
-                          delegate: SliverChildBuilderDelegate(
-                                (context, index) => ParkingSlotWidget(slot: state.mainSlots[index]),
-                            childCount: state.mainSlots.length,
+                          Switch(
+                            value: state.showExtraSlots,
+                            onChanged: (_) =>
+                                context.read<GarageBloc>().add(ToggleExtraSlotsEvent()),
+                            activeColor: ColorManager.primary,
                           ),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            mainAxisExtent: 100,
-                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  if (state.showExtraSlots) ...[
+
+                    SliverPadding(
+                      padding: EdgeInsets.all(AppPadding.p10),
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                              (context, index) => MiniParkingSlotWidget(slot: state.extraSlots[index]),
+                          childCount: state.extraSlots.length,
+                        ),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          mainAxisExtent: 100,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      child: TextUtils(
+                        text: "الجراج الرئيسي",
+                        color: ColorManager.white,
+                        fontSize: FontSize.s17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  SliverPadding(
+                    padding: EdgeInsets.all(12),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                            (context, index) => ParkingSlotWidget(slot: state.mainSlots[index]),
+                        childCount: state.mainSlots.length,
+                      ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        mainAxisExtent: 100,
+                      ),
+                    ),
                   ),
                 ],
               );

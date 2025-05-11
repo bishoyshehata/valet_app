@@ -35,134 +35,126 @@ class LoginScreen extends StatelessWidget {
           appBar: CustomAppBar(
             title: AppStrings.login,
             titleColor: ColorManager.white,
-            leading: Icon(Icons.login_rounded, color: ColorManager.primary),
+            leading: Icon(Icons.login_rounded, color: ColorManager.white),
           ),
           body: BlocProvider<LoginBloc>(
             create: (context) {
              return LoginBloc(sl<LoginUseCase>());
             },
-            child: Stack(
-              children: [
-                Image.asset(
-                  AssetsManager.background,
-                  width: AppSizeWidth.sMaxWidth,
-                  height: AppSizeHeight.sMaxInfinite,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
-                  width: AppSizeWidth.sMaxWidth,
-                  height: AppSizeHeight.sMaxInfinite,
-                  child: SingleChildScrollView(
-                    child: BlocConsumer<LoginBloc, LoginStates>(
-                      listener: (context, state) {
-                        switch (state.loginStatus) {
-                          case LoginStatus.error:
-                            if (state.errorMessage != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(state.errorMessage!),
-                                  backgroundColor: Colors.red,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
+              width: AppSizeWidth.sMaxWidth,
+              height: AppSizeHeight.sMaxInfinite,
+              child: SingleChildScrollView(
+                child: BlocConsumer<LoginBloc, LoginStates>(
+                  listener: (context, state) {
+                    switch (state.loginStatus) {
+                      case LoginStatus.error:
+                        if (state.errorMessage != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.errorMessage!),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                        break;
+                      case LoginStatus.success:
+                        if (state.data != null) {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) =>  ValetHomeScreen(),));
+                        }
+                        break;
+                      default:
+
+                        break;
+                    }
+                  },
+                  builder: (context, state) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: AppSizeHeight.s30),
+
+                        // Logo
+                        // Row(
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   // textBaseline: TextBaseline.alphabetic,
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //
+                        //     TextUtils(
+                        //       text: AppStrings.appName,
+                        //       fontSize: FontSize.s70,
+                        //       fontFamily: 'modak',
+                        //       color: ColorManager.deepPrimary,
+                        //     ),
+                        //     Icon(Icons.garage_rounded,
+                        //         color: ColorManager.deepPrimary,
+                        //         size: AppSizeHeight.s60),
+                        //   ],
+                        // ),
+
+                        Image.asset(AssetsManager.logo),
+                        SizedBox(height: AppSizeHeight.s100),
+
+                        // Phone field
+                        CustomPhoneField(
+                          labelText: AppStrings.enterPhone,
+                          labelSize: 15,
+                            errorText: state.hasInteractedWithPhone ? state.phoneErrorMessage : null,
+
+                            onChanged: (phone) {
+
+                              context.read<LoginBloc>().add(
+                                CompletePhoneChanged(
+                                  phoneNumber: phone.number, // ex: 1550637983
+                                  countryCode: phone.countryCode.replaceFirst('+', ''), // ex: 20
                                 ),
                               );
                             }
-                            break;
-                          case LoginStatus.success:
-                            if (state.data != null) {
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) =>  ValetHomeScreen(),));
-                            }
-                            break;
-                          default:
-
-                            break;
-                        }
-                      },
-                      builder: (context, state) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(height: AppSizeHeight.s30),
-
-                            // Logo
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              // textBaseline: TextBaseline.alphabetic,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-
-                                TextUtils(
-                                  text: AppStrings.appName,
-                                  fontSize: FontSize.s70,
-                                  fontFamily: 'modak',
-                                  color: ColorManager.primary,
-                                ),
-                                Icon(Icons.garage_rounded,
-                                    color: ColorManager.primary,
-                                    size: AppSizeHeight.s60),
-                              ],
+                        ),
+                        SizedBox(height: AppSizeHeight.s20),
+                        // Password field
+                        CustomTextFormField(
+                          labelText: AppStrings.enterPassword,
+                          obscureText: state.isPasswordObscured,
+                          onChanged: (value) => context.read<LoginBloc>().add(PasswordChanged(value)),
+                          errorText: state.hasInteractedWithPassword && !state.isPasswordValid
+                              ? 'كلمة السر قصيرة'
+                              : null,
+                          icon: Icon(Icons.lock_outline, color: ColorManager.white),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              state.isPasswordObscured ? Icons.visibility_off : Icons.visibility,
+                              color: ColorManager.white,
                             ),
+                            onPressed: () => context.read<LoginBloc>().add(TogglePasswordVisibility()),
+                          ),
+                        ),
 
-                            SizedBox(height: AppSizeHeight.s100),
+                        SizedBox(height: AppSizeHeight.s100),
 
-                            // Phone field
-                            CustomPhoneField(
-                              labelText: AppStrings.enterPhone,
-                              labelSize: 15,
-                                errorText: state.hasInteractedWithPhone ? state.phoneErrorMessage : null,
-
-                                onChanged: (phone) {
-
-                                  context.read<LoginBloc>().add(
-                                    CompletePhoneChanged(
-                                      phoneNumber: phone.number, // ex: 1550637983
-                                      countryCode: phone.countryCode.replaceFirst('+', ''), // ex: 20
-                                    ),
-                                  );
-                                }
-                            ),
-                            SizedBox(height: AppSizeHeight.s20),
-                            // Password field
-                            CustomTextFormField(
-                              labelText: AppStrings.enterPassword,
-                              obscureText: state.isPasswordObscured,
-                              onChanged: (value) => context.read<LoginBloc>().add(PasswordChanged(value)),
-                              errorText: state.hasInteractedWithPassword && !state.isPasswordValid
-                                  ? 'كلمة السر قصيرة'
-                                  : null,
-                              icon: Icon(Icons.lock_outline, color: ColorManager.white),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  state.isPasswordObscured ? Icons.visibility_off : Icons.visibility,
-                                  color: ColorManager.white,
-                                ),
-                                onPressed: () => context.read<LoginBloc>().add(TogglePasswordVisibility()),
-                              ),
-                            ),
-
-                            SizedBox(height: AppSizeHeight.s100),
-
-                            // Login Button
-                            CustomButton(
-                              onTap:(){
-                                context.read<LoginBloc>().add(LoginSubmitted(countryCode: state.completePhoneNumber.replaceFirst("+", '')));
-                                 } ,
-                              btnColor: ColorManager.primary,
-                              shadowColor: ColorManager.white,
-                              widget: state.loginStatus == LoginStatus.loading
-                                  ? CircularProgressIndicator(color: ColorManager.background,  )
-                                  : TextUtils(
-                                text: AppStrings.login,
-                                fontWeight: FontWeightManager.bold,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                        // Login Button
+                        CustomButton(
+                          onTap:(){
+                            context.read<LoginBloc>().add(LoginSubmitted(countryCode: state.completePhoneNumber.replaceFirst("+", '')));
+                             } ,
+                          btnColor: ColorManager.lightPrimary,
+                          shadowColor: ColorManager.white,
+                          widget: state.loginStatus == LoginStatus.loading
+                              ? CircularProgressIndicator(color: ColorManager.white,  )
+                              : TextUtils(
+                            text: AppStrings.login,
+                            fontWeight: FontWeightManager.bold,
+                            color: ColorManager.white,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-              ],
+              ),
             ),
           ),
         ),

@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
@@ -15,26 +16,40 @@ import '../../components/custom_bottun.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
-import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
-import '../../resources/strings_manager.dart';
 import '../garage_screen/garage_screen.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrderScreen extends StatelessWidget {
-  const OrderScreen({super.key});
+  final SocketService socketService = SocketService();
+
+   OrderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OrderBloc>(
       create: (context) {
-        return OrderBloc(sl<CreateOrderUseCase>())..add(CreateOrderEvent());
+        final bloc = OrderBloc(sl<CreateOrderUseCase>())..add(CreateOrderEvent());
+
+        // init socket once and push event to bloc
+        SharedPreferences.getInstance().then((prefs) {
+          String? valetId = prefs.getString('valetId');
+          socketService.initSocket(
+            saiesId: valetId!,
+            onPhoneReceived: (phone) {
+              bloc.add(UpdatePhoneNumberEvent(phone));
+
+            },
+          );
+        });
+
+        return bloc;
       },
       child: BlocBuilder<OrderBloc, OrderState>(
-        buildWhen:
-            (previous, current) =>
-                previous.createOrderState != current.createOrderState,
+        buildWhen: (previous, current) =>
+        previous.createOrderState != current.createOrderState ||
+            previous.phoneNumber != current.phoneNumber,
         builder: (context, state) {
           switch (state.createOrderState) {
             case RequestState.loading:
@@ -65,81 +80,78 @@ class OrderScreen extends StatelessWidget {
                 child: Scaffold(
                   backgroundColor: ColorManager.background,
                   appBar: CustomAppBar(
-                    actions: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(
-                          Icons.arrow_forward_ios_sharp,
-                          color: ColorManager.primary,
-                        ),
-                      ),
-                    ],
-                    title: AppStrings.makeOrder,
-                    centerTitle: true,
-                    titleColor: ColorManager.white,
-                    leading: Icon(Icons.edit_note, color: ColorManager.primary),
-                  ),
-                  body: Stack(
-                    children: [
-                      SizedBox(
-                        width: AppSizeWidth.sMaxWidth,
-                        height: AppSizeHeight.sMaxInfinite,
-                        child: Image.asset(
-                          AssetsManager.background,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            _buildGarageInfoCard(
-                              state.data!.garageName,
-                              state.data!.spotName,
+                            actions: [
+                              IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  color: ColorManager.primary,
+                                ),
+                              ),
+                            ],
+                            title: state.phoneNumber,
+                            centerTitle: true,
+                            titleColor: ColorManager.white,
+                            leading: Icon(
+                              Icons.edit_note,
+                              color: ColorManager.primary,
                             ),
-                            _buildVehicleTypeSelector(context),
-                            _buildQrSection(context,state.data!.qr),
-                            _buildImageCaptureSection(context),
-                            SizedBox(height: AppSizeHeight.s10),
-                            BlocBuilder<OrderBloc, OrderState>(
-                              builder: (context, state) {
-                                print(
-                                  "ssssssssssssssssssssssssssssssssssssssss${state.createOrderState}",
-                                );
-                                return CustomButton(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => GarageScreen(),
-                                      ),
-                                    );
-                                  },
-                                  btnColor: ColorManager.darkPrimary,
-                                  shadowColor: ColorManager.white,
-                                  width: MediaQuery.of(context).size.width * .9,
-                                  radius: AppSizeHeight.s10,
-                                  borderColor: ColorManager.white,
-                                  elevation: 5,
-                                  widget: TextUtils(
-                                    text: "تفعيل الطلب",
-                                    color: ColorManager.primary,
-                                    fontSize: FontSize.s17,
-                                    fontWeight: FontWeight.bold,
+                          ),
+                  body: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildGarageInfoCard(
+                          state.data!.garageName,
+                          state.data!.spotName,
+                        ),
+                        _buildVehicleTypeSelector(context),
+                        _buildQrSection(context, state.data!.qr),
+                        _buildImageCaptureSection(context),
+                        SizedBox(height: AppSizeHeight.s10),
+                        BlocBuilder<OrderBloc, OrderState>(
+                          builder: (context, state) {
+                            print(
+                              "ssssssssssssssssssssssssssssssssssssssss${state.createOrderState}",
+                            );
+                            return CustomButton(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => GarageScreen(),
                                   ),
                                 );
                               },
-                            ),
-                            SizedBox(height: AppSizeHeight.s20),
-                          ],
+                              btnColor: ColorManager.darkPrimary,
+                              shadowColor: ColorManager.white,
+                              width: MediaQuery.of(context).size.width * .9,
+                              radius: AppSizeHeight.s10,
+                              borderColor: ColorManager.white,
+                              elevation: 5,
+                              widget: TextUtils(
+                                text: "تفعيل الطلب",
+                                color: ColorManager.primary,
+                                fontSize: FontSize.s17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                    ],
+                        SizedBox(height: AppSizeHeight.s20),
+                      ],
+                    ),
                   ),
                 ),
               );
             case RequestState.error:
-              // TODO: Handle this case.
-              throw UnimplementedError();
+              return Container(
+                height: 190.0,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: TextUtils(text: "Error happened in createOrderState"),
+              );
           }
         },
       ),
@@ -316,7 +328,7 @@ class OrderScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQrSection(BuildContext context ,String qr) {
+  Widget _buildQrSection(BuildContext context, String qr) {
     String base64String = qr.replaceFirst('data:image/png;base64,', '');
     Uint8List qrBytes = base64Decode(base64String);
 

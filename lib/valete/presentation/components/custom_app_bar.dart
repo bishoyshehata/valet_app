@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
+import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import '../resources/font_manager.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -31,7 +32,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: elevation,
       shadowColor: shadowColor ?? Colors.white,
       centerTitle: centerTitle,
-      backgroundColor: backgroundColor ?? Colors.black,
+      backgroundColor: backgroundColor ?? ColorManager.background,
       leading: leading,
       actions: actions,
       title: TextUtils(
