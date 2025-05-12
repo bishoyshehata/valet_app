@@ -1,5 +1,7 @@
 import 'package:valet_app/valete/domain/entities/create_order.dart';
 
+import '../../domain/entities/spot.dart';
+
 class CreateOrderModel extends CreateOrder {
   CreateOrderModel({
     required super.garageId,
@@ -12,6 +14,7 @@ class CreateOrderModel extends CreateOrder {
     required super.capacityEmpty,
     required super.capacityFull,
     required super.totalBusy,
+    required super.spots,
   });
 
   factory CreateOrderModel.fromJson(Map<String, dynamic> json)=>
@@ -25,5 +28,16 @@ class CreateOrderModel extends CreateOrder {
           isOverFlow: json['isOverFlow'],
           capacityEmpty: json['capacityEmpty'],
           capacityFull: json['capacityFull'],
-          totalBusy: json['totalBusy']);
+          totalBusy: json['totalBusy'],
+          spots:  (json['spots'] as List<dynamic>)
+              .map((spotJson) => Spot(
+            id: spotJson['id'],
+            status: spotJson['status'],
+            code: spotJson['code'],
+            garageId: spotJson['garageId'],
+            addedOn: spotJson['addedOn'],
+          ))
+              .toList(),
+          );
+
 }

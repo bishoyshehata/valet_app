@@ -13,6 +13,8 @@ class OrderState {
   final String createOrderError;
   final CreateOrder? data;
   final String phoneNumber;
+  final String spotName;
+
 
   OrderState({
     this.data,
@@ -23,6 +25,8 @@ class OrderState {
     this.imageBytes,
     this.isLoading = false,
     this.phoneNumber = 'رقم هاتف العميل',
+    this.spotName = 'رقم الباكية',
+
 
   });
 
@@ -35,6 +39,9 @@ class OrderState {
      String? createOrderError,
      CreateOrder? data,
     String? phoneNumber,
+    String? spotName,
+
+
 
   }) {
     return OrderState(
@@ -46,6 +53,7 @@ class OrderState {
       createOrderError: createOrderError ?? this.createOrderError,
       data: data ?? this.data,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      spotName: spotName ?? this.spotName,
 
     );
   }

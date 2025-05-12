@@ -10,6 +10,7 @@ import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
+import '../../../domain/entities/spot.dart';
 import '../../components/text/text_utils.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/custom_bottun.dart';
@@ -49,7 +50,8 @@ class OrderScreen extends StatelessWidget {
       child: BlocBuilder<OrderBloc, OrderState>(
         buildWhen: (previous, current) =>
         previous.createOrderState != current.createOrderState ||
-            previous.phoneNumber != current.phoneNumber,
+            previous.phoneNumber != current.phoneNumber ||
+            previous.spotName != current.spotName,
         builder: (context, state) {
           switch (state.createOrderState) {
             case RequestState.loading:
@@ -75,6 +77,8 @@ class OrderScreen extends StatelessWidget {
               );
 
             case RequestState.loaded:
+              final spotName = state.spotName == 'رقم الباكية' ? state.data!.spotName : state.spotName;
+
               return Directionality(
                 textDirection: TextDirection.rtl,
                 child: Scaffold(
@@ -102,7 +106,9 @@ class OrderScreen extends StatelessWidget {
                       children: [
                         _buildGarageInfoCard(
                           state.data!.garageName,
-                          state.data!.spotName,
+                          state.data!.spots,
+                          context,
+                            spotName
                         ),
                         _buildVehicleTypeSelector(context),
                         _buildQrSection(context, state.data!.qr),
@@ -159,91 +165,116 @@ class OrderScreen extends StatelessWidget {
   }
 
   /// widgets
-  Widget _buildGarageInfoCard(String garage, String spot) {
+
+  Widget _buildGarageInfoCard(String garage, List<Spot> spots, BuildContext context, String selectedSpotName) {
     return Card(
-      margin: EdgeInsets.symmetric(
-        horizontal: AppMargin.m16,
-        vertical: AppMargin.m10,
-      ),
-      color: ColorManager.darkPrimary,
-      elevation: 5,
-      shadowColor: ColorManager.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-      ),
       child: Column(
         children: [
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(top: AppMargin.m10, right: AppMargin.m24),
-            padding: EdgeInsets.only(right: AppPadding.p5),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: ColorManager.primary, width: 3),
-              ),
-            ),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "التوجه إلى جراج : ",
-                    style: TextStyle(
-                      color: ColorManager.white,
-                      fontSize: FontSize.s17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: garage,
-                    style: TextStyle(
-                      color: ColorManager.primary,
-                      fontSize: FontSize.s15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(
-              bottom: AppMargin.m10,
-              right: AppMargin.m24,
-            ),
-            padding: EdgeInsets.only(right: AppPadding.p5),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: ColorManager.primary, width: 3),
-              ),
-            ),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "بالباكية : ",
-                    style: TextStyle(
-                      color: ColorManager.white,
-                      fontSize: FontSize.s17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  TextSpan(
-                    text: spot,
-                    style: TextStyle(
-                      color: ColorManager.primary,
-                      fontSize: FontSize.s15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // اسم الجراج
+          Text("التوجه إلى جراج: $garage"),
+
+          // اسم الباكية + زر تعديل
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("بالباكية: $selectedSpotName"),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () => _showSpotDialog(context, spots),
+              )
+            ],
+          )
         ],
       ),
     );
   }
+}
+
+  // Widget _buildGarageInfoCard(String garage, String spot) {
+  //   return Card(
+  //     margin: EdgeInsets.symmetric(
+  //       horizontal: AppMargin.m16,
+  //       vertical: AppMargin.m10,
+  //     ),
+  //     color: ColorManager.darkPrimary,
+  //     elevation: 5,
+  //     shadowColor: ColorManager.white,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         Container(
+  //           alignment: Alignment.centerRight,
+  //           margin: EdgeInsets.only(top: AppMargin.m10, right: AppMargin.m24),
+  //           padding: EdgeInsets.only(right: AppPadding.p5),
+  //           decoration: BoxDecoration(
+  //             border: Border(
+  //               right: BorderSide(color: ColorManager.primary, width: 3),
+  //             ),
+  //           ),
+  //           child: RichText(
+  //             text: TextSpan(
+  //               children: [
+  //                 TextSpan(
+  //                   text: "التوجه إلى جراج : ",
+  //                   style: TextStyle(
+  //                     color: ColorManager.white,
+  //                     fontSize: FontSize.s17,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //                 TextSpan(
+  //                   text: garage,
+  //                   style: TextStyle(
+  //                     color: ColorManager.primary,
+  //                     fontSize: FontSize.s15,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         Container(
+  //           alignment: Alignment.centerRight,
+  //           margin: EdgeInsets.only(
+  //             bottom: AppMargin.m10,
+  //             right: AppMargin.m24,
+  //           ),
+  //           padding: EdgeInsets.only(right: AppPadding.p5),
+  //           decoration: BoxDecoration(
+  //             border: Border(
+  //               right: BorderSide(color: ColorManager.primary, width: 3),
+  //             ),
+  //           ),
+  //           child: RichText(
+  //             text: TextSpan(
+  //               children: [
+  //                 TextSpan(
+  //                   text: "بالباكية : ",
+  //                   style: TextStyle(
+  //                     color: ColorManager.white,
+  //                     fontSize: FontSize.s17,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //                 TextSpan(
+  //                   text: spot,
+  //                   style: TextStyle(
+  //                     color: ColorManager.primary,
+  //                     fontSize: FontSize.s15,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildVehicleTypeSelector(BuildContext context) {
     return Card(
@@ -464,7 +495,7 @@ class OrderScreen extends StatelessWidget {
       ),
     );
   }
-}
+
 
 IconData _getVehicleIcon(VehicleType type) {
   switch (type) {
@@ -478,3 +509,47 @@ IconData _getVehicleIcon(VehicleType type) {
       return Icons.local_shipping;
   }
 }
+
+void _showSpotDialog(BuildContext context, List<Spot> spots) {
+  String selected = spots.first.code;
+
+  final orderBloc = context.read<OrderBloc>();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("اختيار الباكية"),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return DropdownButton<String>(
+                isExpanded: true,
+                value: selected,
+                items: spots
+                    .map((e) => DropdownMenuItem(value: e.code, child: Text(e.code)))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selected = value!;
+                  });
+                },
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // التأكد من أن الـ event يتم إرساله بشكل صحيح
+                orderBloc.add(UpdateSpotNameEvent(selected));
+                Navigator.pop(context);
+              },
+              child: Text("تم"),
+            ),
+          ],
+        );
+      },
+    );
+  });
+}
+

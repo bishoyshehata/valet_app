@@ -25,3 +25,11 @@ class UpdatePhoneNumberEvent extends OrderEvent {
   @override
   List<Object?> get props =>[phoneNumber];
 }
+
+class UpdateSpotNameEvent extends OrderEvent {
+  final String spotName;
+  UpdateSpotNameEvent(this.spotName);
+
+  @override
+  List<Object?> get props => [spotName];
+}

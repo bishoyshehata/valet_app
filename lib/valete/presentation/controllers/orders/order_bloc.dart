@@ -39,9 +39,15 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(phoneNumber: event.phoneNumber));
     });
 
+    on<UpdateSpotNameEvent>((event, emit) {
+      emit(state.copyWith(spotName: event.spotName));
+      print("sssssssssssssssssssssssssssssssssssssssssssssssss${event.spotName}");
+    });
+
 
 
   }
 }
+
 
 
