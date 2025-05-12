@@ -1,26 +1,27 @@
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:valet_app/valete/domain/entities/create_order.dart';
-
+import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import '../../../../core/utils/enums.dart';
 
 class HomeState {
 
-  final RequestState phoneNumberState;
-  final String phoneNumber;
+  final RequestState myGaragesState;
+  final String myGaragesErrorMessage;
+  final List<MyGarages>? data;
+
   HomeState({
-     this.phoneNumberState = RequestState.loading,
-     this.phoneNumber ='',
+     this.myGaragesState = RequestState.loading,
+     this.myGaragesErrorMessage ='',
+      this.data,
   });
 
   HomeState copyWith({
-     String? phoneNumber,
-    RequestState? phoneNumberState,
+     String? myGaragesErrorMessage,
+    RequestState? myGaragesState,
+    List<MyGarages>? data,
   }) {
     return HomeState(
-
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      phoneNumberState: phoneNumberState ?? this.phoneNumberState,
+      data: data ?? this.data,
+      myGaragesErrorMessage: myGaragesErrorMessage ?? this.myGaragesErrorMessage ,
+      myGaragesState: myGaragesState ?? this.myGaragesState,
     );
   }
 }

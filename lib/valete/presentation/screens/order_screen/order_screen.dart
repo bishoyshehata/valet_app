@@ -52,6 +52,7 @@ class OrderScreen extends StatelessWidget {
         previous.createOrderState != current.createOrderState ||
             previous.phoneNumber != current.phoneNumber ||
             previous.spotName != current.spotName,
+
         builder: (context, state) {
           switch (state.createOrderState) {
             case RequestState.loading:
@@ -78,7 +79,8 @@ class OrderScreen extends StatelessWidget {
 
             case RequestState.loaded:
               final spotName = state.spotName == 'رقم الباكية' ? state.data!.spotName : state.spotName;
-
+              final spotId =state.spotName == 'رقم الباكية' ? state.data!.spotId :state.data!.spots.firstWhere((spot) => spot.code == spotName).id;
+              print("iiiiiiiiiiiiiiiiiiiiiiiiiiii ${spotId}");
               return Directionality(
                 textDirection: TextDirection.rtl,
                 child: Scaffold(
@@ -108,7 +110,7 @@ class OrderScreen extends StatelessWidget {
                           state.data!.garageName,
                           state.data!.spots,
                           context,
-                            spotName
+                            spotName,
                         ),
                         _buildVehicleTypeSelector(context),
                         _buildQrSection(context, state.data!.qr),
@@ -541,7 +543,7 @@ void _showSpotDialog(BuildContext context, List<Spot> spots) {
             TextButton(
               onPressed: () {
                 // التأكد من أن الـ event يتم إرساله بشكل صحيح
-                orderBloc.add(UpdateSpotNameEvent(selected));
+                orderBloc.add(UpdateSpotNameEvent(selected,));
                 Navigator.pop(context);
               },
               child: Text("تم"),

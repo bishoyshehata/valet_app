@@ -7,6 +7,8 @@ import 'package:valet_app/valete/domain/repository/Repository.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/login_use_case.dart';
 
+import '../../valete/domain/usecases/my_garages_use_case.dart';
+
 final sl = GetIt.instance ;
 
 class ServicesLocator {
@@ -23,5 +25,7 @@ class ServicesLocator {
     sl.registerLazySingleton(() => LoginUseCase(sl()),);
     /// CreateOrderUseCase
     sl.registerLazySingleton(() => CreateOrderUseCase(sl()),);
+    /// MyGaragesUseCase
+    sl.registerLazySingleton(() => MyGaragesUseCase(sl()),);
   }
 }

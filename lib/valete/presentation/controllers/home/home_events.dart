@@ -3,10 +3,9 @@ import '../../../../core/utils/enums.dart';
 
 abstract class HomeEvent extends Equatable {}
 
-class PhoneNumberReceived extends HomeEvent {
-  final String phoneNumber;
-  PhoneNumberReceived({required this.phoneNumber});
 
+class GetMyGaragesEvent extends HomeEvent {
   @override
-  List<Object?> get props => [phoneNumber];
+  List<Object?> get props => [];
+
 }

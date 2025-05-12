@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/font_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 
+import '../../../../core/services/services_locator.dart';
 import '../../../data/datasource/socket/socket_manager.dart';
 import '../../components/custom_app_bar.dart';
 import '../../resources/strings_manager.dart';
@@ -42,9 +45,11 @@ class ValetHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeBloc(),
+      create: (context) => HomeBloc(sl())..add(GetMyGaragesEvent()),
       child: BlocBuilder<HomeBloc,HomeState>(
+        buildWhen: (previous, current) => previous.myGaragesState!= current.myGaragesState,
         builder: (context, state) {
+          print(state.data);
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -84,28 +89,53 @@ class ValetHomeScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: AppSizeHeight.s15),
-
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: garages.length,
-                      itemBuilder: (context, index) {
-                        final garage = garages[index];
-                        return GarageCard(
-                          name: garage.name,
-                          totalSpots: garage.totalSpots,
-                          occupied: garage.occupied,
-                          onRequestParking: () {
-                            // هنا تقدر تفتح صفحة جديدة أو تنفذ منطق معين
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("تم طلب ركنة في ${garage.name}"),
+                    
+                    switch(state.myGaragesState) {
+                      RequestState.loading => SizedBox(
+                        height: AppSizeHeight.sMaxInfinite,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder:
+                              (context, index) => Shimmer.fromColors(
+                            baseColor: Colors.grey[850]!,
+                            highlightColor: Colors.grey[800]!,
+                            child: Container(
+                              height: 190.0,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8.0),
                               ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                            ),
+                          ),
+                          separatorBuilder: (context, index) => SizedBox(height: 10),
+                          itemCount: 4,
+                        ),
+                      ),
+                      RequestState.loaded =>  ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: state.data!.length,
+                        itemBuilder: (context, index) {
+                          final garage = state.data![index];
+                          return GarageCard(
+                            name: garage.name,
+                            address: garage.address,
+                            totalSpots: garage.spots.length,
+                            capacity: garage.capacity,
+                            onRequestParking: () {
+                              // هنا تقدر تفتح صفحة جديدة أو تنفذ منطق معين
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("تم طلب ركنة في ${garage.name}"),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      RequestState.error => Center(child: TextUtils(text: "errorrrr"),),
+                    }
+                  
                   ],
                 ),
               ),
@@ -119,21 +149,23 @@ class ValetHomeScreen extends StatelessWidget {
 
 class GarageCard extends StatelessWidget {
   final String name;
+  final String address;
   final int totalSpots;
-  final int occupied;
+  final int capacity;
   final VoidCallback onRequestParking;
 
   const GarageCard({
     super.key,
     required this.name,
+    required this.address,
     required this.totalSpots,
-    required this.occupied,
+    required this.capacity,
     required this.onRequestParking,
   });
 
   @override
   Widget build(BuildContext context) {
-    final int available = totalSpots - occupied;
+    final int available = capacity - totalSpots;
 
     return Card(
       shadowColor: ColorManager.white,
@@ -177,7 +209,7 @@ class GarageCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextUtils(
-                    text: "8 ش الزهور من ش التين المعمورة البلد",
+                    text:address,
                     color: ColorManager.white,
                     fontSize: FontSize.s12,
                     fontWeight: FontWeight.bold,
@@ -195,7 +227,7 @@ class GarageCard extends StatelessWidget {
                   fontWeight: FontWeightManager.bold,
                 ),
                 TextUtils(
-                  text: "المشغول: $occupied",
+                  text: "المشغول: $totalSpots",
                   color: ColorManager.white,
                   fontWeight: FontWeightManager.bold,
                 ),
