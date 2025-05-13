@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,7 @@ import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../data/models/store_order_model.dart';
@@ -124,11 +126,18 @@ class OrderScreen extends StatelessWidget {
                            return CustomButton(
 
                                onTap: () async {
-                                 if (state.image != null && state.selectedVehicleType != null && spotId != null &&state.phoneNumber != 'رقم هاتف العميل') {
-                                   final base64 = await encodeImageToBase64(state.image!);
+                                 if (state.selectedVehicleType != null &&
+                                     spotId != null &&
+                                     state.phoneNumber != 'رقم هاتف العميل') {
+
+                                   String? base64;
+
+                                   if (state.image != null) {
+                                     base64 = await encodeImageToBase64(state.image!);
+                                   }
 
                                    final model = StoreOrderModel(
-                                     carImage: base64,
+                                     carImage: base64, // null لو مفيش صورة
                                      spotId: spotId,
                                      carType: state.selectedVehicleType.index,
                                      clientNumber: state.phoneNumber,
@@ -137,19 +146,16 @@ class OrderScreen extends StatelessWidget {
 
                                    context.read<OrderBloc>().add(StoreOrderEvent(model));
 
+                                   Navigator.push(
+                                     context,
+                                     MaterialPageRoute(builder: (context) => ValetHomeScreen()),
+                                   );
                                  } else {
                                    // show validation error
                                  }
                                },
-                              // onTap: () {
-                              //   // Navigator.push(
-                              //   //   context,
-                              //   //   MaterialPageRoute(
-                              //   //     builder: (context) => GarageScreen(),
-                              //   //   ),
-                              //   // );
-                              // },
-                              btnColor: ColorManager.darkPrimary,
+
+                               btnColor: ColorManager.darkPrimary,
                               shadowColor: ColorManager.white,
                               width: MediaQuery.of(context).size.width * .9,
                               radius: AppSizeHeight.s10,

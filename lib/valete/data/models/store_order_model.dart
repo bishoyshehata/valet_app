@@ -6,7 +6,7 @@ class StoreOrderModel extends StoreOrder {
     required super.spotId,
     required super.clientNumber,
     required super.carType,
-    required super.carImage,
+     super.carImage,
   });
 
   Map<String ,dynamic> toJson() =>
@@ -15,19 +15,7 @@ class StoreOrderModel extends StoreOrder {
     "spotId" :spotId ,
     "clientNumber" :clientNumber ,
     "carType" :carType ,
-    "carImage" :carImage ,
+    if (carImage != null) 'carImage': carImage, // مايبعتش key لو null
   };
 }
 
-
-class StoreOrderResponseModel extends StoreOrderResponse {
-    const StoreOrderResponseModel({required super.data});
-
-
-  factory StoreOrderResponseModel.fromJson(Map<String, dynamic> json)=>
-      StoreOrderResponseModel(
-        data: json['data'] ?? false,
-
-      );
-
-}
