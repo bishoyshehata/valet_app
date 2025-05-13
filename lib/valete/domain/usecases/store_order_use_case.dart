@@ -1,21 +1,23 @@
+
 import 'package:dartz/dartz.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/valete/domain/entities/default_order.dart';
+import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/entities/valet.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
-class CreateOrderUseCase {
+import '../entities/my_garages.dart';
+
+class StoreOrderUseCase {
   final IValetRepository repository;
 
-  CreateOrderUseCase(this.repository);
+  StoreOrderUseCase(this.repository);
 
-  Future<Either<Failure, CreateOrder>> createOrder() async {
+  Future<Either<Failure,  bool >> storeOrder(StoreOrder storeOrder) async {
     try {
-      final result = await repository.createOrder();
-
+      final result = await repository.storeOrder(storeOrder);
       return result;
     } catch (e) {
-
       return Left(ServerFailure(e.toString()));
     }
   }

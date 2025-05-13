@@ -1,15 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
+import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
+import '../../../data/models/store_order_model.dart';
 import '../../../domain/entities/spot.dart';
 import '../../components/text/text_utils.dart';
 import '../../components/custom_app_bar.dart';
@@ -31,7 +35,7 @@ class OrderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<OrderBloc>(
       create: (context) {
-        final bloc = OrderBloc(sl<CreateOrderUseCase>())..add(CreateOrderEvent());
+        final bloc = OrderBloc(sl<CreateOrderUseCase>(),sl<StoreOrderUseCase>())..add(CreateOrderEvent());
 
         // init socket once and push event to bloc
         SharedPreferences.getInstance().then((prefs) {
@@ -49,12 +53,12 @@ class OrderScreen extends StatelessWidget {
       },
       child: BlocBuilder<OrderBloc, OrderState>(
         buildWhen: (previous, current) =>
-        previous.createOrderState != current.createOrderState ||
+        previous.defaultOrderState != current.defaultOrderState ||
             previous.phoneNumber != current.phoneNumber ||
             previous.spotName != current.spotName,
 
         builder: (context, state) {
-          switch (state.createOrderState) {
+          switch (state.defaultOrderState) {
             case RequestState.loading:
               return SizedBox(
                 height: AppSizeHeight.sMaxInfinite,
@@ -80,7 +84,6 @@ class OrderScreen extends StatelessWidget {
             case RequestState.loaded:
               final spotName = state.spotName == 'رقم الباكية' ? state.data!.spotName : state.spotName;
               final spotId =state.spotName == 'رقم الباكية' ? state.data!.spotId :state.data!.spots.firstWhere((spot) => spot.code == spotName).id;
-              print("iiiiiiiiiiiiiiiiiiiiiiiiiiii ${spotId}");
               return Directionality(
                 textDirection: TextDirection.rtl,
                 child: Scaffold(
@@ -118,30 +121,65 @@ class OrderScreen extends StatelessWidget {
                         SizedBox(height: AppSizeHeight.s10),
                         BlocBuilder<OrderBloc, OrderState>(
                           builder: (context, state) {
-                            print(
-                              "ssssssssssssssssssssssssssssssssssssssss${state.createOrderState}",
-                            );
-                            return CustomButton(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => GarageScreen(),
-                                  ),
-                                );
-                              },
+                           return CustomButton(
+
+                               onTap: () async {
+                                 if (state.image != null && state.selectedVehicleType != null && spotId != null &&state.phoneNumber != 'رقم هاتف العميل') {
+                                   final base64 = await encodeImageToBase64(state.image!);
+
+                                   final model = StoreOrderModel(
+                                     carImage: base64,
+                                     spotId: spotId,
+                                     carType: state.selectedVehicleType.index,
+                                     clientNumber: state.phoneNumber,
+                                     garageId: state.data!.garageId,
+                                   );
+
+                                   context.read<OrderBloc>().add(StoreOrderEvent(model));
+
+                                 } else {
+                                   // show validation error
+                                 }
+                               },
+                              // onTap: () {
+                              //   // Navigator.push(
+                              //   //   context,
+                              //   //   MaterialPageRoute(
+                              //   //     builder: (context) => GarageScreen(),
+                              //   //   ),
+                              //   // );
+                              // },
                               btnColor: ColorManager.darkPrimary,
                               shadowColor: ColorManager.white,
                               width: MediaQuery.of(context).size.width * .9,
                               radius: AppSizeHeight.s10,
                               borderColor: ColorManager.white,
                               elevation: 5,
-                              widget: TextUtils(
+                              widget: switch(state.storeOrderState) {
+                              StoreOrderState.initial => TextUtils(
                                 text: "تفعيل الطلب",
                                 color: ColorManager.primary,
                                 fontSize: FontSize.s17,
                                 fontWeight: FontWeight.bold,
                               ),
+                                StoreOrderState.loading => CircularProgressIndicator(
+                                  color: ColorManager.white,
+                                ),
+                                StoreOrderState.loaded =>  TextUtils(
+                                  text: "تفعيل الطلب",
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                StoreOrderState.error =>  TextUtils(
+                                  text: "تفعيل الطلب",
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              }
+
+
                             );
                           },
                         ),
@@ -158,7 +196,7 @@ class OrderScreen extends StatelessWidget {
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: TextUtils(text: "Error happened in createOrderState"),
+                child: TextUtils(text: "Error happened in defaultOrderState"),
               );
           }
         },
@@ -316,6 +354,7 @@ class OrderScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: BlocBuilder<OrderBloc, OrderState>(
               builder: (context, state) {
+
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children:
@@ -501,14 +540,16 @@ class OrderScreen extends StatelessWidget {
 
 IconData _getVehicleIcon(VehicleType type) {
   switch (type) {
-    case VehicleType.car:
+    case VehicleType.Car:
       return Icons.directions_car;
-    case VehicleType.motorcycle:
+    case VehicleType.Motorcycle:
       return Icons.motorcycle;
-    case VehicleType.bicycle:
+    case VehicleType.Bicycle:
       return Icons.directions_bike;
-    case VehicleType.truck:
+    case VehicleType.Truck:
       return Icons.local_shipping;
+    case VehicleType.Bus:
+      return Icons.directions_bus;
   }
 }
 
@@ -555,3 +596,7 @@ void _showSpotDialog(BuildContext context, List<Spot> spots) {
   });
 }
 
+Future<String> encodeImageToBase64(File image) async {
+  final bytes = await image.readAsBytes();
+  return base64Encode(bytes);
+}

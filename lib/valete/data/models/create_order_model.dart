@@ -1,4 +1,4 @@
-import 'package:valet_app/valete/domain/entities/create_order.dart';
+import 'package:valet_app/valete/domain/entities/default_order.dart';
 
 import '../../domain/entities/spot.dart';
 

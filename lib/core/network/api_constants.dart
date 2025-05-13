@@ -3,6 +3,7 @@ class ApiConstants {
   static const loginEndPoint = '/api/Valet/Login';
   static const createOrderEndPoint = '/api/Valet/Order';
   static const myGaragesEndPoint = '/api/Valet/MyGarages';
+  static const storeOrderEndPoint = '/api/Valet/Store/Order';
 
 
 

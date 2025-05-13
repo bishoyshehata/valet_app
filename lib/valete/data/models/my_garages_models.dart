@@ -1,6 +1,4 @@
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
-
-import '../../domain/entities/order.dart';
 import '../../domain/entities/spot.dart';
 
 class MyGaragesModel extends MyGarages {
@@ -28,15 +26,9 @@ class MyGaragesModel extends MyGarages {
        capacityOverFlow: json['capacityOverFlow'],
        capacity: json['capacity'],
        companyId: json['companyId'],
-       spots:  (json['spots'] as List<dynamic>)
-           .map((spotJson) => Spot(
-         id: spotJson['id'],
-         status: spotJson['status'],
-         code: spotJson['code'],
-         garageId: spotJson['garageId'],
-         addedOn: spotJson['addedOn'],
-         order: json['order'] != null ? Order.fromJson(json['order']) : null,
-       )).toList(),
+       spots:  (json['spots'] as List)
+           .map((spot) => Spot.fromJson(spot))
+           .toList(),
      );
 
 

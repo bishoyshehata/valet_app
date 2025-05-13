@@ -1,5 +1,6 @@
 enum RequestState { loading, loaded, error }
+enum StoreOrderState {initial, loading, loaded, error }
 
 enum LoginStatus { initial, loading, success, error }
 
-enum VehicleType { car, motorcycle, bicycle, truck }
+enum VehicleType { Car, Bicycle, Motorcycle, Truck ,Bus }

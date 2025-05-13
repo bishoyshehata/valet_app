@@ -8,10 +8,12 @@ import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
+import 'package:valet_app/valete/presentation/controllers/orders/order_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/font_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import 'package:valet_app/valete/presentation/screens/garage_screen/garage_screen.dart';
 
 import '../../../../core/services/services_locator.dart';
 import '../../../data/datasource/socket/socket_manager.dart';
@@ -49,7 +51,6 @@ class ValetHomeScreen extends StatelessWidget {
       child: BlocBuilder<HomeBloc,HomeState>(
         buildWhen: (previous, current) => previous.myGaragesState!= current.myGaragesState,
         builder: (context, state) {
-          print(state.data);
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -89,7 +90,7 @@ class ValetHomeScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: AppSizeHeight.s15),
-                    
+
                     switch(state.myGaragesState) {
                       RequestState.loading => SizedBox(
                         height: AppSizeHeight.sMaxInfinite,
@@ -117,25 +118,32 @@ class ValetHomeScreen extends StatelessWidget {
                         itemCount: state.data!.length,
                         itemBuilder: (context, index) {
                           final garage = state.data![index];
-                          return GarageCard(
-                            name: garage.name,
-                            address: garage.address,
-                            totalSpots: garage.spots.length,
-                            capacity: garage.capacity,
-                            onRequestParking: () {
-                              // هنا تقدر تفتح صفحة جديدة أو تنفذ منطق معين
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("تم طلب ركنة في ${garage.name}"),
-                                ),
-                              );
+                          return InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return BlocProvider.value(value: context.read<HomeBloc>(),child: GarageScreen(garageIndex: index,),);
+                              },));
                             },
+                            child: GarageCard(
+                              name: garage.name,
+                              address: garage.address,
+                              totalSpots: garage.spots.length,
+                              capacity: garage.capacity,
+                              onRequestParking: () {
+                                // هنا تقدر تفتح صفحة جديدة أو تنفذ منطق معين
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("تم طلب ركنة في ${garage.name}"),
+                                  ),
+                                );
+                              },
+                            ),
                           );
                         },
                       ),
                       RequestState.error => Center(child: TextUtils(text: "errorrrr"),),
                     }
-                  
+
                   ],
                 ),
               ),

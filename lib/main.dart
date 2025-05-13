@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import 'core/services/services_locator.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   ServicesLocator().onInit();
-  runApp(const MyApp());
-}
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeBloc>(
+          create: (context) => HomeBloc(sl())..add(GetMyGaragesEvent()),
+        ),
+        // BlocProviders تانية لو فيه
+      ],
+      child: MyApp(),
+    ),
+  );}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

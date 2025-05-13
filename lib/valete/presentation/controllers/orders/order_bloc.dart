@@ -2,15 +2,16 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import 'order_events.dart';
 import 'order_states.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   CreateOrderUseCase createOrderUseCase;
-
-  OrderBloc(this.createOrderUseCase)
-      : super(OrderState(selectedVehicleType: VehicleType.car)) {
+  StoreOrderUseCase storeOrderUseCase;
+  OrderBloc(this.createOrderUseCase,this.storeOrderUseCase)
+      : super(OrderState(selectedVehicleType: VehicleType.Car)) {
     on<SelectVehicleType>((event, emit) {
       emit(state.copyWith(selectedVehicleType: event.vehicleType));
       // print(event.vehicleType.name);
@@ -25,12 +26,12 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     });
 
     on<CreateOrderEvent>((event, emit) async {
-      emit(state.copyWith(createOrderState: RequestState.loading));
+      emit(state.copyWith(defaultOrderState: RequestState.loading));
       final order = await createOrderUseCase.createOrder();
       order.fold((error) =>
-          emit(state.copyWith(createOrderState: RequestState.error,
+          emit(state.copyWith(defaultOrderState: RequestState.error,
               createOrderError: error.message)), (data) {
-        emit(state.copyWith(createOrderState: RequestState.loaded,
+        emit(state.copyWith(defaultOrderState: RequestState.loaded,
             data: data));
       },);
     });
@@ -44,6 +45,25 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       print("sssssssssssssssssssssssssssssssssssssssssssssssss${event.spotName}");
     });
 
+    on<StoreOrderEvent>((event, emit) async {
+      emit(state.copyWith(storeOrderState: StoreOrderState.loading));
+
+        final result = await storeOrderUseCase.storeOrder(event.storeData);
+        result.fold(
+              (error) {
+                print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee$error");
+
+            emit(state.copyWith(
+              storeOrderState: StoreOrderState.error,
+              storeOrderError: error.message,
+            ));
+          },
+              (data) {
+                print("ddddddddddddddddddddddddddddddddddddddddattttttttt$data");
+            emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
+          },
+        );
+    });
 
 
   }

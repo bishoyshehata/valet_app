@@ -5,12 +5,15 @@ import 'package:valet_app/valete/data/models/my_garages_models.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
 import '../../../core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../domain/entities/store_order.dart';
 import '../models/create_order_model.dart';
+import '../models/store_order_model.dart';
 
 abstract class IValetDataSource {
   Future<ValetModel> login(String phone, String password);
   Future<CreateOrderModel> createOrder();
   Future<List<MyGaragesModel>> myGarages();
+  Future<bool> storeOrder(StoreOrder storeOrder);
 }
 class ValetDataSource extends IValetDataSource {
   final Dio dio;
@@ -116,5 +119,45 @@ class ValetDataSource extends IValetDataSource {
 
     }
 
+  }
+
+  @override
+  Future<bool> storeOrder(StoreOrder storeOrder) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString('accessToken');
+
+      final response = await dio.post(ApiConstants.baseUrl +ApiConstants.storeOrderEndPoint,
+        data: {
+          'garageId': storeOrder.garageId,
+          'spotId': storeOrder.spotId,
+          'carType': storeOrder.carType,
+          'clientNumber': storeOrder.clientNumber,
+          'carImage': storeOrder.carImage,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' '$accessToken',
+          },
+
+          validateStatus: (status) => true,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final result = response.data['data'] ;
+
+        return result;
+      } else {
+        throw ServerFailure( response.data['messages'][0]);
+      }
+    } on ServerException catch (e) {
+
+      throw ServerException(
+          errorMessageModel: e.errorMessageModel
+      );
+
+    }
   }
 }
