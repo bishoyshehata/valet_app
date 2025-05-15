@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/domain/usecases/login_use_case.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
@@ -35,7 +36,12 @@ class LoginScreen extends StatelessWidget {
           appBar: CustomAppBar(
             title: AppStrings.login,
             titleColor: ColorManager.white,
-            leading: Icon(Icons.login_rounded, color: ColorManager.white),
+            leading: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.all(AppMargin.m4),
+              child:Icon(Icons.login_sharp, color: ColorManager.white),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(AppSizeHeight.s50),color: ColorManager.grey),
+            ),
           ),
           body: BlocProvider<LoginBloc>(
             create: (context) {
@@ -75,27 +81,12 @@ class LoginScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: AppSizeHeight.s30),
-
-                        // Logo
-                        // Row(
-                        //   crossAxisAlignment: CrossAxisAlignment.center,
-                        //   // textBaseline: TextBaseline.alphabetic,
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //
-                        //     TextUtils(
-                        //       text: AppStrings.appName,
-                        //       fontSize: FontSize.s70,
-                        //       fontFamily: 'modak',
-                        //       color: ColorManager.deepPrimary,
-                        //     ),
-                        //     Icon(Icons.garage_rounded,
-                        //         color: ColorManager.deepPrimary,
-                        //         size: AppSizeHeight.s60),
-                        //   ],
-                        // ),
-
-                        Image.asset(AssetsManager.logo),
+                        TextUtils(
+                          text: AppStrings.appName,
+                          fontSize: FontSize.s70,
+                          fontFamily: 'modak',
+                          color: ColorManager.primary,
+                        ),
                         SizedBox(height: AppSizeHeight.s100),
 
                         // Phone field
@@ -123,11 +114,11 @@ class LoginScreen extends StatelessWidget {
                           errorText: state.hasInteractedWithPassword && !state.isPasswordValid
                               ? 'كلمة السر قصيرة'
                               : null,
-                          icon: Icon(Icons.lock_outline, color: ColorManager.white),
+                          icon: Icon(Icons.lock_outline, color: ColorManager.primary),
                           suffixIcon: IconButton(
                             icon: Icon(
                               state.isPasswordObscured ? Icons.visibility_off : Icons.visibility,
-                              color: ColorManager.white,
+                              color: ColorManager.primary,
                             ),
                             onPressed: () => context.read<LoginBloc>().add(TogglePasswordVisibility()),
                           ),
@@ -140,14 +131,14 @@ class LoginScreen extends StatelessWidget {
                           onTap:(){
                             context.read<LoginBloc>().add(LoginSubmitted(countryCode: state.completePhoneNumber.replaceFirst("+", '')));
                              } ,
-                          btnColor: ColorManager.lightPrimary,
+                          btnColor: ColorManager.primary,
                           shadowColor: ColorManager.white,
                           widget: state.loginStatus == LoginStatus.loading
-                              ? CircularProgressIndicator(color: ColorManager.white,  )
+                              ? Lottie.asset(LottieManager.carLoading)
                               : TextUtils(
                             text: AppStrings.login,
                             fontWeight: FontWeightManager.bold,
-                            color: ColorManager.white,
+                            color: ColorManager.background,
                           ),
                         ),
                       ],

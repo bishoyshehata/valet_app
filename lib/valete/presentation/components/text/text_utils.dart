@@ -36,7 +36,7 @@ class TextUtils extends StatelessWidget {
         fontFamily: fontFamily,
         fontSize: fontSize ?? 14,
         fontWeight: fontWeight ?? FontWeight.normal,
-        color: color ?? ColorManager.darkPrimary,
+        color: color ?? ColorManager.primary,
       ),
     );
   }

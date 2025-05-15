@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
@@ -11,7 +11,6 @@ import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
-import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../data/models/store_order_model.dart';
@@ -23,20 +22,23 @@ import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
 import '../../resources/font_manager.dart';
+import '../valet_home/valet_home_screen.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrderScreen extends StatelessWidget {
   final SocketService socketService = SocketService();
 
-   OrderScreen({super.key});
+  OrderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OrderBloc>(
-
       create: (context) {
-        final bloc = OrderBloc(sl<CreateOrderUseCase>(),sl<StoreOrderUseCase>())..add(CreateOrderEvent());
+        final bloc = OrderBloc(
+          sl<CreateOrderUseCase>(),
+          sl<StoreOrderUseCase>(),
+        )..add(CreateOrderEvent());
 
         // init socket once and push event to bloc
         SharedPreferences.getInstance().then((prefs) {
@@ -45,7 +47,6 @@ class OrderScreen extends StatelessWidget {
             saiesId: valetId!,
             onPhoneReceived: (phone) {
               bloc.add(UpdatePhoneNumberEvent(phone));
-
             },
           );
         });
@@ -58,7 +59,6 @@ class OrderScreen extends StatelessWidget {
         //     previous.phoneNumber != current.phoneNumber ||
         //     previous.spotName != current.spotName ||
         //       previous.data?.spots != current.data?.spots,
-
         builder: (context, state) {
           switch (state.defaultOrderState) {
             case RequestState.loading:
@@ -71,7 +71,12 @@ class OrderScreen extends StatelessWidget {
                         baseColor: Colors.grey[850]!,
                         highlightColor: Colors.grey[800]!,
                         child: Container(
-                          height: 190.0,
+                          margin: EdgeInsets.only(
+                            right: AppMargin.m12,
+                            top: AppMargin.m12,
+                            left: AppMargin.m12,
+                          ),
+                          height: AppSizeHeight.s120,
                           decoration: BoxDecoration(
                             color: Colors.black,
                             borderRadius: BorderRadius.circular(8.0),
@@ -84,113 +89,158 @@ class OrderScreen extends StatelessWidget {
               );
 
             case RequestState.loaded:
-              final spotName = state.spotName == 'رقم الباكية' ? state.data!.spotName : state.spotName;
-              final spotId =state.spotName == 'رقم الباكية' ? state.data!.spotId :state.data!.spots.firstWhere((spot) => spot.code == spotName).id;
+              final spotName =
+                  state.spotName == 'رقم الباكية'
+                      ? state.data!.spotName
+                      : state.spotName;
+              final spotId =
+                  state.spotName == 'رقم الباكية'
+                      ? state.data!.spotId
+                      : state.data!.spots
+                          .firstWhere((spot) => spot.code == spotName)
+                          .id;
               return Directionality(
                 textDirection: TextDirection.rtl,
-                child: Scaffold(
-                  backgroundColor: ColorManager.background,
-                  appBar: CustomAppBar(
-                            actions: [
-                              IconButton(
-                                onPressed: () => Navigator.pop(context),
-                                icon: Icon(
-                                  Icons.arrow_forward_ios_sharp,
-                                  color: ColorManager.primary,
-                                ),
-                              ),
-                            ],
-                            title: state.phoneNumber,
-                            centerTitle: true,
-                            titleColor: ColorManager.white,
-                            leading: Icon(
-                              Icons.edit_note,
-                              color: ColorManager.primary,
-                            ),
+                child: WillPopScope(
+                  onWillPop: () async {
+                    SocketService().closeSocket();
+                    Navigator.pop(context);
+                    return false;
+                  },
+                  child: Scaffold(
+                    backgroundColor: ColorManager.background,
+                    appBar: CustomAppBar(
+                      title: state.phoneNumber,
+                      centerTitle: true,
+                      titleColor: ColorManager.white,
+                      leading: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.all(AppMargin.m4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            AppSizeHeight.s50,
                           ),
-                  body: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _buildGarageInfoCard(
-                          state.data!.garageName,
-                          state.data!.spots,
-                          context,
-                            spotName,
+                          color: ColorManager.grey,
                         ),
-                        _buildVehicleTypeSelector(context),
-                        _buildQrSection(context, state.data!.qr),
-                        _buildImageCaptureSection(context),
-                        SizedBox(height: AppSizeHeight.s10),
-                        BlocBuilder<OrderBloc, OrderState>(
-                          builder: (context, state) {
-                           return CustomButton(
-
-                               onTap: () async {
-                                 if (state.selectedVehicleType != null &&
-                                     spotId != null &&
-                                     state.phoneNumber != 'رقم هاتف العميل') {
-
-                                   File? carImage;
-                                   if (state.image != null) {
-                                     carImage = state.image;
-                                   }
-
-                                   final model = StoreOrderModel(
-                                     carImageFile: carImage, // null لو مفيش صورة
-                                     spotId: spotId,
-                                     carType: state.selectedVehicleType.index,
-                                     ClientNumber: state.phoneNumber,
-                                     garageId: state.data!.garageId,
-                                   );
-
-                                   context.read<OrderBloc>().add(StoreOrderEvent(model));
-                                   print("aaaaddddddddddddedd");
-                                   //
-                                   // Navigator.push(
-                                   //   context,
-                                   //   MaterialPageRoute(builder: (context) => ValetHomeScreen()),
-                                   // );
-                                 } else {
-                                   // show validation error
-                                 }
-                               },
-
-                               btnColor: ColorManager.darkPrimary,
-                              shadowColor: ColorManager.white,
-                              width: MediaQuery.of(context).size.width * .9,
-                              radius: AppSizeHeight.s10,
-                              borderColor: ColorManager.white,
-                              elevation: 5,
-                              widget: switch(state.storeOrderState) {
-                              StoreOrderState.initial => TextUtils(
-                                text: "تفعيل الطلب",
-                                color: ColorManager.primary,
-                                fontSize: FontSize.s17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                                StoreOrderState.loading => CircularProgressIndicator(
-                                  color: ColorManager.white,
-                                ),
-                                StoreOrderState.loaded =>  TextUtils(
-                                  text: "تفعيل الطلب",
-                                  color: ColorManager.primary,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                StoreOrderState.error =>  TextUtils(
-                                  text: "تفعيل الطلب",
-                                  color: ColorManager.primary,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              }
-
-
-                            );
+                        child: IconButton(
+                          onPressed: () {
+                            SocketService().closeSocket();
+                            Navigator.pop(context);
                           },
+
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: ColorManager.white,
+                          ),
                         ),
-                        SizedBox(height: AppSizeHeight.s20),
-                      ],
+                      ),
+                    ),
+                    body: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildGarageInfoCard(
+                            state.data!.garageName,
+                            state.data!.spots,
+                            context,
+                            spotName,
+                          ),
+                          _buildVehicleTypeSelector(context),
+                          _buildQrSection(context, state.data!.qr),
+                          _buildImageCaptureSection(context),
+                          SizedBox(height: AppSizeHeight.s10),
+                          BlocBuilder<OrderBloc, OrderState>(
+                            builder: (context, state) {
+                              return CustomButton(
+                                onTap: () async {
+                                  if (state.selectedVehicleType != null &&
+                                      spotId != null &&
+                                      state.phoneNumber != 'رقم هاتف العميل') {
+                                    File? carImage;
+                                    if (state.image != null) {
+                                      carImage = state.image;
+                                    }
+
+                                    final model = StoreOrderModel(
+                                      carImageFile: carImage,
+                                      // null لو مفيش صورة
+                                      spotId: spotId,
+                                      carType: state.selectedVehicleType.index,
+                                      ClientNumber: state.phoneNumber,
+                                      garageId: state.data!.garageId,
+                                    );
+
+                                    context.read<OrderBloc>().add(
+                                      StoreOrderEvent(model),
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ValetHomeScreen(),
+                                      ),
+                                    );
+                                  } else {
+                                    if(state.phoneNumber == 'رقم هاتف العميل'){
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content:
+                                          TextUtils(
+                                            text: 'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                            color: ColorManager.primary,
+                                            fontSize: FontSize.s13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    }else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: TextUtils(
+                                            text: 'نأسف و لكن يوجد خطأ بالبيانات.',
+                                            color: ColorManager.primary,
+                                            fontSize: FontSize.s13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                                btnColor: ColorManager.primary,
+                                shadowColor: ColorManager.white,
+                                width: MediaQuery.of(context).size.width * .9,
+                                radius: AppSizeHeight.s10,
+                                borderColor: ColorManager.white,
+                                elevation: 5,
+                                widget: switch (state.storeOrderState) {
+                                  StoreOrderState.initial => TextUtils(
+                                    text: "تفعيل الطلب",
+                                    color: ColorManager.background,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  StoreOrderState.loading =>
+                                    CircularProgressIndicator(
+                                      color: ColorManager.white,
+                                    ),
+                                  StoreOrderState.loaded => TextUtils(
+                                    text: "تفعيل الطلب",
+                                    color: ColorManager.primary,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  StoreOrderState.error => TextUtils(
+                                    text: "تفعيل الطلب",
+                                    color: ColorManager.primary,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(height: AppSizeHeight.s20),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -211,136 +261,63 @@ class OrderScreen extends StatelessWidget {
   }
 
   /// widgets
-
-  Widget _buildGarageInfoCard(String garage, List<Spot> spots, BuildContext context, String selectedSpotName) {
-    return Card(
-      child: Column(
-        children: [
-          // اسم الجراج
-          Text("التوجه إلى جراج: $garage"),
-
-          // اسم الباكية + زر تعديل
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("بالباكية: $selectedSpotName"),
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () => _showSpotDialog(context, spots),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-  // Widget _buildGarageInfoCard(String garage, String spot) {
-  //   return Card(
-  //     margin: EdgeInsets.symmetric(
-  //       horizontal: AppMargin.m16,
-  //       vertical: AppMargin.m10,
-  //     ),
-  //     color: ColorManager.darkPrimary,
-  //     elevation: 5,
-  //     shadowColor: ColorManager.white,
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-  //     ),
-  //     child: Column(
-  //       children: [
-  //         Container(
-  //           alignment: Alignment.centerRight,
-  //           margin: EdgeInsets.only(top: AppMargin.m10, right: AppMargin.m24),
-  //           padding: EdgeInsets.only(right: AppPadding.p5),
-  //           decoration: BoxDecoration(
-  //             border: Border(
-  //               right: BorderSide(color: ColorManager.primary, width: 3),
-  //             ),
-  //           ),
-  //           child: RichText(
-  //             text: TextSpan(
-  //               children: [
-  //                 TextSpan(
-  //                   text: "التوجه إلى جراج : ",
-  //                   style: TextStyle(
-  //                     color: ColorManager.white,
-  //                     fontSize: FontSize.s17,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 TextSpan(
-  //                   text: garage,
-  //                   style: TextStyle(
-  //                     color: ColorManager.primary,
-  //                     fontSize: FontSize.s15,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         Container(
-  //           alignment: Alignment.centerRight,
-  //           margin: EdgeInsets.only(
-  //             bottom: AppMargin.m10,
-  //             right: AppMargin.m24,
-  //           ),
-  //           padding: EdgeInsets.only(right: AppPadding.p5),
-  //           decoration: BoxDecoration(
-  //             border: Border(
-  //               right: BorderSide(color: ColorManager.primary, width: 3),
-  //             ),
-  //           ),
-  //           child: RichText(
-  //             text: TextSpan(
-  //               children: [
-  //                 TextSpan(
-  //                   text: "بالباكية : ",
-  //                   style: TextStyle(
-  //                     color: ColorManager.white,
-  //                     fontSize: FontSize.s17,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //                 TextSpan(
-  //                   text: spot,
-  //                   style: TextStyle(
-  //                     color: ColorManager.primary,
-  //                     fontSize: FontSize.s15,
-  //                     fontWeight: FontWeight.bold,
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  Widget _buildVehicleTypeSelector(BuildContext context) {
+  Widget _buildGarageInfoCard(
+    String garage,
+    List<Spot> spots,
+    BuildContext context,
+    String selectedSpotName,
+  ) {
     return Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
         vertical: AppMargin.m10,
       ),
-      color: ColorManager.darkPrimary,
+      color: ColorManager.grey,
       elevation: 5,
-      shadowColor: ColorManager.white,
+      shadowColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSizeHeight.s10),
       ),
+
       child: Column(
         children: [
           Container(
             alignment: Alignment.centerRight,
+            margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
+            padding: EdgeInsets.only(right: AppPadding.p5),
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: ColorManager.primary, width: 3),
+              ),
+            ),
+            child: RichText(
+              textDirection: TextDirection.rtl,
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'التوجه إلى جراج : ',
+                    style: GoogleFonts.cairo(
+                      color: ColorManager.white,
+                      fontSize: FontSize.s17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: garage,
+                    style: GoogleFonts.cairo(
+                      color: ColorManager.primary,
+                      fontSize: FontSize.s15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.centerRight,
             margin: EdgeInsets.only(
               bottom: AppMargin.m16,
-              top: AppMargin.m16,
               right: AppMargin.m24,
             ),
             padding: EdgeInsets.only(right: AppPadding.p5),
@@ -349,200 +326,263 @@ class OrderScreen extends StatelessWidget {
                 right: BorderSide(color: ColorManager.primary, width: 3),
               ),
             ),
-            child: TextUtils(
-              text: "قم بإختيار نوع المركبة",
-              color: ColorManager.white,
-              fontSize: FontSize.s17,
-              fontWeight: FontWeight.bold,
+            child: RichText(
+              textDirection: TextDirection.rtl,
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'بالباكية : ',
+                    style: GoogleFonts.cairo(
+                      color: ColorManager.white,
+                      fontSize: FontSize.s17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: selectedSpotName,
+                    style: GoogleFonts.cairo(
+                      color: ColorManager.primary,
+                      fontSize: FontSize.s15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: BlocBuilder<OrderBloc, OrderState>(
-              builder: (context, state) {
-
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children:
-                      VehicleType.values.map((type) {
-                        final icon = _getVehicleIcon(type);
-                        final isSelected = state.selectedVehicleType == type;
-                        return GestureDetector(
-                          onTap: () {
-                            context.read<OrderBloc>().add(
-                              SelectVehicleType(type),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                icon,
+        ],
+      ),
+    );
+  }
+}
+Widget _buildVehicleTypeSelector(BuildContext context) {
+  return Card(
+    margin: EdgeInsets.symmetric(
+      horizontal: AppMargin.m16,
+      vertical: AppMargin.m10,
+    ),
+    color: ColorManager.grey,
+    elevation: 5,
+    shadowColor: ColorManager.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+    ),
+    child: Column(
+      children: [
+        Container(
+          alignment: Alignment.centerRight,
+          margin: EdgeInsets.only(
+            bottom: AppMargin.m16,
+            top: AppMargin.m16,
+            right: AppMargin.m24,
+          ),
+          padding: EdgeInsets.only(right: AppPadding.p5),
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(color: ColorManager.primary, width: 3),
+            ),
+          ),
+          child: TextUtils(
+            text: "قم بإختيار نوع المركبة",
+            color: ColorManager.white,
+            fontSize: FontSize.s17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: BlocBuilder<OrderBloc, OrderState>(
+            builder: (context, state) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children:
+                    VehicleType.values.map((type) {
+                      final icon = _getVehicleIcon(type);
+                      final isSelected = state.selectedVehicleType == type;
+                      return GestureDetector(
+                        onTap: () {
+                          context.read<OrderBloc>().add(
+                            SelectVehicleType(type),
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            Icon(
+                              icon,
+                              color:
+                                  isSelected
+                                      ? ColorManager.primary
+                                      : ColorManager.white,
+                              size: 30,
+                            ),
+                            Text(
+                              type.name,
+                              style: TextStyle(
                                 color:
                                     isSelected
                                         ? ColorManager.primary
                                         : ColorManager.white,
-                                size: 30,
+                                fontSize: 12,
                               ),
-                              Text(
-                                type.name,
-                                style: TextStyle(
-                                  color:
-                                      isSelected
-                                          ? ColorManager.primary
-                                          : ColorManager.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQrSection(BuildContext context, String qr) {
-    String base64String = qr.replaceFirst('data:image/png;base64,', '');
-    Uint8List qrBytes = base64Decode(base64String);
-
-    return Card(
-      margin: EdgeInsets.symmetric(
-        horizontal: AppMargin.m16,
-        vertical: AppMargin.m10,
-      ),
-      color: ColorManager.darkPrimary,
-      elevation: 5,
-      shadowColor: ColorManager.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-      ),
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-            padding: EdgeInsets.only(right: AppPadding.p5),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: ColorManager.primary, width: 3),
-              ),
-            ),
-            child: TextUtils(
-              text: "قم بمسح ال QR",
-              color: ColorManager.white,
-              fontSize: FontSize.s17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height * .25,
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(vertical: AppMargin.m16),
-            child: Center(child: Image.memory(qrBytes)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildImageCaptureSection(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(
-        horizontal: AppMargin.m16,
-        vertical: AppMargin.m10,
-      ),
-      color: ColorManager.darkPrimary,
-      elevation: 5,
-      shadowColor: ColorManager.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-      ),
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-            padding: EdgeInsets.only(right: AppPadding.p5),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: ColorManager.primary, width: 3),
-              ),
-            ),
-            child: TextUtils(
-              text: "قم بإلتقاط صورة للمركبة",
-              color: ColorManager.white,
-              fontSize: FontSize.s17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          BlocBuilder<OrderBloc, OrderState>(
-            builder: (context, state) {
-              final image = state.image;
-              return Stack(
-                children: [
-                  Container(
-                    margin: EdgeInsets.all(AppMargin.m20),
-                    height: MediaQuery.of(context).size.height * .25,
-                    width: AppSizeWidth.sMaxWidth,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: ColorManager.lightGrey,
-                      borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-                    ),
-                    child:
-                        image != null
-                            ? GestureDetector(
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (_) =>
-                                              FullScreenImage(imageFile: image),
-                                    ),
-                                  ),
-                              child: PhotoView(
-                                imageProvider: FileImage(image),
-                                backgroundDecoration: BoxDecoration(
-                                  color: ColorManager.background,
-                                ),
-                              ),
-                            )
-                            : Icon(
-                              Icons.image,
-                              size: AppSizeHeight.s100,
-                              color: ColorManager.white,
                             ),
-                  ),
-                  Positioned(
-                    bottom: AppSizeHeight.s15,
-                    right: AppSizeHeight.s15,
-                    child: IconButton(
-                      onPressed: () {
-                        context.read<OrderBloc>().add(PickImageEvent());
-                      },
-
-                      icon: Icon(
-                        Icons.camera_alt,
-                        size: AppSizeHeight.s30,
-                        color: ColorManager.primary,
-                      ),
-                    ),
-                  ),
-                ],
+                          ],
+                        ),
+                      );
+                    }).toList(),
               );
             },
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
+Widget _buildQrSection(BuildContext context, String qr) {
+  String base64String = qr.replaceFirst('data:image/png;base64,', '');
+  Uint8List qrBytes = base64Decode(base64String);
+
+  return Card(
+    margin: EdgeInsets.symmetric(
+      horizontal: AppMargin.m16,
+      vertical: AppMargin.m10,
+    ),
+    color: ColorManager.grey,
+    elevation: 5,
+    shadowColor: ColorManager.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+    ),
+    child: Column(
+      children: [
+        Container(
+          alignment: Alignment.centerRight,
+          margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
+          padding: EdgeInsets.only(right: AppPadding.p5),
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(color: ColorManager.primary, width: 3),
+            ),
+          ),
+          child: TextUtils(
+            text: "قم بمسح ال QR",
+            color: ColorManager.white,
+            fontSize: FontSize.s17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height * .25,
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(vertical: AppMargin.m16),
+          child: Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(AppSizeHeight.s10),
+              ),
+              border: Border.all(width: 5, color: ColorManager.primary),
+            ),
+            child: Image.memory(qrBytes),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildImageCaptureSection(BuildContext context) {
+  return Card(
+    margin: EdgeInsets.symmetric(
+      horizontal: AppMargin.m16,
+      vertical: AppMargin.m10,
+    ),
+    color: ColorManager.grey,
+    elevation: 5,
+    shadowColor: ColorManager.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+    ),
+    child: Column(
+      children: [
+        Container(
+          alignment: Alignment.centerRight,
+          margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
+          padding: EdgeInsets.only(right: AppPadding.p5),
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(color: ColorManager.primary, width: 3),
+            ),
+          ),
+          child: TextUtils(
+            text: "قم بإلتقاط صورة للمركبة",
+            color: ColorManager.white,
+            fontSize: FontSize.s17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        BlocBuilder<OrderBloc, OrderState>(
+          builder: (context, state) {
+            final image = state.image;
+            return Stack(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(AppMargin.m20),
+                  height: MediaQuery.of(context).size.height * .25,
+                  width: AppSizeWidth.sMaxWidth,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: ColorManager.lightGrey,
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                  ),
+                  child:
+                      image != null
+                          ? GestureDetector(
+                            onTap:
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) =>
+                                            FullScreenImage(imageFile: image),
+                                  ),
+                                ),
+                            child: PhotoView(
+                              imageProvider: FileImage(image),
+                              backgroundDecoration: BoxDecoration(
+                                color: ColorManager.background,
+                              ),
+                            ),
+                          )
+                          : Icon(
+                            Icons.image,
+                            size: AppSizeHeight.s100,
+                            color: ColorManager.primary,
+                          ),
+                ),
+                Positioned(
+                  bottom: AppSizeHeight.s15,
+                  right: AppSizeHeight.s15,
+                  child: IconButton(
+                    onPressed: () {
+                      context.read<OrderBloc>().add(PickImageEvent());
+                    },
+
+                    icon: Icon(
+                      Icons.camera_alt,
+                      size: AppSizeHeight.s30,
+                      color: ColorManager.primary,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
 
 IconData _getVehicleIcon(VehicleType type) {
   switch (type) {
@@ -575,9 +615,15 @@ void _showSpotDialog(BuildContext context, List<Spot> spots) {
               return DropdownButton<String>(
                 isExpanded: true,
                 value: selected,
-                items: spots
-                    .map((e) => DropdownMenuItem(value: e.code, child: Text(e.code)))
-                    .toList(),
+                items:
+                    spots
+                        .map(
+                          (e) => DropdownMenuItem(
+                            value: e.code,
+                            child: Text(e.code),
+                          ),
+                        )
+                        .toList(),
                 onChanged: (value) {
                   setState(() {
                     selected = value!;
@@ -590,7 +636,7 @@ void _showSpotDialog(BuildContext context, List<Spot> spots) {
             TextButton(
               onPressed: () {
                 // التأكد من أن الـ event يتم إرساله بشكل صحيح
-                orderBloc.add(UpdateSpotNameEvent(selected,));
+                orderBloc.add(UpdateSpotNameEvent(selected));
                 Navigator.pop(context);
               },
               child: Text("تم"),
@@ -601,4 +647,3 @@ void _showSpotDialog(BuildContext context, List<Spot> spots) {
     );
   });
 }
-

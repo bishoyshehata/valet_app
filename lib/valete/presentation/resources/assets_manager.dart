@@ -17,6 +17,10 @@ class AssetsManager {
   // images
   static String logo = 'assets/lottie/valete_logo.json';
   static String scanQr = 'assets/lottie/scan_qr.json';
+  static String noCars = 'assets/lottie/nocars.json';
+  static String noCars2 = 'assets/lottie/no_cars.json';
+  static String carLoading = 'assets/lottie/car_loading.json';
+  static String carTransparent = 'assets/lottie/car_transparent.json';
 
 
 }

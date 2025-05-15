@@ -21,9 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     // the UI
     return Scaffold(
-      backgroundColor: ColorManager.white,
+      backgroundColor: ColorManager.background,
       body: Center(
-        child: Lottie.asset(LottieManager.logo),
+        child: Lottie.asset(LottieManager.carTransparent),
       ),
     );
   }

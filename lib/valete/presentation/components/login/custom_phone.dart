@@ -39,9 +39,10 @@ class CustomPhoneField extends StatelessWidget {
         hintStyle: TextStyle(
           color: ColorManager.white.withOpacity(0.6),
           fontSize: 14,
+
         ),
         errorText: errorText, // إظهار رسالة الخطأ إذا كانت موجودة
-        fillColor: ColorManager.background,
+        fillColor: ColorManager.darkGrey,
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),

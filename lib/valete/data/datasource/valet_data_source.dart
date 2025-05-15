@@ -39,6 +39,9 @@ class ValetDataSource extends IValetDataSource {
         final result =  ValetModel.fromJson(response.data);
         prefs.setString('accessToken', result.accessToken);
         prefs.setString('valetId', result.id.toString());
+        prefs.setString('valetName', result.name.toString());
+        prefs.setString('companyName', result.companyName.toString());
+        prefs.setString('whatsapp', result.whatsapp.toString());
 
         return result ;
       } else {

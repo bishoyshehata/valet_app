@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
+import 'package:valet_app/valete/domain/entities/spot.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
+import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/font_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
@@ -16,48 +20,47 @@ import '../../components/custom_app_bar.dart';
 import '../../resources/strings_manager.dart';
 import '../order_screen/order_screen.dart';
 
-// نموذج بيانات للجراج
-class Garage {
-  final String name;
-  final int totalSpots;
-  final int occupied;
-
-  Garage({
-    required this.name,
-    required this.totalSpots,
-    required this.occupied,
-  });
-}
-
 class ValetHomeScreen extends StatelessWidget {
-  // بيانات الجراجات (تقدر تجيبها من API بعدين)
-  final List<Garage> garages = [
-    Garage(name: "جراج التحرير", totalSpots: 50, occupied: 35),
-    Garage(name: "جراج المعادي", totalSpots: 40, occupied: 28),
-    Garage(name: "جراج أكتوبر", totalSpots: 60, occupied: 45),
-  ];
-
   ValetHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Future<String> getValetName() async {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('valetName') ?? '';
+    }
     return BlocProvider(
       create: (context) => HomeBloc(sl())..add(GetMyGaragesEvent()),
-      child: BlocBuilder<HomeBloc,HomeState>(
-        buildWhen: (previous, current) => previous.myGaragesState!= current.myGaragesState,
+      child: BlocBuilder<HomeBloc, HomeState>(
+        // buildWhen: (previous, current) => previous.myGaragesState!= current.myGaragesState,
         builder: (context, state) {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
               backgroundColor: ColorManager.background,
-              appBar: CustomAppBar(
-                title: '${AppStrings.welcome} Valet Name',
-                titleColor: ColorManager.white,
-                leading: Icon(
-                  Icons.garage_rounded,
-                  color: ColorManager.primary,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: FutureBuilder<String>(
+                  future: getValetName(),
+                  builder: (context, snapshot) {
+                    final title = snapshot.hasData
+                        ? AppStrings.welcome + snapshot.data!
+                        : AppStrings.welcome;
+
+                    return CustomAppBar(
+                      title:title,
+                      titleColor: ColorManager.white,
+                      leading: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.all(AppMargin.m4),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(AppSizeHeight.s50),color: ColorManager.grey),
+                        child:Icon(Icons.maps_home_work, color: ColorManager.white),
+                      ),
+                    );
+                  },
                 ),
               ),
+
               body: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -66,11 +69,13 @@ class ValetHomeScreen extends StatelessWidget {
                       alignment: Alignment.center,
 
                       child: CustomButton(
-                        onTap: ()  {
+                        onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => OrderScreen(), // pass the updated phone
+                              builder:
+                                  (context) =>
+                                      OrderScreen(), // pass the updated phone
                             ),
                           );
                         },
@@ -80,65 +85,81 @@ class ValetHomeScreen extends StatelessWidget {
                         widget: TextUtils(
                           text: 'إضافة طلب',
                           fontSize: FontSize.s20,
+                          color: ColorManager.background,
                           fontWeight: FontWeightManager.bold,
                         ),
                       ),
                     ),
-                    SizedBox(height: AppSizeHeight.s15),
-
-                    switch(state.myGaragesState) {
+                    SizedBox(height: AppSizeHeight.s5),
+                    switch (state.myGaragesState) {
                       RequestState.loading => SizedBox(
                         height: AppSizeHeight.sMaxInfinite,
                         child: ListView.separated(
                           shrinkWrap: true,
                           itemBuilder:
                               (context, index) => Shimmer.fromColors(
-                            baseColor: Colors.grey[850]!,
-                            highlightColor: Colors.grey[800]!,
-                            child: Container(
-                              height: 190.0,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(8.0),
+                                baseColor: Colors.grey[850]!,
+                                highlightColor: Colors.grey[800]!,
+                                child: Container(
+                                  margin: EdgeInsets.only(right: AppMargin.m12 ,top:  AppMargin.m12, left:  AppMargin.m12),
+                                  height: AppSizeHeight.s120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          separatorBuilder: (context, index) => SizedBox(height: 10),
+                          separatorBuilder:
+                              (context, index) => SizedBox(height: 10),
                           itemCount: 4,
                         ),
                       ),
-                      RequestState.loaded =>  ListView.builder(
+                      RequestState.loaded =>
+                      state.data!.isEmpty ? Lottie.asset(LottieManager.noCars):
+                      ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: state.data!.length,
                         itemBuilder: (context, index) {
                           final garage = state.data![index];
                           return InkWell(
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                return BlocProvider.value(value: context.read<HomeBloc>(),child: GarageScreen(garageIndex: index,),);
-                              },));
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return BlocProvider.value(
+                                      value: context.read<HomeBloc>(),
+                                      child: GarageScreen(garageIndex: index),
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             child: GarageCard(
                               name: garage.name,
                               address: garage.address,
-                              totalSpots: garage.spots.length,
+                              spot: garage.spots,
                               capacity: garage.capacity,
-                              onRequestParking: () {
-                                // هنا تقدر تفتح صفحة جديدة أو تنفذ منطق معين
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("تم طلب ركنة في ${garage.name}"),
-                                  ),
-                                );
-                              },
+
                             ),
                           );
                         },
                       ),
-                      RequestState.error => Center(child: TextUtils(text: "errorrrr"),),
-                    }
-
+                      RequestState.error => Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(child: Lottie.asset(LottieManager.noCars)),
+                          TextUtils(
+                            text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                            color: ColorManager.white,
+                            fontSize: FontSize.s13,
+                            noOfLines: 2,
+                            overFlow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    },
                   ],
                 ),
               ),
@@ -153,28 +174,28 @@ class ValetHomeScreen extends StatelessWidget {
 class GarageCard extends StatelessWidget {
   final String name;
   final String address;
-  final int totalSpots;
+  final List<Spot> spot;
   final int capacity;
-  final VoidCallback onRequestParking;
 
   const GarageCard({
     super.key,
     required this.name,
     required this.address,
-    required this.totalSpots,
+    required this.spot,
     required this.capacity,
-    required this.onRequestParking,
   });
 
   @override
   Widget build(BuildContext context) {
-    final int available = capacity - totalSpots;
+    final int totalSpots = capacity;
+    final int occupiedSpots = spot.where((spot) => spot.order != null).length;
+    final int availableSpots = totalSpots - occupiedSpots;
 
     return Card(
       shadowColor: ColorManager.white,
       elevation: 5,
       color: ColorManager.grey,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+       margin:  EdgeInsets.only(right: AppMargin.m12 ,top:  AppMargin.m12, left:  AppMargin.m12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(AppPadding.p16),
@@ -212,7 +233,7 @@ class GarageCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextUtils(
-                    text:address,
+                    text: address,
                     color: ColorManager.white,
                     fontSize: FontSize.s12,
                     fontWeight: FontWeight.bold,
@@ -230,12 +251,12 @@ class GarageCard extends StatelessWidget {
                   fontWeight: FontWeightManager.bold,
                 ),
                 TextUtils(
-                  text: "المشغول: $totalSpots",
+                  text: "المشغول: $occupiedSpots",
                   color: ColorManager.white,
                   fontWeight: FontWeightManager.bold,
                 ),
                 TextUtils(
-                  text: "المتاح: $available",
+                  text: "المتاح: $availableSpots",
                   color: ColorManager.white,
                   fontWeight: FontWeightManager.bold,
                 ),

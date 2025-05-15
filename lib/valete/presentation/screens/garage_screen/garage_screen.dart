@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/domain/entities/spot.dart';
@@ -25,12 +26,9 @@ class GarageScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorManager.background,
         appBar: CustomAppBar(
-         leading:  IconButton(
+          leading: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: ColorManager.primary,
-            ),
+            icon: Icon(Icons.arrow_back_ios, color: ColorManager.primary),
           ),
           title: "موقف السيارات",
           centerTitle: true,
@@ -45,23 +43,7 @@ class GarageScreen extends StatelessWidget {
               case RequestState.loading:
                 return SizedBox(
                   height: AppSizeHeight.sMaxInfinite,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder:
-                        (context, index) => Shimmer.fromColors(
-                          baseColor: Colors.grey[850]!,
-                          highlightColor: Colors.grey[800]!,
-                          child: Container(
-                            height: 190.0,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                        ),
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                    itemCount: 4,
-                  ),
+                  child: Center(child: Lottie.asset(LottieManager.carLoading)),
                 );
               case RequestState.loaded:
                 return CustomScrollView(
@@ -146,10 +128,20 @@ class GarageScreen extends StatelessWidget {
                     ),
                   ],
                 );
-
               case RequestState.error:
-                // TODO: Handle this case.
-                throw UnimplementedError();
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(child: Lottie.asset(LottieManager.noCars)),
+                    TextUtils(
+                      text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                      color: ColorManager.white,
+                      fontSize: FontSize.s13,
+                      noOfLines: 2,
+                      overFlow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                );
             }
           },
         ),
@@ -162,22 +154,33 @@ class ParkingSlotWidget extends StatelessWidget {
   final Spot spot;
   final int spotindex;
   final int garageindex;
-  const ParkingSlotWidget({super.key, required this.spot ,required this.spotindex, required this.garageindex});
+
+  const ParkingSlotWidget({
+    super.key,
+    required this.spot,
+    required this.spotindex,
+    required this.garageindex,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => BlocProvider.value(
-                  value: context.read<HomeBloc>(),
-                  child: OrderDetails(spotIndex:spotindex,garageIndex: garageindex ,),
-                ),
-          ),
-        );
+        if (spot.order != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => BlocProvider.value(
+                    value: context.read<HomeBloc>(),
+                    child: OrderDetails(
+                      spotIndex: spotindex,
+                      garageIndex: garageindex,
+                    ),
+                  ),
+            ),
+          );
+        } else {}
       },
       child: Card(
         color:
@@ -193,7 +196,7 @@ class ParkingSlotWidget extends StatelessWidget {
                 text: spot.code,
                 color:
                     spot.order != null
-                        ? ColorManager.darkPrimary
+                        ? ColorManager.primary
                         : ColorManager.white,
                 fontSize: FontSize.s15,
                 fontWeight: FontWeight.bold,
@@ -233,7 +236,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
               text: spot.code,
               color:
                   spot.order != null
-                      ? ColorManager.darkPrimary
+                      ? ColorManager.primary
                       : ColorManager.white,
               fontSize: FontSize.s15,
               fontWeight: FontWeight.bold,
@@ -256,33 +259,19 @@ class MiniParkingSlotWidget extends StatelessWidget {
     );
   }
 }
+
 Widget buildCarTypeImage(int carType) {
   switch (carType) {
     case 0:
-      return Image.asset(
-        AssetsManager.car,
-        height: AppSizeHeight.s45,
-      );
+      return Image.asset(AssetsManager.car, height: AppSizeHeight.s45);
     case 1:
-      return Image.asset(
-        AssetsManager.bicycle,
-        height: AppSizeHeight.s45,
-      );
+      return Image.asset(AssetsManager.bicycle, height: AppSizeHeight.s45);
     case 2:
-      return Image.asset(
-        AssetsManager.motorcycle,
-        height: AppSizeHeight.s45,
-      );
-      case 3:
-      return Image.asset(
-        AssetsManager.truck,
-        height: AppSizeHeight.s45,
-      );
-      case 4:
-      return Image.asset(
-        AssetsManager.van,
-        height: AppSizeHeight.s45,
-      );
+      return Image.asset(AssetsManager.motorcycle, height: AppSizeHeight.s45);
+    case 3:
+      return Image.asset(AssetsManager.truck, height: AppSizeHeight.s45);
+    case 4:
+      return Image.asset(AssetsManager.van, height: AppSizeHeight.s45);
     default:
       return Icon(
         Icons.directions_car,

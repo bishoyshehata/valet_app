@@ -1,20 +1,20 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-
+IO.Socket socket = IO.io(
+  'https://valet.node.vps.kirellos.com',
+  <String, dynamic>{
+    'transports': ['websocket'],
+    'autoConnect': false,
+    'secure': true,
+    'reconnection': false,
+  },
+);
 class SocketService {
   void initSocket({
     required String saiesId,
     required Function(String phoneNumber) onPhoneReceived,
   }) {
-    IO.Socket socket = IO.io(
-      'https://valet.node.vps.kirellos.com',
-      <String, dynamic>{
-        'transports': ['websocket'],
-        'autoConnect': false,
-        'secure': true,
-        'reconnection': false,
-      },
-    );
+
 
     socket.connect();
 
@@ -32,4 +32,14 @@ class SocketService {
     socket.onDisconnect((_) => print('❌ Disconnected'));
     socket.onError((error) => print('🔥 Error: $error'));
   }
+  void closeSocket() {
+    if (socket.connected) {
+      socket.disconnect();
+      socket.dispose(); // لو مدعومة في مكتبتك
+      print('Socket disconnected');
+    } else {
+      print('Socket already disconnected');
+    }
+  }
+
 }
