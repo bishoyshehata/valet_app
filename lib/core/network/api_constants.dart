@@ -4,6 +4,7 @@ class ApiConstants {
   static const createOrderEndPoint = '/api/Valet/Order';
   static const myGaragesEndPoint = '/api/Valet/MyGarages';
   static const storeOrderEndPoint = '/api/Valet/Store/Order';
+  static const myOrdersEndPoint = '/api/Valet/myOrders';
 
 
 

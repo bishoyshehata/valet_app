@@ -3,6 +3,7 @@ import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/domain/entities/default_order.dart';
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
+import 'package:valet_app/valete/domain/entities/my_orders.dart';
 import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/entities/valet.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
@@ -45,6 +46,16 @@ class ValetRepository extends IValetRepository {
   Future<Either<Failure, bool>> storeOrder(StoreOrder storeOrder) async{
     try {
       final result = await valetDataSource.storeOrder(storeOrder);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MyOrders>>> myOrders(int status) async {
+    try {
+      final result = await valetDataSource.myOrders(status);
       return Right(result);
     } on ServerFailure catch (failure) {
       return Left(ServerFailure(failure.message));

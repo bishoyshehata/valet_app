@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/main.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import 'core/services/services_locator.dart';
 
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Valet App',
-          home:ValetHomeScreen(),
+          home:MainScreen(),
         );
       },
     );

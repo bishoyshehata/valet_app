@@ -11,6 +11,7 @@ import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/main.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../data/models/store_order_model.dart';
@@ -22,7 +23,6 @@ import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
 import '../../resources/font_manager.dart';
-import '../valet_home/valet_home_screen.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -174,7 +174,7 @@ class OrderScreen extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ValetHomeScreen(),
+                                        builder: (context) => MainScreen(),
                                       ),
                                     );
                                   } else {

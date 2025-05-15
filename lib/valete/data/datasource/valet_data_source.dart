@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/core/network/api_constants.dart';
 import 'package:valet_app/valete/data/models/my_garages_models.dart';
+import 'package:valet_app/valete/data/models/my_orders_model.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
 import '../../../core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ abstract class IValetDataSource {
   Future<CreateOrderModel> createOrder();
   Future<List<MyGaragesModel>> myGarages();
   Future<bool> storeOrder(StoreOrder storeOrder);
+  Future<List<MyOrdersModel>> myOrders(int status);
 }
 class ValetDataSource extends IValetDataSource {
   final Dio dio;
@@ -134,16 +136,12 @@ class ValetDataSource extends IValetDataSource {
         'spotId': storeOrder.spotId,
         'carType': storeOrder.carType,
       };
-
       if (storeOrder.carImageFile != null) {
         formMap['carImageFile'] = await MultipartFile.fromFile(
           storeOrder.carImageFile!.path,
         );
       }
-
       final formData = FormData.fromMap(formMap);
-
-
       final response = await dio.post(
         ApiConstants.baseUrl + ApiConstants.storeOrderEndPoint,
         data: formData,
@@ -155,23 +153,52 @@ class ValetDataSource extends IValetDataSource {
           validateStatus: (status) => true,
         ),
       );
-
       if (response.statusCode == 200) {
         final result = response.data['data'] ;
-        print("ssssssssssssssssssssssssssssss$result");
-
         return result;
       } else {
-        print("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-
         throw ServerFailure( response.data['messages'][0]);
       }
     } on ServerException catch (e) {
-          print("eeeeeeeeeeeeeeeeeeeeeeeeeeeee$e");
       throw ServerException(
           errorMessageModel: e.errorMessageModel
       );
 
+    }
+  }
+
+  @override
+  Future<List<MyOrdersModel>> myOrders(int status)async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? accessToken = prefs.getString('accessToken');
+
+      final response = await dio.post(ApiConstants.baseUrl +ApiConstants.myOrdersEndPoint,
+        data: {
+        'status': status,
+      },
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer $accessToken',
+          },
+          validateStatus: (status) => true,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+
+        final  result = (response.data['data'] as List)
+            .map((e) => MyOrdersModel.fromJson(e))
+            .toList();
+       return result ;
+      } else {
+        throw ServerFailure( response.data['messages'][0]);
+      }
+    } on ServerException catch (e) {
+      throw ServerException(
+          errorMessageModel: e.errorMessageModel
+      );
     }
   }
 }
