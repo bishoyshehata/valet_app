@@ -142,7 +142,7 @@ class OrderScreen extends StatelessWidget {
                             state.data!.garageName,
                             state.data!.spots,
                             context,
-                            spotName,
+                            spotName
                           ),
                           _buildVehicleTypeSelector(context),
                           _buildQrSection(context, state.data!.qr),
@@ -162,7 +162,6 @@ class OrderScreen extends StatelessWidget {
 
                                     final model = StoreOrderModel(
                                       carImageFile: carImage,
-                                      // null لو مفيش صورة
                                       spotId: spotId,
                                       carType: state.selectedVehicleType.index,
                                       ClientNumber: state.phoneNumber,
@@ -262,11 +261,11 @@ class OrderScreen extends StatelessWidget {
 
   /// widgets
   Widget _buildGarageInfoCard(
-    String garage,
-    List<Spot> spots,
-    BuildContext context,
-    String selectedSpotName,
-  ) {
+      String garage,
+      List<Spot> spots,
+      BuildContext context,
+      String selectedSpotName,
+      ) {
     return Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
@@ -278,9 +277,9 @@ class OrderScreen extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSizeHeight.s10),
       ),
-
       child: Column(
         children: [
+         // جراج
           Container(
             alignment: Alignment.centerRight,
             margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
@@ -314,11 +313,14 @@ class OrderScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          // الباكية - Dropdown
           Container(
             alignment: Alignment.centerRight,
             margin: EdgeInsets.only(
               bottom: AppMargin.m16,
               right: AppMargin.m24,
+              top: AppMargin.m10,
             ),
             padding: EdgeInsets.only(right: AppPadding.p5),
             decoration: BoxDecoration(
@@ -326,34 +328,58 @@ class OrderScreen extends StatelessWidget {
                 right: BorderSide(color: ColorManager.primary, width: 3),
               ),
             ),
-            child: RichText(
-              textDirection: TextDirection.rtl,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'بالباكية : ',
-                    style: GoogleFonts.cairo(
-                      color: ColorManager.white,
-                      fontSize: FontSize.s17,
-                      fontWeight: FontWeight.bold,
-                    ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'بالباكية : ',
+                  style: GoogleFonts.cairo(
+                    color: ColorManager.white,
+                    fontSize: FontSize.s17,
+                    fontWeight: FontWeight.bold,
                   ),
-                  TextSpan(
-                    text: selectedSpotName,
+                ),
+                SizedBox(
+                  width: AppSizeWidth.s70,
+                  child: DropdownButton<String>(
+                    value: selectedSpotName,
+                    isExpanded: true,
+                    underline: Container(
+                      height: AppSizeHeight.s2,
+                      color: ColorManager.primary,
+                    ),
+                    icon: Icon(Icons.arrow_drop_down, color: ColorManager.primary),
                     style: GoogleFonts.cairo(
                       color: ColorManager.primary,
                       fontSize: FontSize.s15,
                       fontWeight: FontWeight.bold,
                     ),
+                    items: spots.map((spot) {
+                      return DropdownMenuItem<String>(
+
+                        value: spot.code,
+                        child: TextUtils(text:  spot.code,color: ColorManager.primary,fontSize: FontSize.s15,fontWeight: FontWeightManager.bold,),
+                      );
+                    }).toList(),
+                    dropdownColor: ColorManager.grey,
+                    onChanged: (value) {
+                      if (value != null) {
+                        context.read<OrderBloc>().add(UpdateSpotNameEvent(value));
+                      }
+                    },
                   ),
-                ],
-              ),
+                )
+
+
+              ],
             ),
+
           ),
         ],
       ),
     );
   }
+
 }
 Widget _buildVehicleTypeSelector(BuildContext context) {
   return Card(
@@ -599,51 +625,3 @@ IconData _getVehicleIcon(VehicleType type) {
   }
 }
 
-void _showSpotDialog(BuildContext context, List<Spot> spots) {
-  String selected = spots.first.code;
-
-  final orderBloc = context.read<OrderBloc>();
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("اختيار الباكية"),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return DropdownButton<String>(
-                isExpanded: true,
-                value: selected,
-                items:
-                    spots
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e.code,
-                            child: Text(e.code),
-                          ),
-                        )
-                        .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selected = value!;
-                  });
-                },
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // التأكد من أن الـ event يتم إرساله بشكل صحيح
-                orderBloc.add(UpdateSpotNameEvent(selected));
-                Navigator.pop(context);
-              },
-              child: Text("تم"),
-            ),
-          ],
-        );
-      },
-    );
-  });
-}

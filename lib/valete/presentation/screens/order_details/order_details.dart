@@ -24,10 +24,10 @@ class OrderDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
+
       builder: (context, state) {
         final data = state.data![garageIndex].spots[spotIndex];
-        print(ApiConstants.baseUrl + "/" + data.order!.carImage!);
-
+        state = context.watch<HomeBloc>().state;
         switch (state.myGaragesState) {
           case RequestState.loading:
             return Center(
@@ -65,7 +65,7 @@ class OrderDetails extends StatelessWidget {
                           ),
                         ),
                         child:
-                        data.order != null
+                        data.order!.carImage != null
                             ? Image.network(
                           Uri.encodeFull(ApiConstants.baseUrl + "/" + data.order!.carImage!),
                           height: AppSizeHeight.s45,

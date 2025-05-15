@@ -128,15 +128,21 @@ class ValetDataSource extends IValetDataSource {
     try {
       final prefs = await SharedPreferences.getInstance();
       String? accessToken = prefs.getString('accessToken');
-      final formData = FormData.fromMap({
+      final formMap = {
         'ClientNumber': storeOrder.ClientNumber,
         'garageId': storeOrder.garageId,
         'spotId': storeOrder.spotId,
         'carType': storeOrder.carType,
-        'carImageFile': await MultipartFile.fromFile(
+      };
+
+      if (storeOrder.carImageFile != null) {
+        formMap['carImageFile'] = await MultipartFile.fromFile(
           storeOrder.carImageFile!.path,
-        ),
-      });
+        );
+      }
+
+      final formData = FormData.fromMap(formMap);
+
 
       final response = await dio.post(
         ApiConstants.baseUrl + ApiConstants.storeOrderEndPoint,

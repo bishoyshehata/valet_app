@@ -26,7 +26,7 @@ class SocketService {
     socket.on('receive-phone', (phone) {
       print('📞 Received phone number: $phone');
       onPhoneReceived(phone); // use callback
-      socket.disconnect();
+      closeSocket();
     });
 
     socket.onDisconnect((_) => print('❌ Disconnected'));
@@ -36,7 +36,6 @@ class SocketService {
     if (socket.connected) {
       socket.disconnect();
       socket.dispose(); // لو مدعومة في مكتبتك
-      print('Socket disconnected');
     } else {
       print('Socket already disconnected');
     }

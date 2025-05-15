@@ -32,8 +32,10 @@ class ValetHomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => HomeBloc(sl())..add(GetMyGaragesEvent()),
       child: BlocBuilder<HomeBloc, HomeState>(
-        // buildWhen: (previous, current) => previous.myGaragesState!= current.myGaragesState,
+
+        buildWhen: (previous, current) => previous.myGaragesState!= current.myGaragesState,
         builder: (context, state) {
+
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -129,7 +131,7 @@ class ValetHomeScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (context) {
                                     return BlocProvider.value(
-                                      value: context.read<HomeBloc>(),
+                                      value: context.watch<HomeBloc>(),
                                       child: GarageScreen(garageIndex: index),
                                     );
                                   },
@@ -191,6 +193,8 @@ class GarageCard extends StatelessWidget {
     final int occupiedSpots = spot.where((spot) => spot.order != null).length;
     final int availableSpots = totalSpots - occupiedSpots;
 
+    return BlocBuilder<HomeBloc, HomeState>(
+  builder: (context, state) {
     return Card(
       shadowColor: ColorManager.white,
       elevation: 5,
@@ -266,5 +270,7 @@ class GarageCard extends StatelessWidget {
         ),
       ),
     );
+  },
+);
   }
 }

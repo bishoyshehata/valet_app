@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/domain/entities/spot.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
@@ -38,7 +37,10 @@ class GarageScreen extends StatelessWidget {
           // buildWhen:
           //     (previous, current) =>
           //         previous.myGaragesState != current.myGaragesState,
+
           builder: (context, state) {
+            state = context.watch<HomeBloc>().state;
+
             switch (state.myGaragesState) {
               case RequestState.loading:
                 return SizedBox(
