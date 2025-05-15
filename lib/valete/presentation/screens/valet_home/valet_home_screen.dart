@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
@@ -8,15 +7,11 @@ import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
-import 'package:valet_app/valete/presentation/controllers/orders/order_bloc.dart';
-import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/font_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/garage_screen/garage_screen.dart';
-
 import '../../../../core/services/services_locator.dart';
-import '../../../data/datasource/socket/socket_manager.dart';
 import '../../components/custom_app_bar.dart';
 import '../../resources/strings_manager.dart';
 import '../order_screen/order_screen.dart';

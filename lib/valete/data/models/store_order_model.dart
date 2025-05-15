@@ -4,18 +4,18 @@ class StoreOrderModel extends StoreOrder {
   const StoreOrderModel({
     required super.garageId,
     required super.spotId,
-    required super.clientNumber,
+    required super.ClientNumber,
     required super.carType,
-     super.carImage,
+     super.carImageFile,
   });
 
   Map<String ,dynamic> toJson() =>
   {
     "garageId" :garageId ,
     "spotId" :spotId ,
-    "clientNumber" :clientNumber ,
+    "ClientNumber" :ClientNumber ,
     "carType" :carType ,
-    if (carImage != null) 'carImage': carImage, // مايبعتش key لو null
+    if (carImageFile != null) 'carImageFile': carImageFile, // مايبعتش key لو null
   };
 }
 

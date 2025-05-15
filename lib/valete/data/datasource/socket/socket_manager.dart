@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-import '../../../presentation/controllers/orders/order_bloc.dart';
-import '../../../presentation/controllers/orders/order_events.dart';
 
 class SocketService {
   void initSocket({

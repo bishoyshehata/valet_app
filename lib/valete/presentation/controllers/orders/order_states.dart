@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:valet_app/valete/domain/entities/default_order.dart';
 
 import '../../../../core/utils/enums.dart';
-import '../../../domain/entities/store_order.dart';
 
 class OrderState {
   final VehicleType selectedVehicleType;

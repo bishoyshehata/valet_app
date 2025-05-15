@@ -42,7 +42,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
     on<UpdateSpotNameEvent>((event, emit) {
       emit(state.copyWith(spotName: event.spotName));
-      print("sssssssssssssssssssssssssssssssssssssssssssssssss${event.spotName}");
     });
 
     on<StoreOrderEvent>((event, emit) async {
@@ -51,7 +50,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         final result = await storeOrderUseCase.storeOrder(event.storeData);
         result.fold(
               (error) {
-                print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee$error");
 
             emit(state.copyWith(
               storeOrderState: StoreOrderState.error,
@@ -59,7 +57,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             ));
           },
               (data) {
-                print("ddddddddddddddddddddddddddddddddddddddddattttttttt$data");
+                print(data);
+
             emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
           },
         );

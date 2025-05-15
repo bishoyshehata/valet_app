@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
-import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
@@ -24,7 +23,6 @@ import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
 import '../../resources/font_manager.dart';
-import '../garage_screen/garage_screen.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -36,6 +34,7 @@ class OrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OrderBloc>(
+
       create: (context) {
         final bloc = OrderBloc(sl<CreateOrderUseCase>(),sl<StoreOrderUseCase>())..add(CreateOrderEvent());
 
@@ -54,10 +53,11 @@ class OrderScreen extends StatelessWidget {
         return bloc;
       },
       child: BlocBuilder<OrderBloc, OrderState>(
-        buildWhen: (previous, current) =>
-        previous.defaultOrderState != current.defaultOrderState ||
-            previous.phoneNumber != current.phoneNumber ||
-            previous.spotName != current.spotName,
+        // buildWhen: (previous, current) =>
+        // previous.defaultOrderState != current.defaultOrderState ||
+        //     previous.phoneNumber != current.phoneNumber ||
+        //     previous.spotName != current.spotName ||
+        //       previous.data?.spots != current.data?.spots,
 
         builder: (context, state) {
           switch (state.defaultOrderState) {
@@ -130,26 +130,26 @@ class OrderScreen extends StatelessWidget {
                                      spotId != null &&
                                      state.phoneNumber != 'رقم هاتف العميل') {
 
-                                   String? base64;
-
+                                   File? carImage;
                                    if (state.image != null) {
-                                     base64 = await encodeImageToBase64(state.image!);
+                                     carImage = state.image;
                                    }
 
                                    final model = StoreOrderModel(
-                                     carImage: base64, // null لو مفيش صورة
+                                     carImageFile: carImage, // null لو مفيش صورة
                                      spotId: spotId,
                                      carType: state.selectedVehicleType.index,
-                                     clientNumber: state.phoneNumber,
+                                     ClientNumber: state.phoneNumber,
                                      garageId: state.data!.garageId,
                                    );
 
                                    context.read<OrderBloc>().add(StoreOrderEvent(model));
-
-                                   Navigator.push(
-                                     context,
-                                     MaterialPageRoute(builder: (context) => ValetHomeScreen()),
-                                   );
+                                   print("aaaaddddddddddddedd");
+                                   //
+                                   // Navigator.push(
+                                   //   context,
+                                   //   MaterialPageRoute(builder: (context) => ValetHomeScreen()),
+                                   // );
                                  } else {
                                    // show validation error
                                  }
@@ -602,7 +602,3 @@ void _showSpotDialog(BuildContext context, List<Spot> spots) {
   });
 }
 
-Future<String> encodeImageToBase64(File image) async {
-  final bytes = await image.readAsBytes();
-  return base64Encode(bytes);
-}

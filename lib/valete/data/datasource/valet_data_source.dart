@@ -7,7 +7,6 @@ import '../../../core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/store_order.dart';
 import '../models/create_order_model.dart';
-import '../models/store_order_model.dart';
 
 abstract class IValetDataSource {
   Future<ValetModel> login(String phone, String password);
@@ -126,34 +125,40 @@ class ValetDataSource extends IValetDataSource {
     try {
       final prefs = await SharedPreferences.getInstance();
       String? accessToken = prefs.getString('accessToken');
+      final formData = FormData.fromMap({
+        'ClientNumber': storeOrder.ClientNumber,
+        'garageId': storeOrder.garageId,
+        'spotId': storeOrder.spotId,
+        'carType': storeOrder.carType,
+        'carImageFile': await MultipartFile.fromFile(
+          storeOrder.carImageFile!.path,
+        ),
+      });
 
-      final response = await dio.post(ApiConstants.baseUrl +ApiConstants.storeOrderEndPoint,
-        data: {
-          'garageId': storeOrder.garageId,
-          'spotId': storeOrder.spotId,
-          'carType': storeOrder.carType,
-          'clientNumber': storeOrder.clientNumber,
-          'carImage': storeOrder.carImage,
-        },
+      final response = await dio.post(
+        ApiConstants.baseUrl + ApiConstants.storeOrderEndPoint,
+        data: formData,
         options: Options(
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' '$accessToken',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer $accessToken',
           },
-
           validateStatus: (status) => true,
         ),
       );
 
       if (response.statusCode == 200) {
         final result = response.data['data'] ;
+        print("ssssssssssssssssssssssssssssss$result");
 
         return result;
       } else {
+        print("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
         throw ServerFailure( response.data['messages'][0]);
       }
     } on ServerException catch (e) {
-
+          print("eeeeeeeeeeeeeeeeeeeeeeeeeeeee$e");
       throw ServerException(
           errorMessageModel: e.errorMessageModel
       );

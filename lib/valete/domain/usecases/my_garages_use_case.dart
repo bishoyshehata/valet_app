@@ -1,7 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:valet_app/core/error/failure.dart';
-import 'package:valet_app/valete/domain/entities/default_order.dart';
-import 'package:valet_app/valete/domain/entities/valet.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
 import '../entities/my_garages.dart';

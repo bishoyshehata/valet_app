@@ -1,20 +1,23 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 
 class StoreOrder extends Equatable {
   final int garageId;
   final int spotId;
-  final String clientNumber;
+  final String ClientNumber;
   final int carType;
-  final String? carImage;
+  final File? carImageFile;
 
   const StoreOrder({
     required this.garageId,
     required this.spotId,
-    required this.clientNumber,
+    required this.ClientNumber,
+
     required this.carType,
-     this.carImage,
+     this.carImageFile,
   });
 
   @override
-  List<Object?> get props => [garageId,spotId,clientNumber,carType,carImage];
+  List<Object?> get props => [garageId,spotId,ClientNumber,carType,carImageFile];
 }

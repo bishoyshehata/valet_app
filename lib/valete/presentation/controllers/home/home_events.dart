@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../../core/utils/enums.dart';
 
 abstract class HomeEvent extends Equatable {}
 
