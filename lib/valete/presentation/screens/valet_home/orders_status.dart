@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
@@ -25,7 +26,22 @@ class OrdersScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => HomeBloc(sl<MyGaragesUseCase>(),sl<MyOrdersUseCase>())..add(GetMyOrdersEvent(0)),
       child: Scaffold(
-        appBar: AppBar(title: const Text('إدارة الطلبات')),
+        backgroundColor: ColorManager.background,
+        appBar:  CustomAppBar(
+          title: 'إدارة الطلبات',
+          centerTitle: false,
+          titleColor: ColorManager.white,
+          leading:Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.all(AppMargin.m4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSizeHeight.s50),
+              color: ColorManager.grey,
+            ),
+            child:Icon(Icons.note_alt_rounded, color: ColorManager.white),
+          )
+        ),
+
         body: Column(
           children: [
             SizedBox(
@@ -49,10 +65,10 @@ class OrdersScreen extends StatelessWidget {
                             context.read<HomeBloc>().add(
                                 ChangeSelectedStatus(option['id']));
                           },
-                          selectedColor: Colors.blueAccent,
-                          backgroundColor: Colors.grey.shade300,
-                          labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
+                          selectedColor: ColorManager.primary,
+                          backgroundColor:ColorManager.grey,
+                          labelStyle: GoogleFonts.cairo(
+                            color: isSelected ? ColorManager.background : ColorManager.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

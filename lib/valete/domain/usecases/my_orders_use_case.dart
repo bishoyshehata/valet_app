@@ -9,8 +9,11 @@ class MyOrdersUseCase {
   MyOrdersUseCase(this.repository);
 
   Future<Either<Failure,  List<MyOrders> >> myOrders(int status) async {
+    try {
       final result = await repository.myOrders(status);
       return result;
-
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
   }
 }
