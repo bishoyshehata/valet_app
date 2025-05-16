@@ -134,7 +134,7 @@ class GarageScreen extends StatelessWidget {
                               garageindex: garageIndex,
                               spot: state.data![garageIndex].spots[index],
                             );
-                          }, childCount: state.data![garageIndex].capacity),
+                          }, childCount: state.data![garageIndex].spots.length),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,

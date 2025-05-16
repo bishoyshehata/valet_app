@@ -27,3 +27,7 @@ class ChangeTabEvent extends HomeEvent {
   @override
   List<Object> get props => [index];
 }
+class GetAllMyOrdersEvent extends HomeEvent {
+  @override
+  List<Object?> get props => [];
+}

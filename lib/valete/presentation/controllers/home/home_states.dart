@@ -7,43 +7,43 @@ class HomeState {
   final String myGaragesErrorMessage;
   final List<MyGarages>? data;
   final int currentIndex;
-  final List<MyOrders>? orders;
   final int selectedStatus;
   final RequestState myOrdersState;
   final String myOrdersErrorMessage;
+  final Map<int, List<MyOrders>> ordersByStatus;
 
   HomeState({
     this.myGaragesState = RequestState.loading,
     this.myGaragesErrorMessage = '',
-    this.myOrdersState = RequestState.loading,
-    this.myOrdersErrorMessage = '',
     this.data,
     this.currentIndex = 0,
-    this.orders = const [],
     this.selectedStatus = 1,
+    this.myOrdersState = RequestState.loading,
+    this.myOrdersErrorMessage = '',
+    this.ordersByStatus = const {},
   });
 
+  List<MyOrders> get orders => ordersByStatus[selectedStatus] ?? [];
+
   HomeState copyWith({
-    String? myGaragesErrorMessage,
     RequestState? myGaragesState,
-    String? myOrdersErrorMessage,
-    RequestState? myOrdersState,
+    String? myGaragesErrorMessage,
     List<MyGarages>? data,
     int? currentIndex,
-    List<MyOrders>? orders,
     int? selectedStatus,
-
+    RequestState? myOrdersState,
+    String? myOrdersErrorMessage,
+    Map<int, List<MyOrders>>? ordersByStatus,
   }) {
     return HomeState(
-      data: data ?? this.data,
-      myGaragesErrorMessage: myGaragesErrorMessage ?? this.myGaragesErrorMessage,
       myGaragesState: myGaragesState ?? this.myGaragesState,
+      myGaragesErrorMessage: myGaragesErrorMessage ?? this.myGaragesErrorMessage,
+      data: data ?? this.data,
       currentIndex: currentIndex ?? this.currentIndex,
-      orders: orders ?? this.orders,
       selectedStatus: selectedStatus ?? this.selectedStatus,
-      myOrdersErrorMessage: myOrdersErrorMessage ?? this.myOrdersErrorMessage,
       myOrdersState: myOrdersState ?? this.myOrdersState,
-
+      myOrdersErrorMessage: myOrdersErrorMessage ?? this.myOrdersErrorMessage,
+      ordersByStatus: ordersByStatus ?? this.ordersByStatus,
     );
   }
 }

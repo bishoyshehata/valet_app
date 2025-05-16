@@ -18,7 +18,6 @@ import '../../components/login/custom_phone.dart';
 import '../../controllers/login/login_events.dart';
 import '../../resources/colors_manager.dart';
 import '../../resources/strings_manager.dart';
-import '../valet_home/valet_home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
