@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
-
 import '../../../../core/services/services_locator.dart';
 import '../../../domain/usecases/my_garages_use_case.dart';
 import '../../../domain/usecases/my_orders_use_case.dart';
@@ -13,6 +12,7 @@ import '../../controllers/home/home_events.dart';
 import '../../resources/values_manager.dart';
 
 class OrdersScreen extends StatelessWidget {
+  final int initialSelectedStatus =0;
   final List<Map<String, dynamic>> statusOptions = const [
     {'id': 0, 'label': 'منتظر'},
     {'id': 1, 'label': 'تم الطلب'},
@@ -24,22 +24,26 @@ class OrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeBloc(sl<MyGaragesUseCase>(),sl<MyOrdersUseCase>())..add(GetMyOrdersEvent(0)),
+      create:
+          (context) =>
+              HomeBloc(sl<MyGaragesUseCase>(), sl<MyOrdersUseCase>(),initialSelectedStatus:initialSelectedStatus)
+                ..add(GetMyOrdersEvent(initialSelectedStatus)),
+
       child: Scaffold(
         backgroundColor: ColorManager.background,
-        appBar:  CustomAppBar(
+        appBar: CustomAppBar(
           title: 'إدارة الطلبات',
           centerTitle: false,
           titleColor: ColorManager.white,
-          leading:Container(
+          leading: Container(
             alignment: Alignment.center,
             margin: EdgeInsets.all(AppMargin.m4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSizeHeight.s50),
               color: ColorManager.grey,
             ),
-            child:Icon(Icons.note_alt_rounded, color: ColorManager.white),
-          )
+            child: Icon(Icons.note_alt_rounded, color: ColorManager.white),
+          ),
         ),
 
         body: Column(
@@ -62,13 +66,16 @@ class OrdersScreen extends StatelessWidget {
                           label: Text(option['label']),
                           selected: isSelected,
                           onSelected: (_) {
-                            context.read<HomeBloc>().add(
-                                ChangeSelectedStatus(option['id']));
+                            context.read<HomeBloc>().add(GetMyOrdersEvent(option['id']));
+                            print(option);
                           },
                           selectedColor: ColorManager.primary,
-                          backgroundColor:ColorManager.grey,
+                          backgroundColor: ColorManager.grey,
                           labelStyle: GoogleFonts.cairo(
-                            color: isSelected ? ColorManager.background : ColorManager.white,
+                            color:
+                                isSelected
+                                    ? ColorManager.background
+                                    : ColorManager.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -80,16 +87,13 @@ class OrdersScreen extends StatelessWidget {
             ),
             Expanded(
               child: BlocBuilder<HomeBloc, HomeState>(
-
                 builder: (context, state) {
-                  print(state.orders);
-                  final orders = state.orders!
-                      .where((order) => order.status == state.selectedStatus)
-                      .toList();
+                     final orders = state.orders ?? [];
 
                   if (orders.isEmpty) {
                     return const Center(
-                        child: Text('لا يوجد طلبات بالحالة الحالية'));
+                      child: Text('لا يوجد طلبات بالحالة الحالية'),
+                    );
                   }
 
                   return ListView.builder(
@@ -99,8 +103,8 @@ class OrdersScreen extends StatelessWidget {
                       return Card(
                         margin: const EdgeInsets.all(10),
                         child: ListTile(
-                          title: Text('الطلب رقم: ${order.id}'),
-                          subtitle: Text('رقم العميل: ${order.clientId}'),
+                          title: Text('الطلب رقم: ${order.whatsapp}'),
+                          subtitle: Text('رقم العميل: ${order.spot.code}'),
                         ),
                       );
                     },

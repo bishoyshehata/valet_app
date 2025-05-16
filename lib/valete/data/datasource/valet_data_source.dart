@@ -174,9 +174,9 @@ class ValetDataSource extends IValetDataSource {
       String? accessToken = prefs.getString('accessToken');
 
       final response = await dio.get(ApiConstants.baseUrl +ApiConstants.myOrdersEndPoint,
-        data: {
-        'status': status,
-      },
+        queryParameters: {
+          'status': status,
+        },
         options: Options(
           headers: {
             'Content-Type': 'application/json',

@@ -57,7 +57,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             ));
           },
               (data) {
-                print(data);
 
             emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
           },

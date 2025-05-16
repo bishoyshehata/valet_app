@@ -34,7 +34,6 @@ class MainScreen extends StatelessWidget {
       child: BlocBuilder<HomeBloc, HomeState>(
 
         builder: (context, state) {
-        print(state.myGaragesState);
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
@@ -44,25 +43,25 @@ class MainScreen extends StatelessWidget {
                 backgroundColor: ColorManager.background,
                 currentIndex: state.currentIndex,
                 selectedItemColor: ColorManager.primary,
-                unselectedItemColor: ColorManager.grey,
+                unselectedItemColor: ColorManager.white,
                 onTap: (index) {
                   context.read<HomeBloc>().add(ChangeTabEvent(index));
                 },
-                unselectedLabelStyle:GoogleFonts.cairo(color: ColorManager.grey) ,
+                unselectedLabelStyle:GoogleFonts.cairo(color: ColorManager.white) ,
                 selectedLabelStyle: GoogleFonts.cairo(color: ColorManager.primary),
                 items: [
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.home_work_outlined, color: ColorManager.grey,),
-                    label: 'الرئيسية',
+                    icon: Icon(Icons.home_work_outlined, color: ColorManager.white,),
+                    label: 'الجراج',
                     activeIcon: Icon(Icons.home_work_rounded, color: ColorManager.primary,),
                   ),
                    BottomNavigationBarItem(
-                    icon: Icon(Icons.note_alt_outlined, color: ColorManager.grey,),
+                    icon: Icon(Icons.note_alt_outlined, color: ColorManager.white,),
                     label: 'الطلبات',
                      activeIcon: Icon(Icons.note_alt_rounded, color: ColorManager.primary,),
                   ),
                    BottomNavigationBarItem(
-                    icon: Icon(Icons.person_2_outlined, color: ColorManager.grey,),
+                    icon: Icon(Icons.person_2_outlined, color: ColorManager.white,),
                     label: 'شخصي',
                      activeIcon: Icon(Icons.person, color: ColorManager.primary,),backgroundColor: ColorManager.primary
 

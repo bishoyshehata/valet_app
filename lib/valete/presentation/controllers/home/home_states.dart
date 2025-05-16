@@ -11,7 +11,7 @@ class HomeState {
   final int selectedStatus;
   final RequestState myOrdersState;
   final String myOrdersErrorMessage;
-  final int status;
+
   HomeState({
     this.myGaragesState = RequestState.loading,
     this.myGaragesErrorMessage = '',
@@ -20,8 +20,7 @@ class HomeState {
     this.data,
     this.currentIndex = 0,
     this.orders = const [],
-    this.selectedStatus = 0,
-    this.status =0 ,
+    this.selectedStatus = 1,
   });
 
   HomeState copyWith({
@@ -33,7 +32,7 @@ class HomeState {
     int? currentIndex,
     List<MyOrders>? orders,
     int? selectedStatus,
-    int? status,
+
   }) {
     return HomeState(
       data: data ?? this.data,
@@ -44,7 +43,7 @@ class HomeState {
       selectedStatus: selectedStatus ?? this.selectedStatus,
       myOrdersErrorMessage: myOrdersErrorMessage ?? this.myOrdersErrorMessage,
       myOrdersState: myOrdersState ?? this.myOrdersState,
-      status: status ?? this.status,
+
     );
   }
 }
