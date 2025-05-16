@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/domain/entities/spot.dart';
+import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/my_orders_use_case.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
@@ -23,7 +25,7 @@ class GarageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HomeBloc>(
-      create: (_) => HomeBloc(sl())..add(GetMyGaragesEvent()),
+      create: (_) => HomeBloc(sl<MyGaragesUseCase>(),sl<MyOrdersUseCase>())..add(GetMyGaragesEvent()),
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(

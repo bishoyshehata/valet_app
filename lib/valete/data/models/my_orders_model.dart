@@ -1,5 +1,8 @@
 import 'package:valet_app/valete/domain/entities/my_orders.dart';
 
+import '../../domain/entities/spot.dart';
+import 'my_garages_models.dart';
+
 class MyOrdersModel extends MyOrders {
   const MyOrdersModel({
     required super.id,
@@ -21,11 +24,11 @@ class MyOrdersModel extends MyOrders {
           carImage: json['carImage'],
           status: json['status'],
           carType: json['carType'],
-          clientId: json['client']['clientId'],
+          clientId: json['client']['id'],
           whatsapp: json['client']['whatsapp'],
           spotId: json['spotId'],
-          spot: json['spot'],
+          spot: Spot.fromJson(json['spot']),
           garageId: json['garageId'],
-          garage: json['garage'],
+          garage: MyGaragesModel.fromJson(json['garage']),
           valetId: json['valetId']);
 }

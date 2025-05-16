@@ -173,13 +173,13 @@ class ValetDataSource extends IValetDataSource {
       final prefs = await SharedPreferences.getInstance();
       String? accessToken = prefs.getString('accessToken');
 
-      final response = await dio.post(ApiConstants.baseUrl +ApiConstants.myOrdersEndPoint,
+      final response = await dio.get(ApiConstants.baseUrl +ApiConstants.myOrdersEndPoint,
         data: {
         'status': status,
       },
         options: Options(
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             'Authorization': 'Bearer $accessToken',
           },
           validateStatus: (status) => true,

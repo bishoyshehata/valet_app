@@ -11,7 +11,7 @@ import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
-import 'package:valet_app/valete/presentation/screens/valet_home/main.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../data/models/store_order_model.dart';
