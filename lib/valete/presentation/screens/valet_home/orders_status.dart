@@ -1,16 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:valet_app/core/utils/enums.dart';
+import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
-import '../../../../core/services/services_locator.dart';
 import '../../../domain/entities/my_orders.dart';
-import '../../../domain/usecases/my_garages_use_case.dart';
-import '../../../domain/usecases/my_orders_use_case.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_events.dart';
@@ -31,166 +30,177 @@ class OrdersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create:
-          (context) => HomeBloc(
-            sl<MyGaragesUseCase>(),
-            sl<MyOrdersUseCase>(),
-            initialSelectedStatus: initialSelectedStatus,
-          )..add(GetAllMyOrdersEvent()),
+    context.read<HomeBloc>().add(GetAllMyOrdersEvent());
 
-      child: Scaffold(
-        backgroundColor: ColorManager.background,
-        appBar: CustomAppBar(
-          title: 'إدارة الطلبات',
-          centerTitle: false,
-          titleColor: ColorManager.white,
-          leading: Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.all(AppMargin.m4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppSizeHeight.s50),
-              color: ColorManager.grey,
-            ),
-            child: Icon(Icons.note_alt_rounded, color: ColorManager.white),
-          ),
+    return Scaffold(
+    backgroundColor: ColorManager.background,
+    appBar: CustomAppBar(
+      title: 'إدارة الطلبات',
+      centerTitle: false,
+      titleColor: ColorManager.white,
+      leading: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.all(AppMargin.m4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppSizeHeight.s50),
+          color: ColorManager.grey,
         ),
+        child: Icon(Icons.note_alt_rounded, color: ColorManager.white),
+      ),
+    ),
 
-        body: Column(
-          children: [
-            SizedBox(
-              height: 70,
-              child: BlocBuilder<HomeBloc, HomeState>(
-                // buildWhen: (prev, curr) => prev.selectedStatus != curr.selectedStatus,
+    body: Column(
+      children: [
+        SizedBox(
+          height: 70,
+          child: BlocBuilder<HomeBloc, HomeState>(
 
-                builder: (context, state) {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: statusOptions.length,
-                    itemBuilder: (context, index) {
-                      final option = statusOptions[index];
-                      final isSelected = state.selectedStatus == option['id'];
+            // buildWhen: (prev, curr) => prev.selectedStatus != curr.selectedStatus,
+            builder: (context, state) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: statusOptions.length,
+                itemBuilder: (context, index) {
+                  final option = statusOptions[index];
+                  final isSelected = state.selectedStatus == option['id'];
 
-                      return Container(
-                        margin: EdgeInsets.only(top: AppMargin.m8),
-                        padding: EdgeInsets.all(AppPadding.p6),
-                        child: Stack(
-                          children: [
-                            ChoiceChip(
-                              elevation: 3,
-                              shadowColor: ColorManager.primary,
-                              label: Text(option['label']),
-                              selected: isSelected,
-                              onSelected: (_) {
-                                context.read<HomeBloc>().add(
-                                  GetMyOrdersEvent(option['id']),
-                                );
-                                print(option);
-                              },
-                              selectedColor: ColorManager.primary,
-                              backgroundColor: ColorManager.grey,
-                              labelStyle: GoogleFonts.cairo(
-                                color:
-                                    isSelected
-                                        ? ColorManager.background
-                                        : ColorManager.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                color: ColorManager.background,
-                                border: Border.all(
-                                  color: ColorManager.white,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  AppSizeHeight.s50,
-                                ),
-                              ),
-                              child: TextUtils(
-                            text: '${state.ordersByStatus[option['id']]?.length ?? 0}',
-                              fontSize: FontSize.s10,
-                              color: ColorManager.white,
-                              fontWeight: FontWeightManager.bold,
-                            ),
-                            ),
-                          ],
+                  return Container(
+                    margin: EdgeInsets.only(top: AppMargin.m8),
+                    padding: EdgeInsets.all(AppPadding.p6),
+                    child: Stack(
+                      children: [
+                        ChoiceChip(
+                          elevation: 3,
+                          shadowColor: ColorManager.primary,
+                          label: Text(option['label']),
+                          selected: isSelected,
+                          onSelected: (_) {
+                            context.read<HomeBloc>().add(
+                              GetMyOrdersEvent(option['id']),
+                            );
+                          },
+                          selectedColor: ColorManager.primary,
+                          backgroundColor: ColorManager.grey,
+                          labelStyle: GoogleFonts.cairo(
+                            color:
+                                isSelected
+                                    ? ColorManager.background
+                                    : ColorManager.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      );
-                    },
+                        Container(
+                          alignment: Alignment.center,
+                          height: 20,
+                          width: 20,
+                          decoration: BoxDecoration(
+                            color: ColorManager.background,
+                            border: Border.all(
+                              color: ColorManager.white,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              AppSizeHeight.s50,
+                            ),
+                          ),
+                          child: TextUtils(
+                            text:
+                                '${state.ordersByStatus[option['id']]?.length ?? 0}',
+                            fontSize: FontSize.s10,
+                            color: ColorManager.white,
+                            fontWeight: FontWeightManager.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
-              ),
-            ),
-            Expanded(
-              child: BlocBuilder<HomeBloc, HomeState>(
-                builder: (context, state) {
-                  final orders = state.orders ?? [];
+              );
+            },
+          ),
+        ),
+        Expanded(
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
 
-                  switch (state.myOrdersState) {
-                    case RequestState.loading:
-                      return SizedBox(
-                        height: AppSizeHeight.sMaxInfinite,
-                        child: Center(
-                          child: Lottie.asset(LottieManager.carLoading),
-                        ),
-                      );
-                    case RequestState.loaded:
-                      if (orders.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Lottie.asset(LottieManager.noCars),
-                              const SizedBox(height: 12),
-                              TextUtils(
-                                text: "لا توجد طلبات في هذه الحالة",
-                                color: ColorManager.white,
-                                fontSize: FontSize.s14,
-                                fontWeight: FontWeightManager.bold,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount: orders.length,
-                        itemBuilder: (context, index) {
-                          final order = orders[index];
-                          return statusCard(order);
-                        },
-                      );
-                    case RequestState.error:
-                      return Column(
+              final orders = state.ordersByStatus[state.selectedStatus] ?? [];
+
+              switch (state.myOrdersState) {
+                case RequestState.loading:
+                  return SizedBox(
+                    height: AppSizeHeight.sMaxInfinite,
+                    child: Center(
+                      child: Lottie.asset(LottieManager.carLoading),
+                    ),
+                  );
+                case RequestState.loaded:
+                  if (orders.isEmpty) {
+                    return Center(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Center(child: Lottie.asset(LottieManager.noCars)),
+                          Lottie.asset(LottieManager.noCars),
+                          const SizedBox(height: 12),
                           TextUtils(
-                            text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                            text: "لا توجد طلبات في هذه الحالة",
                             color: ColorManager.white,
-                            fontSize: FontSize.s13,
-                            noOfLines: 2,
-                            overFlow: TextOverflow.ellipsis,
+                            fontSize: FontSize.s14,
+                            fontWeight: FontWeightManager.bold,
                           ),
                         ],
-                      );
+                      ),
+                    );
                   }
-                },
-              ),
-            ),
-          ],
+                  return ListView.builder(
+                    itemCount: orders.length,
+                    itemBuilder: (context, index) {
+                      final order = orders[index];
+                      return statusCard(order,context);
+                    },
+                  );
+                case RequestState.error:
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(child: Lottie.asset(LottieManager.noCars)),
+                      TextUtils(
+                        text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                        color: ColorManager.white,
+                        fontSize: FontSize.s13,
+                        noOfLines: 2,
+                        overFlow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  );
+              }
+            },
+          ),
         ),
-      ),
-    );
+      ],
+    ),
+        );
+
   }
 }
 
-Widget statusCard(MyOrders order) {
-  return Card(
+Widget statusCard(MyOrders order ,BuildContext context) {
+  return BlocListener<HomeBloc, HomeState>(
+    listenWhen: (prev, curr) =>
+    prev.updateOrderStatus != curr.updateOrderStatus &&
+        curr.updateOrderStatus == true &&
+        curr.updatingOrderId == order.id,
+    listener: (context, state) {
+      context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+      // Reset state to avoid repeated triggers
+      context.read<HomeBloc>().emit(
+        state.copyWith(
+          updateOrderStatus: false,
+          updateOrderStatusState: UpdateOrderState.initial,
+          updatingOrderId: null,
+        ),
+      );
+    },
+  child: Card(
     shadowColor: ColorManager.primary,
     color: ColorManager.grey,
     margin: const EdgeInsets.all(10),
@@ -247,13 +257,20 @@ Widget statusCard(MyOrders order) {
                     ),
                   ),
                 ),
+                SizedBox(height: AppSizeHeight.s5,),
+                BlocBuilder<HomeBloc, HomeState>(
+  builder: (context, state) {
+    return getStatusButton(order.status,context,order.id,state);
+  },
+),
               ],
             ),
           ),
         ],
       ),
     ),
-  );
+  ),
+);
 }
 
 String getStatusText(int status) {
@@ -272,6 +289,45 @@ String getStatusText(int status) {
       return 'غير معروف';
   }
 }
+Widget getStatusButton(int status, BuildContext context, int orderId, HomeState state) {
+  switch (status) {
+    case 0:
+      return SizedBox();
+    case 1:
+      return CustomButton(
+        onTap: () {
+          context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, 2));
+        },
+        btnColor: ColorManager.primary,
+        shadowColor: ColorManager.primary,
+        widget: buildButtonContent(state.updateOrderStatusState, 'أنا في طريقي'),
+        height: AppSizeHeight.s35,
+      );
+    case 2:
+      return CustomButton(
+        onTap: () {
+          context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, 3));
+        },
+        btnColor: ColorManager.primary,
+        shadowColor: ColorManager.primary,
+        widget: buildButtonContent(state.updateOrderStatusState, 'لقد وصلت'),
+        height: AppSizeHeight.s35,
+      );
+    case 3:
+      return CustomButton(
+        onTap: () {
+          context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, 4));
+        },
+        btnColor: ColorManager.primary,
+        shadowColor: ColorManager.primary,
+        widget: buildButtonContent(state.updateOrderStatusState, 'تم التسليم'),
+        height: AppSizeHeight.s35,
+      );
+    default:
+      return SizedBox();
+  }
+}
+
 
 Color getStatusColor(int status) {
   switch (status) {
@@ -298,4 +354,52 @@ String formatDate(String dateString) {
   } catch (_) {
     return 'تاريخ غير صالح';
   }
+}
+Widget getLoadingWidget(UpdateOrderState state) {
+  if (state == UpdateOrderState.loading) {
+    return Lottie.asset(LottieManager.carLoading);
+  } else if (state == UpdateOrderState.error) {
+    return TextUtils(
+      text: 'حدثت مشكلة تواصل مع المدير',
+      color: ColorManager.background,
+      fontWeight: FontWeightManager.bold,
+    );
+  } else {
+    // initial or loaded
+    return TextUtils(
+      text: 'أنا في طريقي إليك',
+      color: ColorManager.background,
+      fontWeight: FontWeightManager.bold,
+    );
+  }
+}
+Widget buildButtonContent(UpdateOrderState state, String text) {
+  return switch (state) {
+    UpdateOrderState.initial ||
+    UpdateOrderState.loaded => TextUtils(
+      text: text,
+      color: ColorManager.background,
+      fontWeight: FontWeightManager.bold,
+    ),
+    UpdateOrderState.loading => Lottie.asset(LottieManager.carLoading),
+    UpdateOrderState.error => TextUtils(
+      text: 'حدثت مشكلة تواصل مع المدير',
+      color: ColorManager.background,
+      fontWeight: FontWeightManager.bold,
+    ),
+  };
+}
+
+void handleOrderUpdate(BuildContext context, int orderId, int newStatus) {
+  StreamSubscription? subscription;
+  subscription = context.read<HomeBloc>().stream.listen((state) {
+    if (state.updateOrderStatus == true && state.updatingOrderId == orderId) {
+      context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+      subscription?.cancel();
+    }
+  });
+
+  Future.delayed(Duration.zero, () {
+    context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, newStatus));
+  });
 }

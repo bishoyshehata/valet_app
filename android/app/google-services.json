@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1084910218079",
+    "project_id": "valet-fcm",
+    "storage_bucket": "valet-fcm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084910218079:android:8a327082f43eb28426e4ea",
+        "android_client_info": {
+          "package_name": "com.example.valet_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPpN-QBf2jJXCAA3GfctaYtNSVkDZ2NYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

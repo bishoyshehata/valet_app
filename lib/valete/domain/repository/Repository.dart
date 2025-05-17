@@ -14,4 +14,6 @@ abstract class IValetRepository{
   Future<Either<Failure , List<MyGarages>>> myGarages();
   Future<Either<Failure , bool >> storeOrder(StoreOrder storeOrder);
   Future<Either<Failure , List<MyOrders> >> myOrders(int status);
+  Future<Either<Failure , bool >> updateOrderStatus(int orderId , int newStatus);
+
 }

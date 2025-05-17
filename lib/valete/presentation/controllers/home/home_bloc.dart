@@ -1,65 +1,93 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_orders_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/update_order_status_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/my_orders.dart';
 import 'home_events.dart';
 import 'home_states.dart';
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final MyGaragesUseCase myGaragesUseCase;
   final MyOrdersUseCase myOrdersUseCase;
+  final UpdateOrderStatusUseCase updateOrderStatusUseCase;
 
-  HomeBloc(this.myGaragesUseCase, this.myOrdersUseCase, {int initialSelectedStatus = 1})
-      : super(HomeState(selectedStatus: initialSelectedStatus, currentIndex: 0)) {
-
+  HomeBloc(
+    this.myGaragesUseCase,
+    this.myOrdersUseCase,
+    this.updateOrderStatusUseCase, {
+    int initialSelectedStatus = 0,
+  }) : super(
+         HomeState(selectedStatus: initialSelectedStatus, currentIndex: 0),
+       ) {
     // 🚗 تحميل الجراجات
     on<GetMyGaragesEvent>((event, emit) async {
       final result = await myGaragesUseCase.myGarages();
       result.fold(
-            (error) => emit(state.copyWith(
-          myGaragesState: RequestState.error,
-          myGaragesErrorMessage: error.message,
-        )),
-            (data) => emit(state.copyWith(
-          myGaragesState: RequestState.loaded,
-          data: data,
-        )),
+        (error) {
+          emit(
+            state.copyWith(
+              myGaragesState: RequestState.error,
+              myGaragesErrorMessage: error.message,
+            ),
+          );
+        },
+        (data){
+          emit(
+            state.copyWith(myGaragesState: RequestState.loaded, data: data),
+          );
+        }
       );
     });
-
     // 🟠 تحميل الطلبات حسب الحالة + حفظها
     on<GetMyOrdersEvent>((event, emit) async {
       final int status = event.newStatus;
 
       // لو البيانات موجودة بالفعل، غير بس الحالة المختارة
       if (state.ordersByStatus.containsKey(status)) {
-        emit(state.copyWith(
-          selectedStatus: status,
-          myOrdersState: RequestState.loaded,
-        ));
+        emit(
+          state.copyWith(
+            selectedStatus: status,
+            myOrdersState: RequestState.loading, // تغيير مؤقت
+          ),
+        );
+        emit(
+          state.copyWith(
+            selectedStatus: status,
+            myOrdersState: RequestState.loaded,
+          ),
+        );
         return;
       }
 
       // تحميل جديد لو مش موجود
-      emit(state.copyWith(
-        selectedStatus: status,
-        myOrdersState: RequestState.loading,
-      ));
+      emit(
+        state.copyWith(
+          selectedStatus: status,
+          myOrdersState: RequestState.loading,
+        ),
+      );
 
       final result = await myOrdersUseCase.myOrders(status);
       result.fold(
-            (error) => emit(state.copyWith(
-          myOrdersState: RequestState.error,
-          myOrdersErrorMessage: error.message,
-        )),
-            (ordersList) {
-          final updatedMap = Map<int, List<MyOrders>>.from(state.ordersByStatus);
+        (error) => emit(
+          state.copyWith(
+            myOrdersState: RequestState.error,
+            myOrdersErrorMessage: error.message,
+          ),
+        ),
+        (ordersList) {
+          final updatedMap = Map<int, List<MyOrders>>.from(
+            state.ordersByStatus,
+          );
           updatedMap[status] = ordersList;
 
-          emit(state.copyWith(
-            myOrdersState: RequestState.loaded,
-            ordersByStatus: updatedMap,
-          ));
+          emit(
+            state.copyWith(
+              myOrdersState: RequestState.loaded,
+              ordersByStatus: updatedMap,
+            ),
+          );
         },
       );
     });
@@ -72,29 +100,60 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final result = await myOrdersUseCase.myOrders(status);
 
         result.fold(
-              (error) {
-            emit(state.copyWith(
-              myOrdersState: RequestState.error,
-              myOrdersErrorMessage: error.message,
-            ));
+          (error) {
+            emit(
+              state.copyWith(
+                myOrdersState: RequestState.error,
+                myOrdersErrorMessage: error.message,
+              ),
+            );
             return; // وقف اللوب لو في خطأ
           },
-              (data) {
+          (data) {
             newOrdersByStatus[status] = data;
           },
         );
       }
 
-      emit(state.copyWith(
-        myOrdersState: RequestState.loaded,
-        ordersByStatus: newOrdersByStatus,
-      ));
+      emit(
+        state.copyWith(
+          myOrdersState: RequestState.loaded,
+          ordersByStatus: newOrdersByStatus,
+        ),
+      );
     });
-
-
     on<ChangeTabEvent>((event, emit) {
       emit(state.copyWith(currentIndex: event.index));
     });
+    on<UpdateOrderStatusEvent>((event, emit) async {
+      emit(state.copyWith(
+        updateOrderStatusState: UpdateOrderState.loading,
+        updatingOrderId: event.orderId,
+      ));
+      final result = await updateOrderStatusUseCase.updateOrderStatus(
+        event.orderId,
+        event.newStatus,
+      );
+
+      result.fold(
+        (error) => emit(
+          state.copyWith(
+            updateOrderStatusErrorMessage: error.message,
+            updateOrderStatusState: UpdateOrderState.error,
+          ),
+        ),
+        (data) {
+          emit(
+            state.copyWith(
+              updateOrderStatus: data,
+              updateOrderStatusState: UpdateOrderState.loaded,
+              updatingOrderId: event.orderId,
+            ),
+          );
+           add(GetMyOrdersEvent(event.newStatus)); // 👈 حدث الطلبات حسب الحالة الجديدة
+
+        }
+      );
+    });
   }
 }
-

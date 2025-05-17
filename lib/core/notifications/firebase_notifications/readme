@@ -1,0 +1,54 @@
+
+
+
+
+
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.yourapp">
+
+    <!-- الأذونات الأخرى -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- بقية ملف الـ Manifest -->
+</manifest>
+
+
+
+
+
+
+
+
+
+android {
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "com.example.yourapp"
+        minSdkVersion 21
+        targetSdkVersion 33
+        // الإعدادات الأخرى...
+    }
+    // بقية تكوين Gradle...
+}
+
+
+
+
+
+<key>FirebaseAppDelegateProxyEnabled</key>
+<false/>
+<key>NSUserTrackingUsageDescription</key>
+<string>يرجى السماح لنا بتتبع استخدامك لتحسين الخدمة.</string>
+<key>UIBackgroundModes</key>
+<array>
+    <string>remote-notification</string>
+</array>
+
+
+
+
+dependencies:
+  flutter_local_notifications: ^13.0.0

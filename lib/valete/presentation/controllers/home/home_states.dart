@@ -11,7 +11,10 @@ class HomeState {
   final RequestState myOrdersState;
   final String myOrdersErrorMessage;
   final Map<int, List<MyOrders>> ordersByStatus;
-
+  final UpdateOrderState updateOrderStatusState;
+  final String updateOrderStatusErrorMessage;
+  final bool? updateOrderStatus;
+  final int? updatingOrderId;
   HomeState({
     this.myGaragesState = RequestState.loading,
     this.myGaragesErrorMessage = '',
@@ -21,6 +24,10 @@ class HomeState {
     this.myOrdersState = RequestState.loading,
     this.myOrdersErrorMessage = '',
     this.ordersByStatus = const {},
+    this.updateOrderStatus,
+    this.updatingOrderId,
+    this.updateOrderStatusErrorMessage ='',
+    this.updateOrderStatusState =UpdateOrderState.initial
   });
 
   List<MyOrders> get orders => ordersByStatus[selectedStatus] ?? [];
@@ -34,6 +41,10 @@ class HomeState {
     RequestState? myOrdersState,
     String? myOrdersErrorMessage,
     Map<int, List<MyOrders>>? ordersByStatus,
+    UpdateOrderState? updateOrderStatusState,
+    String? updateOrderStatusErrorMessage,
+    bool? updateOrderStatus,
+    int? updatingOrderId
   }) {
     return HomeState(
       myGaragesState: myGaragesState ?? this.myGaragesState,
@@ -44,6 +55,10 @@ class HomeState {
       myOrdersState: myOrdersState ?? this.myOrdersState,
       myOrdersErrorMessage: myOrdersErrorMessage ?? this.myOrdersErrorMessage,
       ordersByStatus: ordersByStatus ?? this.ordersByStatus,
+      updateOrderStatusState: updateOrderStatusState ?? this.updateOrderStatusState,
+      updateOrderStatusErrorMessage: updateOrderStatusErrorMessage ?? this.updateOrderStatusErrorMessage,
+      updateOrderStatus: updateOrderStatus ?? this.updateOrderStatus,
+      updatingOrderId: updatingOrderId ?? this.updatingOrderId,
     );
   }
 }
