@@ -10,6 +10,7 @@ import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
+import '../../../../core/network/api_constants.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../domain/entities/my_orders.dart';
 import '../../components/custom_app_bar.dart';
@@ -21,6 +22,8 @@ import '../../resources/values_manager.dart';
 import '../garage_screen/garage_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
+  ScrollController _chipScrollController = ScrollController();
+
   final int initialSelectedStatus = 0;
   final List<Map<String, dynamic>> statusOptions = const [
     {'id': 0, 'label': 'في الإنتظار'},
@@ -154,10 +157,11 @@ class OrdersScreen extends StatelessWidget {
                       ),
                     );
                   }
+                  final reversedOrders = orders.reversed.toList();
                   return ListView.builder(
                     itemCount: orders.length,
                     itemBuilder: (context, index) {
-                      final order = orders[index];
+                      final order = reversedOrders[index];
                       return statusCard(order,context);
                     },
                   );
@@ -209,10 +213,20 @@ Widget statusCard(MyOrders order ,BuildContext context) {
       child: Row(
         children: [
           // صورة السيارة أو صورة بديلة
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: buildCarTypeImage(order.carType),
+          SizedBox(
+            width: AppSizeWidth.s75,
+            height: AppSizeHeight.s80,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child:  order.carImage != null
+                  ? Image.network(
+                Uri.encodeFull(ApiConstants.baseUrl + "/" + order.carImage!),
+                height: AppSizeHeight.s45,
+                fit: BoxFit.cover,
+              )
+                  : buildCarTypeImage(order.carType)),
           ),
+
           const SizedBox(width: 16),
           // البيانات
           Expanded(
@@ -298,8 +312,10 @@ Widget getStatusButton(int status, BuildContext context, int orderId, HomeState 
         },
         btnColor: ColorManager.primary,
         shadowColor: ColorManager.primary,
-        widget: buildButtonContent(state.updateOrderStatusState, 'أنا في طريقي'),
-        height: AppSizeHeight.s35,
+        widget: buildButtonContent(
+          state.updatingOrderId == orderId ? state.updateOrderStatusState : UpdateOrderState.initial,
+          'أنا في طريقي',
+        ),        height: AppSizeHeight.s35,
       );
     case 2:
       return CustomButton(
@@ -308,7 +324,10 @@ Widget getStatusButton(int status, BuildContext context, int orderId, HomeState 
         },
         btnColor: ColorManager.primary,
         shadowColor: ColorManager.primary,
-        widget: buildButtonContent(state.updateOrderStatusState, 'لقد وصلت'),
+        widget: buildButtonContent(
+          state.updatingOrderId == orderId ? state.updateOrderStatusState : UpdateOrderState.initial,
+          'لقد وصلت',
+        ),
         height: AppSizeHeight.s35,
       );
     case 3:
@@ -318,7 +337,10 @@ Widget getStatusButton(int status, BuildContext context, int orderId, HomeState 
         },
         btnColor: ColorManager.primary,
         shadowColor: ColorManager.primary,
-        widget: buildButtonContent(state.updateOrderStatusState, 'تم التسليم'),
+        widget: buildButtonContent(
+          state.updatingOrderId == orderId ? state.updateOrderStatusState : UpdateOrderState.initial,
+          'تم التسليم',
+        ),
         height: AppSizeHeight.s35,
       );
     default:

@@ -83,12 +83,14 @@ class _MyAppState extends State<MyApp> {
     // App is in foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('📩 Foreground message received');
+      print('📩 Foreground message received ${message.data}');
       context.read<HomeBloc>().add(GetAllMyOrdersEvent());
     });
 
     // App is opened from background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('📩 App opened from background notification');
+      print('📩 App opened from background notification ${message.data}');
       context.read<HomeBloc>().add(GetAllMyOrdersEvent());
     });
 
