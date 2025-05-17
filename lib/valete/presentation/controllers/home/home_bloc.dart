@@ -22,6 +22,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
        ) {
     // 🚗 تحميل الجراجات
     on<GetMyGaragesEvent>((event, emit) async {
+      print('GetAllMyOrdersEvent triggered from notification');
+
       final result = await myGaragesUseCase.myGarages();
       result.fold(
         (error) {
@@ -92,8 +94,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
     });
     on<GetAllMyOrdersEvent>((event, emit) async {
-      emit(state.copyWith(myOrdersState: RequestState.loading));
-
       Map<int, List<MyOrders>> newOrdersByStatus = {};
 
       for (int status = 0; status <= 4; status++) {
@@ -110,7 +110,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             return; // وقف اللوب لو في خطأ
           },
           (data) {
-            newOrdersByStatus[status] = data;
+            newOrdersByStatus[status] = List.from(data);
           },
         );
       }
@@ -124,6 +124,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
     on<ChangeTabEvent>((event, emit) {
       emit(state.copyWith(currentIndex: event.index));
+    });
+    on<ResetOrderUpdateStatus>((event, emit) {
+     emit(
+        state.copyWith(
+          updateOrderStatus: false,
+          updateOrderStatusState: UpdateOrderState.initial,
+          updatingOrderId: null,
+        ),
+      );
     });
     on<UpdateOrderStatusEvent>((event, emit) async {
       emit(state.copyWith(

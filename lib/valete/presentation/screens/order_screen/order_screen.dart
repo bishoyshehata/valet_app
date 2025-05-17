@@ -110,7 +110,9 @@ class OrderScreen extends StatelessWidget {
                   child: Scaffold(
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
-                      title: state.phoneNumber,
+                      title: state.phoneNumber == 'رقم هاتف العميل' ?'رقم هاتف العميل' :  state.phoneNumber.length >= 8
+                          ? state.phoneNumber.replaceRange(0, 8, '########')
+                          : state.phoneNumber,
                       centerTitle: true,
                       titleColor: ColorManager.white,
                       leading: Container(

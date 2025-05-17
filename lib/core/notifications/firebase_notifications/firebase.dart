@@ -2,9 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
-import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
+import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import '../../../valete/presentation/controllers/home/home_bloc.dart';
-import '../../../valete/presentation/resources/colors_manager.dart';
+import '../../../valete/presentation/controllers/home/home_events.dart';
 import '../../services/services_locator.dart';
 import 'data/data_sources/notificaiton_local_data_source.dart';
 import 'data/data_sources/notification_remote_data_source.dart';
@@ -12,7 +12,6 @@ import 'data/repositories/notification_repository_impl.dart';
 import 'domain/entities/notification_entity.dart';
 import 'domain/use_cases/get_notifications_use_case.dart';
 import 'domain/use_cases/request_permission_use_case.dart';
-export 'presentation/pages/notification_page.dart';
 
 final getIt = GetIt.instance;
 
@@ -31,16 +30,12 @@ class FirebaseFcm {
       getIt<NotificationRemoteDataSource>(),
       getIt<NotificationLocalDataSource>(),
     );
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        print('📩 Foreground message: ${message.notification!.title}');
-        final homeBloc = sl<HomeBloc>();
-        homeBloc.add(GetAllMyOrdersEvent());
-      }
-    });
+
 
     getIt.registerSingleton<RequestPermissionUseCase>(RequestPermissionUseCase(repository));
     getIt.registerSingleton<GetNotificationsUseCase>(GetNotificationsUseCase(repository));
+
+
 
 
     // الاشتراك في الإشعارات
@@ -50,27 +45,7 @@ class FirebaseFcm {
     _subscribeToTopics();
 
   }
-  // static void _handleIncomingNotification(Map<String, dynamic> data) {
-  //   try {
-  //     final String rawJson = data['data'];
-  //     final Map<String, dynamic> innerData = json.decode(rawJson);
-  //
-  //     final String type = data['type'];
-  //     print("sssssssssssaaaaaaaaaaaaaaaaaaaaaaa$type");
-  //     if (type == "order_update") {
-  //       final int orderId = innerData['id'];
-  //       final String clientName = innerData['client'];
-  //
-  //       print("🔄 Order updated for client: $clientName - Order ID: $orderId");
-  //
-  //       // شغل الـ BLoC لتحديث الطلبات من السيرفر أو محلي
-  //       final homeBloc = sl<HomeBloc>();
-  //       homeBloc.add(GetAllMyOrdersEvent());
-  //     }
-  //   } catch (e) {
-  //     print("❌ Error parsing notification data: $e");
-  //   }
-  // }
+
   static Future<void> _requestPermission() async {
     await getIt<GetNotificationsUseCase>().repository.requestPermission();
   }
@@ -94,7 +69,6 @@ class FirebaseFcm {
 
 
   static void _showNotification(NotificationEntity message) async {
-
     // إعدادات Android
     AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(

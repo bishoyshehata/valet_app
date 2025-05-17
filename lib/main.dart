@@ -55,25 +55,51 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider<HomeBloc>(
-          create: (context) => HomeBloc(
-            sl<MyGaragesUseCase>(),
-            sl<MyOrdersUseCase>(),
-            sl<UpdateOrderStatusUseCase>(),
-          )
+          create: (context) =>
+          HomeBloc(sl<MyGaragesUseCase>(), sl<MyOrdersUseCase>(),sl<UpdateOrderStatusUseCase>())
             ..add(GetMyGaragesEvent())
             ..add(GetMyOrdersEvent(0)),
         ),
+        // BlocProviders تانية لو فيه
       ],
       child: MyApp(),
     ),
   );
-
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  @override
+  void initState() {
+    super.initState();
+
+    // App is in foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('📩 Foreground message received');
+      context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+    });
+
+    // App is opened from background
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('📩 App opened from background notification');
+      context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+    });
+
+    // App launched from terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        print('📩 App launched from terminated by notification');
+        context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -84,7 +110,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Valet App',
-          home:MainScreen(),
+          home: MainScreen(),
         );
       },
     );

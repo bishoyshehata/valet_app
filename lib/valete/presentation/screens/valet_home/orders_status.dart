@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,7 @@ import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
+import '../../../../core/services/services_locator.dart';
 import '../../../domain/entities/my_orders.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/text/text_utils.dart';
@@ -121,6 +123,7 @@ class OrdersScreen extends StatelessWidget {
         ),
         Expanded(
           child: BlocBuilder<HomeBloc, HomeState>(
+            // buildWhen: (previous, current) => previous.orders != current.orders ,
             builder: (context, state) {
 
               final orders = state.ordersByStatus[state.selectedStatus] ?? [];
@@ -184,6 +187,7 @@ class OrdersScreen extends StatelessWidget {
 }
 
 Widget statusCard(MyOrders order ,BuildContext context) {
+
   return BlocListener<HomeBloc, HomeState>(
     listenWhen: (prev, curr) =>
     prev.updateOrderStatus != curr.updateOrderStatus &&
@@ -192,13 +196,7 @@ Widget statusCard(MyOrders order ,BuildContext context) {
     listener: (context, state) {
       context.read<HomeBloc>().add(GetAllMyOrdersEvent());
       // Reset state to avoid repeated triggers
-      context.read<HomeBloc>().emit(
-        state.copyWith(
-          updateOrderStatus: false,
-          updateOrderStatusState: UpdateOrderState.initial,
-          updatingOrderId: null,
-        ),
-      );
+      context.read<HomeBloc>().add(ResetOrderUpdateStatus());
     },
   child: Card(
     shadowColor: ColorManager.primary,
