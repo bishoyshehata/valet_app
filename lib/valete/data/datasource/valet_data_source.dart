@@ -19,18 +19,21 @@ abstract class IValetDataSource {
 }
 class ValetDataSource extends IValetDataSource {
   final Dio dio;
+  late SharedPreferences prefs;
 
   ValetDataSource(this.dio);
 
   @override
   Future<ValetModel> login(String phone, String password) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
+
+      String? deviceToken = prefs.getString('deviceToken');
 
       final response = await dio.post(ApiConstants.baseUrl +ApiConstants.loginEndPoint, data: {
         'phone': phone,
         'password': password,
-        'DeviceToken': 'abc-456',
+        'deviceToken':deviceToken,
       },
         options: Options(
           validateStatus: (status) => true,
@@ -63,7 +66,8 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<CreateOrderModel> createOrder() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
+
       String? accessToken = prefs.getString('accessToken');
 
       final response = await dio.post(ApiConstants.baseUrl +ApiConstants.createOrderEndPoint,
@@ -94,7 +98,8 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future< List<MyGaragesModel>> myGarages()async{
     try {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
+
       String? accessToken = prefs.getString('accessToken');
 
       final response = await dio.post(ApiConstants.baseUrl +ApiConstants.myGaragesEndPoint,
@@ -129,7 +134,8 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<bool> storeOrder(StoreOrder storeOrder) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
+
       String? accessToken = prefs.getString('accessToken');
       final formMap = {
         'ClientNumber': storeOrder.ClientNumber,
@@ -171,7 +177,8 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<List<MyOrdersModel>> myOrders(int status)async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
+
       String? accessToken = prefs.getString('accessToken');
 
       final response = await dio.get(ApiConstants.baseUrl +ApiConstants.myOrdersEndPoint,
@@ -206,7 +213,8 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<bool> updateOrderStatus(int orderId, int newStatus) async{
     try {
-      final prefs = await SharedPreferences.getInstance();
+      prefs = await SharedPreferences.getInstance();
+
       String? accessToken = prefs.getString('accessToken');
       final response = await dio.post(
         ApiConstants.updateOrderStatusEndPoint(orderId,newStatus),

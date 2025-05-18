@@ -5,11 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_orders_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/update_order_status_use_case.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
+import 'package:valet_app/valete/presentation/screens/login/login.dart';
+import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
 import 'core/notifications/firebase_notifications/firebase.dart';
 import 'core/services/services_locator.dart';
@@ -47,6 +51,9 @@ void main() async {
   await FirebaseFcm.setUp();
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
   final fcmToken = await messaging.getToken();
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('deviceToken', fcmToken.toString());
+
   print("📲 FCM Token: $fcmToken");
 
   ServicesLocator().onInit();
@@ -112,7 +119,7 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Valet App',
-          home: MainScreen(),
+          home: SplashScreen(),
         );
       },
     );

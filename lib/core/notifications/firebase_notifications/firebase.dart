@@ -37,7 +37,6 @@ class FirebaseFcm {
 
 
 
-
     // الاشتراك في الإشعارات
     _requestPermission();
     _subscribeToNotifications();

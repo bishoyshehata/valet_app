@@ -10,6 +10,7 @@ class AssetsManager {
   static String van = 'assets/images/van.png';
   static String scanMe = 'assets/images/scan_me.png';
   static String logo = 'assets/images/logo.png';
+  static String valet = 'assets/images/valet.png';
 
 
 
