@@ -5,7 +5,7 @@ import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
-import 'package:valet_app/valete/presentation/screens/valet_home/valet_profile.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/profile/valet_profile.dart';
 import '../../controllers/home/home_events.dart';
 import 'orders_status.dart';
 

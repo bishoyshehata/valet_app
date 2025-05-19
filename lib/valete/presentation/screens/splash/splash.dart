@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/colors_manager.dart';
@@ -39,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (accessToken != null) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        MaterialPageRoute(builder: (context) => MainScreen()),
       );
     } else {
       Navigator.push(

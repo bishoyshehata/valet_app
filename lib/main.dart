@@ -10,7 +10,7 @@ import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_events.dart';
-import 'package:valet_app/valete/presentation/controllers/profile/delete_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
 import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
 import 'core/notifications/firebase_notifications/firebase.dart';
 import 'core/services/services_locator.dart';
@@ -64,9 +64,9 @@ void main() async {
         ), BlocProvider<MyOrdersBloc>(
           create: (context) =>
           sl<MyOrdersBloc>()
-        ),BlocProvider<DeleteBloc>(
+        ),BlocProvider<ProfileBloc>(
           create: (context) =>
-          sl<DeleteBloc>()
+          sl<ProfileBloc>()
         ),
         // BlocProviders تانية لو فيه
       ],
