@@ -15,5 +15,6 @@ abstract class IValetRepository{
   Future<Either<Failure , bool >> storeOrder(StoreOrder storeOrder);
   Future<Either<Failure , List<MyOrders> >> myOrders(int status);
   Future<Either<Failure , bool >> updateOrderStatus(int orderId , int newStatus);
+  Future<Either<Failure , bool >> deleteValet(int valetId);
 
 }

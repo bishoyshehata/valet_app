@@ -16,6 +16,7 @@ abstract class IValetDataSource {
   Future<bool> storeOrder(StoreOrder storeOrder);
   Future<List<MyOrdersModel>> myOrders(int status);
   Future<bool> updateOrderStatus(int orderId,int newStatus);
+  Future<bool> deleteValet(int valetId);
 }
 class ValetDataSource extends IValetDataSource {
   final Dio dio;
@@ -228,6 +229,36 @@ class ValetDataSource extends IValetDataSource {
       );
       if (response.statusCode == 200) {
         final result = response.data['data'] ;
+        return result;
+      } else {
+        throw ServerFailure( response.data['messages'][0]);
+      }
+    } on ServerException catch (e) {
+      throw ServerException(
+          errorMessageModel: e.errorMessageModel
+      );
+
+    }
+  }
+
+  @override
+  Future<bool> deleteValet(int valetId) async{
+    try {
+      prefs = await SharedPreferences.getInstance();
+
+      String? accessToken = prefs.getString('accessToken');
+      final response = await dio.post(
+        ApiConstants.deleteValetEndPoint(valetId),
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          },
+          validateStatus: (status) => true,
+        ),
+      );
+      if (response.statusCode == 200) {
+        final result = response.data['succeeded'] ;
         return result;
       } else {
         throw ServerFailure( response.data['messages'][0]);

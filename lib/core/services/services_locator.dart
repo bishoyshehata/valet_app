@@ -4,13 +4,16 @@ import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/data/repository/repository.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/delete_account_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/login_use_case.dart';
+import 'package:valet_app/valete/presentation/controllers/profile/delete_bloc.dart';
 
 import '../../valete/domain/usecases/my_garages_use_case.dart';
 import '../../valete/domain/usecases/my_orders_use_case.dart';
 import '../../valete/domain/usecases/store_order_use_case.dart';
 import '../../valete/domain/usecases/update_order_status_use_case.dart';
 import '../../valete/presentation/controllers/home/home_bloc.dart';
+import '../../valete/presentation/controllers/myorders/my_orders_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -21,7 +24,13 @@ class ServicesLocator {
 
     /// HomeBloc
     sl.registerLazySingleton<HomeBloc>(
-      () => HomeBloc(sl<MyGaragesUseCase>(), sl<MyOrdersUseCase>(),sl<UpdateOrderStatusUseCase>()),
+      () => HomeBloc(sl<MyGaragesUseCase>()),
+    ); /// MyOrdersBloc
+    sl.registerLazySingleton<MyOrdersBloc>(
+      () => MyOrdersBloc(sl<MyOrdersUseCase>(),sl<UpdateOrderStatusUseCase>()),
+    ); /// DeleteBloc
+    sl.registerLazySingleton<DeleteBloc>(
+      () => DeleteBloc(sl<DeleteValedUseCase>()),
     );
 
     /// DataSources
@@ -46,5 +55,7 @@ class ServicesLocator {
     sl.registerLazySingleton(() => MyOrdersUseCase(sl()));
     /// UpdateOrderStatusUseCase
     sl.registerLazySingleton(() => UpdateOrderStatusUseCase(sl()));
+    /// DeleteValedUseCase
+    sl.registerLazySingleton(() => DeleteValedUseCase(sl()));
   }
 }

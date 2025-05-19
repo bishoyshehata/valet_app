@@ -71,4 +71,14 @@ class ValetRepository extends IValetRepository {
       return Left(ServerFailure(failure.message));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> deleteValet(int valetId)async {
+    try {
+      final result = await valetDataSource.deleteValet(valetId);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message));
+    }
+  }
 }

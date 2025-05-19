@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,22 +7,21 @@ import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
-import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
-import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import '../../../../core/network/api_constants.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../domain/entities/my_orders.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/text/text_utils.dart';
-import '../../controllers/home/home_events.dart';
+import '../../controllers/myorders/my_orders_bloc.dart';
+import '../../controllers/myorders/my_orders_events.dart';
+import '../../controllers/myorders/my_orders_states.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
 import '../garage_screen/garage_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
-  ScrollController _chipScrollController = ScrollController();
 
   final int initialSelectedStatus = 0;
   final List<Map<String, dynamic>> statusOptions = const [
@@ -34,223 +32,225 @@ class OrdersScreen extends StatelessWidget {
     {'id': 4, 'label': 'تم التسليم'},
   ];
 
+  const OrdersScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+    context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
 
     return Scaffold(
-      backgroundColor: ColorManager.background,
-      appBar: CustomAppBar(
-        title: 'إدارة الطلبات',
-        centerTitle: false,
-        titleColor: ColorManager.white,
-        leading: Container(
-          alignment: Alignment.center,
-          margin: EdgeInsets.all(AppMargin.m4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSizeHeight.s50),
-            color: ColorManager.grey,
-          ),
-          child: Icon(Icons.note_alt_rounded, color: ColorManager.white),
-        ),
-      ),
-
-      body: Column(
-        children: [
-          SizedBox(
-            height: 70,
-            child: BlocBuilder<HomeBloc, HomeState>(
-              // buildWhen: (prev, curr) => prev.selectedStatus != curr.selectedStatus,
-              builder: (context, state) {
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: statusOptions.length,
-                  itemBuilder: (context, index) {
-                    final option = statusOptions[index];
-                    final isSelected = state.selectedStatus == option['id'];
-
-                    return Container(
-                      margin: EdgeInsets.only(top: AppMargin.m8),
-                      padding: EdgeInsets.all(AppPadding.p6),
-                      child: Stack(
-                        children: [
-                          ChoiceChip(
-                            elevation: 3,
-                            shadowColor: ColorManager.primary,
-                            label: Text(option['label']),
-                            selected: isSelected,
-                            onSelected: (_) {
-                              context.read<HomeBloc>().add(
-                                GetMyOrdersEvent(option['id']),
-                              );
-                            },
-                            selectedColor: ColorManager.primary,
-                            backgroundColor: ColorManager.grey,
-                            labelStyle: GoogleFonts.cairo(
-                              color:
-                                  isSelected
-                                      ? ColorManager.background
-                                      : ColorManager.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            height: 20,
-                            width: 20,
-                            decoration: BoxDecoration(
-                              color: ColorManager.background,
-                              border: Border.all(
-                                color: ColorManager.white,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                AppSizeHeight.s50,
-                              ),
-                            ),
-                            child: TextUtils(
-                              text:
-                                  '${state.ordersByStatus[option['id']]?.length ?? 0}',
-                              fontSize: FontSize.s10,
-                              color: ColorManager.white,
-                              fontWeight: FontWeightManager.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
+        backgroundColor: ColorManager.background,
+        appBar: CustomAppBar(
+          title: 'إدارة الطلبات',
+          centerTitle: false,
+          titleColor: ColorManager.white,
+          leading: Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.all(AppMargin.m4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSizeHeight.s50),
+              color: ColorManager.grey,
             ),
+            child: Icon(Icons.note_alt_rounded, color: ColorManager.white),
           ),
-          Expanded(
-            child: BlocBuilder<HomeBloc, HomeState>(
-              // buildWhen: (previous, current) => previous.orders != current.orders ,
-              builder: (context, state) {
-                final orders = state.ordersByStatus[state.selectedStatus] ?? [];
+        ),
 
-                switch (state.myOrdersState) {
-                  case RequestState.loading:
-                    return SizedBox(
-                      height: AppSizeHeight.sMaxInfinite,
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder:
-                            (context, index) => Shimmer.fromColors(
-                              baseColor: Colors.grey[850]!,
-                              highlightColor: Colors.grey[800]!,
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                  right: AppMargin.m12,
-                                  top: AppMargin.m12,
-                                  left: AppMargin.m12,
-                                ),
-                                height: AppSizeHeight.s120,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
+        body: Column(
+          children: [
+            SizedBox(
+              height: 70,
+              child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                // buildWhen: (prev, curr) => prev.selectedStatus != curr.selectedStatus,
+                builder: (context, state) {
+                  return ListView.builder(
+
+                    scrollDirection: Axis.horizontal,
+                    itemCount: statusOptions.length,
+                    itemBuilder: (context, index) {
+                      final option = statusOptions[index];
+                      final isSelected = state.selectedStatus == option['id'];
+
+                      return Container(
+                        margin: EdgeInsets.only(top: AppMargin.m8),
+                        padding: EdgeInsets.all(AppPadding.p6),
+                        child: Stack(
+                          children: [
+                            ChoiceChip(
+                              elevation: 3,
+                              shadowColor: ColorManager.primary,
+                              label: Text(option['label']),
+                              selected: isSelected,
+                              onSelected: (_) {
+                                context.read<MyOrdersBloc>().add(
+                                  GetMyOrdersEvent(option['id']),
+                                );
+                              },
+                              selectedColor: ColorManager.primary,
+                              backgroundColor: ColorManager.grey,
+                              labelStyle: GoogleFonts.cairo(
+                                color:
+                                    isSelected
+                                        ? ColorManager.background
+                                        : ColorManager.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                        separatorBuilder:
-                            (context, index) => SizedBox(height: 10),
-                        itemCount: 4,
-                      ),
-                    );
-                  case RequestState.loaded:
-                    if (orders.isEmpty) {
-                      return FutureBuilder(
-                        future: Future.delayed(Duration(seconds: 2)),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState != ConnectionState.done) {
-                            // بنعرض shimmer مؤقت لحد ما نفحص فعلاً إن مفيش طلبات
-                            return SizedBox(
-                              height: AppSizeHeight.sMaxInfinite,
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) => Shimmer.fromColors(
-                                  baseColor: Colors.grey[850]!,
-                                  highlightColor: Colors.grey[800]!,
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: AppMargin.m12,
-                                      vertical: AppMargin.m12,
-                                    ),
-                                    height: AppSizeHeight.s120,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                color: ColorManager.background,
+                                border: Border.all(
+                                  color: ColorManager.white,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  AppSizeHeight.s50,
+                                ),
+                              ),
+                              child: TextUtils(
+                                text:
+                                    '${state.ordersByStatus[option['id']]?.length ?? 0}',
+                                fontSize: FontSize.s10,
+                                color: ColorManager.white,
+                                fontWeight: FontWeightManager.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                // buildWhen: (previous, current) => previous.orders != current.orders ,
+                builder: (context, state) {
+                  final orders = state.ordersByStatus[state.selectedStatus] ?? [];
+
+                  switch (state.myOrdersState) {
+                    case RequestState.loading:
+                      return SizedBox(
+                        height: AppSizeHeight.sMaxInfinite,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder:
+                              (context, index) => Shimmer.fromColors(
+                                baseColor: Colors.grey[850]!,
+                                highlightColor: Colors.grey[800]!,
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    right: AppMargin.m12,
+                                    top: AppMargin.m12,
+                                    left: AppMargin.m12,
+                                  ),
+                                  height: AppSizeHeight.s120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
-                                separatorBuilder: (context, index) => SizedBox(height: 10),
-                                itemCount: 4,
                               ),
-                            );
-                          } else {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Lottie.asset(LottieManager.noCars),
-                                  const SizedBox(height: 12),
-                                  TextUtils(
-                                    text: "لا توجد طلبات في هذه الحالة",
-                                    color: ColorManager.white,
-                                    fontSize: FontSize.s14,
-                                    fontWeight: FontWeightManager.bold,
+                          separatorBuilder:
+                              (context, index) => SizedBox(height: 10),
+                          itemCount: 4,
+                        ),
+                      );
+                    case RequestState.loaded:
+                      if (orders.isEmpty) {
+                        return FutureBuilder(
+                          future: Future.delayed(Duration(seconds: 2)),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState != ConnectionState.done) {
+                              // بنعرض shimmer مؤقت لحد ما نفحص فعلاً إن مفيش طلبات
+                              return SizedBox(
+                                height: AppSizeHeight.sMaxInfinite,
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) => Shimmer.fromColors(
+                                    baseColor: Colors.grey[850]!,
+                                    highlightColor: Colors.grey[800]!,
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: AppMargin.m12,
+                                        vertical: AppMargin.m12,
+                                      ),
+                                      height: AppSizeHeight.s120,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                    ),
                                   ),
-                                ],
-                              ),
-                            );
-                          }
+                                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                                  itemCount: 4,
+                                ),
+                              );
+                            } else {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Lottie.asset(LottieManager.noCars),
+                                    const SizedBox(height: 12),
+                                    TextUtils(
+                                      text: "لا توجد طلبات في هذه الحالة",
+                                      color: ColorManager.white,
+                                      fontSize: FontSize.s14,
+                                      fontWeight: FontWeightManager.bold,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          final order = orders[index];
+                          return statusCard(order, context);
                         },
                       );
-                    }
-                    final reversedOrders = orders.reversed.toList();
-                    return ListView.builder(
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        final order = reversedOrders[index];
-                        return statusCard(order, context);
-                      },
-                    );
-                  case RequestState.error:
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(child: Lottie.asset(LottieManager.noCars)),
-                        TextUtils(
-                          text: "يوجد خطب ما بالجراج وجارى إصلاحه",
-                          color: ColorManager.white,
-                          fontSize: FontSize.s13,
-                          noOfLines: 2,
-                          overFlow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    );
-                }
-              },
+                    case RequestState.error:
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(child: Lottie.asset(LottieManager.noCars)),
+                          TextUtils(
+                            text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                            color: ColorManager.white,
+                            fontSize: FontSize.s13,
+                            noOfLines: 2,
+                            overFlow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      );
+                  }
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
   }
 }
 
 Widget statusCard(MyOrders order, BuildContext context) {
-  return BlocListener<HomeBloc, HomeState>(
+  return BlocListener<MyOrdersBloc, MyOrdersState>(
     listenWhen:
         (prev, curr) =>
             prev.updateOrderStatus != curr.updateOrderStatus &&
             curr.updateOrderStatus == true &&
             curr.updatingOrderId == order.id,
     listener: (context, state) {
-      context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
       // Reset state to avoid repeated triggers
-      context.read<HomeBloc>().add(ResetOrderUpdateStatus());
+      context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
     },
     child: Card(
       shadowColor: ColorManager.primary,
@@ -324,7 +324,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                     ),
                   ),
                   SizedBox(height: AppSizeHeight.s5),
-                  BlocBuilder<HomeBloc, HomeState>(
+                  BlocBuilder<MyOrdersBloc, MyOrdersState>(
                     builder: (context, state) {
                       return getStatusButton(
                         order.status,
@@ -365,7 +365,7 @@ Widget getStatusButton(
   int status,
   BuildContext context,
   int orderId,
-  HomeState state,
+  MyOrdersState state,
 ) {
   switch (status) {
     case 0:
@@ -373,7 +373,7 @@ Widget getStatusButton(
     case 1:
       return CustomButton(
         onTap: () {
-          context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, 2));
+          context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 2));
         },
         btnColor: ColorManager.primary,
         shadowColor: ColorManager.primary,
@@ -388,7 +388,7 @@ Widget getStatusButton(
     case 2:
       return CustomButton(
         onTap: () {
-          context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, 3));
+          context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 3));
         },
         btnColor: ColorManager.primary,
         shadowColor: ColorManager.primary,
@@ -403,7 +403,7 @@ Widget getStatusButton(
     case 3:
       return CustomButton(
         onTap: () {
-          context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, 4));
+          context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 4));
         },
         btnColor: ColorManager.primary,
         shadowColor: ColorManager.primary,
@@ -484,14 +484,14 @@ Widget buildButtonContent(UpdateOrderState state, String text) {
 
 void handleOrderUpdate(BuildContext context, int orderId, int newStatus) {
   StreamSubscription? subscription;
-  subscription = context.read<HomeBloc>().stream.listen((state) {
+  subscription = context.read<MyOrdersBloc>().stream.listen((state) {
     if (state.updateOrderStatus == true && state.updatingOrderId == orderId) {
-      context.read<HomeBloc>().add(GetAllMyOrdersEvent());
+      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
       subscription?.cancel();
     }
   });
 
   Future.delayed(Duration.zero, () {
-    context.read<HomeBloc>().add(UpdateOrderStatusEvent(orderId, newStatus));
+    context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, newStatus));
   });
 }
