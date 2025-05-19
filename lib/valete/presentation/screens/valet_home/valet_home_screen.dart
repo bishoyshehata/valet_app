@@ -24,7 +24,6 @@ class ValetHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<HomeBloc>().add(GetMyGaragesEvent());
     Future<String> getValetName() async {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString('valetName') ?? '';
@@ -56,106 +55,104 @@ class ValetHomeScreen extends StatelessWidget {
               ),
             ),
 
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: AppSizeHeight.s10),
-                    Align(
-                      alignment: Alignment.center,
-
-                      child: CustomButton(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      OrderScreen(), // pass the updated phone
-                            ),
-                          );
-                        },
-                        elevation: 5,
-                        btnColor: ColorManager.primary,
-                        shadowColor: ColorManager.white,
-                        widget: TextUtils(
-                          text: 'إضافة طلب',
-                          fontSize: FontSize.s20,
-                          color: ColorManager.background,
-                          fontWeight: FontWeightManager.bold,
-                        ),
+            body: RefreshIndicator(
+              onRefresh: () async {
+                context.read<HomeBloc>().add(GetMyGaragesEvent());
+              },
+              child: ListView(
+                padding: EdgeInsets.zero,
+                physics: const AlwaysScrollableScrollPhysics(), // مهم جدًا
+                children: [
+                  SizedBox(height: AppSizeHeight.s10),
+                  Align(
+                    alignment: Alignment.center,
+                    child: CustomButton(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => OrderScreen()),
+                        );
+                      },
+                      elevation: 5,
+                      btnColor: ColorManager.primary,
+                      shadowColor: ColorManager.white,
+                      widget: TextUtils(
+                        text: 'إضافة طلب',
+                        fontSize: FontSize.s20,
+                        color: ColorManager.background,
+                        fontWeight: FontWeightManager.bold,
                       ),
                     ),
-                    SizedBox(height: AppSizeHeight.s5),
-                    switch (state.myGaragesState) {
-                      RequestState.loading => SizedBox(
-                        height: AppSizeHeight.sMaxInfinite,
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          itemBuilder:
-                              (context, index) => Shimmer.fromColors(
-                                baseColor: Colors.grey[850]!,
-                                highlightColor: Colors.grey[800]!,
-                                child: Container(
-                                  margin: EdgeInsets.only(right: AppMargin.m12 ,top:  AppMargin.m12, left:  AppMargin.m12),
-                                  height: AppSizeHeight.s120,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ),
-                              ),
-                          separatorBuilder:
-                              (context, index) => SizedBox(height: 10),
-                          itemCount: 4,
+                  ),
+                  SizedBox(height: AppSizeHeight.s5),
+
+                  switch (state.myGaragesState) {
+                    RequestState.loading => ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => Shimmer.fromColors(
+                        baseColor: Colors.grey[850]!,
+                        highlightColor: Colors.grey[800]!,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: AppMargin.m12,
+                            vertical: AppMargin.m12,
+                          ),
+                          height: AppSizeHeight.s120,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
                       ),
-                      RequestState.loaded =>
-                      state.data!.isEmpty ? Lottie.asset(LottieManager.noCars):
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: state.data!.length,
-                        itemBuilder: (context, index) {
-                          final garage = state.data![index];
-                          return InkWell(
-                            onTap: () {
-                              // context.read<HomeBloc>().add(GetMyGaragesEvent());
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GarageScreen(garageIndex: index),
-                                ),
-                              );
-                            },
-                            child: GarageCard(
-                              name: garage.name,
-                              address: garage.address,
-                              spot: garage.spots,
-                              capacity: garage.capacity,
-
-                            ),
-                          );
-                        },
-                      ),
-                      RequestState.error => Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(child: Lottie.asset(LottieManager.noCars)),
-                          TextUtils(
-                            text: "يوجد خطب ما بالجراج وجارى إصلاحه",
-                            color: ColorManager.white,
-                            fontSize: FontSize.s13,
-                            noOfLines: 2,
-                            overFlow: TextOverflow.ellipsis,
+                      separatorBuilder: (context, index) => SizedBox(height: 10),
+                      itemCount: 4,
+                    ),
+                    RequestState.loaded => state.data!.isEmpty
+                        ? Lottie.asset(LottieManager.noCars)
+                        : ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: state.data!.length,
+                      itemBuilder: (context, index) {
+                        final garage = state.data![index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GarageScreen(garageIndex: index),
+                              ),
+                            );
+                          },
+                          child: GarageCard(
+                            name: garage.name,
+                            address: garage.address,
+                            spot: garage.spots,
+                            capacity: garage.capacity,
                           ),
-                        ],
-                      ),
-                    },
-                  ],
-                ),
+                        );
+                      },
+                    ),
+                    RequestState.error => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(child: Lottie.asset(LottieManager.noCars)),
+                        TextUtils(
+                          text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                          color: ColorManager.white,
+                          fontSize: FontSize.s13,
+                          noOfLines: 2,
+                          overFlow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  },
+                ],
               ),
-            );
+            ),
+
+          );
           },
         );
   }
