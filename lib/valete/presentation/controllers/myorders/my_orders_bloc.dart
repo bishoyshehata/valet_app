@@ -128,5 +128,14 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
         }
       );
     });
+    on<ResetOrderUpdateStatus>((event, emit) {
+      emit(
+        state.copyWith(
+          updateOrderStatus: false,
+          updateOrderStatusState: UpdateOrderState.initial,
+          updatingOrderId: null,
+        ),
+      );
+    });
   }
 }

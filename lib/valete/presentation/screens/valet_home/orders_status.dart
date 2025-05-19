@@ -249,7 +249,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
             curr.updatingOrderId == order.id,
     listener: (context, state) {
       context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-      // Reset state to avoid repeated triggers
+      // // Reset state to avoid repeated triggers
       context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
     },
     child: Card(
