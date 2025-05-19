@@ -12,10 +12,13 @@ class DeleteBloc extends Bloc<DeleteEvent, DeleteState> {
     this.deleteValedUseCase, {
     int initialSelectedStatus = 0,
   }) : super( DeleteState()) {
+
+
     on<DeleteValetEvent>((event, emit) async {
       final result = await deleteValedUseCase.deleteValet(event.valetId);
       result.fold(
         (error) => emit(
+
           state.copyWith(
             deleteErrorMessage: error.message,
             deleteState: RequestState.error,

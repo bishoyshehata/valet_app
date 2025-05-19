@@ -247,7 +247,7 @@ class ValetDataSource extends IValetDataSource {
       prefs = await SharedPreferences.getInstance();
 
       String? accessToken = prefs.getString('accessToken');
-      final response = await dio.post(
+      final response = await dio.delete(
         ApiConstants.deleteValetEndPoint(valetId),
         options: Options(
           headers: {

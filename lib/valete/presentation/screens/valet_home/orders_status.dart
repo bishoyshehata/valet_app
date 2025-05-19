@@ -9,7 +9,6 @@ import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import '../../../../core/network/api_constants.dart';
-import '../../../../core/services/services_locator.dart';
 import '../../../domain/entities/my_orders.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/text/text_utils.dart';

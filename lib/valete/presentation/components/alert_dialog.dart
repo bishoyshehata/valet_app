@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
-
 import '../resources/colors_manager.dart';
 import '../resources/font_manager.dart';
 
