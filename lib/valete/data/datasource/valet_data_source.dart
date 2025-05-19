@@ -49,6 +49,7 @@ class ValetDataSource extends IValetDataSource {
         prefs.setString('valetName', result.name.toString());
         prefs.setString('companyName', result.companyName.toString());
         prefs.setString('whatsapp', result.whatsapp.toString());
+        prefs.setString('valetPhone', result.phone.toString());
 
         return result ;
       } else {

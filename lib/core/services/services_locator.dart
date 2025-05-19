@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/data/repository/repository.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
@@ -14,6 +15,7 @@ import '../../valete/domain/usecases/store_order_use_case.dart';
 import '../../valete/domain/usecases/update_order_status_use_case.dart';
 import '../../valete/presentation/controllers/home/home_bloc.dart';
 import '../../valete/presentation/controllers/myorders/my_orders_bloc.dart';
+import '../../valete/presentation/controllers/re_auth/re_auth_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -23,12 +25,22 @@ class ServicesLocator {
     sl.registerLazySingleton<Dio>(() => Dio());
 
     /// HomeBloc
-    sl.registerLazySingleton<HomeBloc>(
-      () => HomeBloc(sl<MyGaragesUseCase>()),
-    ); /// MyOrdersBloc
+    sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>()));
+
+    /// ReAuthBloc
+    sl.registerLazySingletonAsync<SharedPreferences>(
+      () async => await SharedPreferences.getInstance(),
+    );
+    sl.registerLazySingleton<ReAuthBloc>(
+      () => ReAuthBloc(sl<LoginUseCase>(), sl<SharedPreferences>()),
+    );
+
+    /// MyOrdersBloc
     sl.registerLazySingleton<MyOrdersBloc>(
-      () => MyOrdersBloc(sl<MyOrdersUseCase>(),sl<UpdateOrderStatusUseCase>()),
-    ); /// DeleteBloc
+      () => MyOrdersBloc(sl<MyOrdersUseCase>(), sl<UpdateOrderStatusUseCase>()),
+    );
+
+    /// DeleteBloc
     sl.registerLazySingleton<ProfileBloc>(
       () => ProfileBloc(sl<DeleteValedUseCase>()),
     );
@@ -53,8 +65,10 @@ class ServicesLocator {
 
     /// MYOrdersUseCase
     sl.registerLazySingleton(() => MyOrdersUseCase(sl()));
+
     /// UpdateOrderStatusUseCase
     sl.registerLazySingleton(() => UpdateOrderStatusUseCase(sl()));
+
     /// DeleteValedUseCase
     sl.registerLazySingleton(() => DeleteValedUseCase(sl()));
   }
