@@ -35,3 +35,10 @@ class LoginSubmitted extends LoginEvents {
 class TogglePasswordVisibility extends LoginEvents {}
 
 class ResetLoginStatus extends LoginEvents {}
+
+class TokenExpiredEvent extends LoginEvents {}
+class ReAuthSubmittedEvent extends LoginEvents {
+  final String password;
+  final String phone;
+  const ReAuthSubmittedEvent(this.password,this.phone);
+}

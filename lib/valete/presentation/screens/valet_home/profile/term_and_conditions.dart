@@ -4,7 +4,6 @@ import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_states.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../../../../core/services/services_locator.dart';
 import '../../../controllers/profile/profile_bloc.dart';
 import '../../../controllers/profile/profile_events.dart';
 

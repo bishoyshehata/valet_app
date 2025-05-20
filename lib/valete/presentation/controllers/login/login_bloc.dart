@@ -21,11 +21,6 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
         phoneErrorMessage : isValid ? null : 'رقم الهاتف غير صحيح بالنسبة للدولة المختارة',
       ));
     });
-
-
-
-
-
     on<PasswordChanged>((event, emit) {
       final isValid = _validatePassword(event.password);
       emit(
@@ -38,7 +33,6 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
         ),
       );
     });
-
     on<TogglePasswordVisibility>((event, emit) {
 
       emit(state.copyWith(isPasswordObscured: !state.isPasswordObscured,loginStatus: LoginStatus.initial,));
@@ -48,10 +42,8 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
         state.copyWith(loginStatus: LoginStatus.initial, errorMessage: null),
       );
     });
-
     on<LoginSubmitted>((event, emit) async {
       emit(state.copyWith(loginStatus: LoginStatus.loading));
-
       if (state.isFormValid) {
         final result = await loginUseCase.login(state.completePhoneNumber.replaceFirst("+", ''), state.password);
         result.fold(
@@ -63,6 +55,42 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
           },
               (valet) {
             emit(state.copyWith(loginStatus: LoginStatus.success, data: valet));
+          },
+        );
+      } else {
+        emit(
+          state.copyWith(
+            loginStatus: LoginStatus.error,
+            errorMessage: "أسف و لكن عليك إستكمال بياناتك",
+          ),
+        );
+      }
+    });
+    on<TokenExpiredEvent>((event, emit) async {
+      emit(state.copyWith(reAuthStatus: ReAuthStatus.waitingForPassword));
+      print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+    });
+    on<ReAuthSubmittedEvent>((event, emit) async {
+      emit(state.copyWith(loginStatus: LoginStatus.loading , reAuthStatus: ReAuthStatus.loading));
+      final isValid = _validatePassword(event.password);
+
+      if (isValid) {
+
+        final result = await loginUseCase.login(event.phone, event.password);
+        result.fold(
+              (error) {
+                print(error);
+            emit(state.copyWith(
+              loginStatus: LoginStatus.error,
+              errorMessage: error.message,
+              reAuthStatus: ReAuthStatus.error
+            ));
+          },
+              (valet) {
+                print(valet);
+
+            emit(state.copyWith(loginStatus: LoginStatus.success, data: valet, reAuthStatus: ReAuthStatus.success));
           },
         );
       } else {
@@ -94,9 +122,7 @@ bool validatePhoneByCountry(String countryCode, String nationalNumber) {
   }
 }
 
-
-
-
 bool _validatePassword(String password) {
   return password.length >= 8;
 }
+

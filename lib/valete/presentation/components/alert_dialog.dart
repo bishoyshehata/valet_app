@@ -19,11 +19,11 @@ class AlertDialogService {
         String negativeButtonText = 'لا',
         VoidCallback? onPositiveButtonPressed,
         VoidCallback? onNegativeButtonPressed,
-        bool dismissible = false,
+        bool? dismissible,
       }) async {
     return await showDialog<bool>(
       context: context,
-      barrierDismissible: dismissible,
+      barrierDismissible: dismissible ?? false,
       builder: (BuildContext context) {
         return Directionality(
           textDirection: TextDirection.rtl,

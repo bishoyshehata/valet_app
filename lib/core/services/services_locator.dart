@@ -8,14 +8,13 @@ import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/delete_account_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/login_use_case.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
-
 import '../../valete/domain/usecases/my_garages_use_case.dart';
 import '../../valete/domain/usecases/my_orders_use_case.dart';
 import '../../valete/domain/usecases/store_order_use_case.dart';
 import '../../valete/domain/usecases/update_order_status_use_case.dart';
 import '../../valete/presentation/controllers/home/home_bloc.dart';
+import '../../valete/presentation/controllers/login/login_bloc.dart';
 import '../../valete/presentation/controllers/myorders/my_orders_bloc.dart';
-import '../../valete/presentation/controllers/re_auth/re_auth_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -26,15 +25,13 @@ class ServicesLocator {
 
     /// HomeBloc
     sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>()));
+/// LoginBloc
+    sl.registerLazySingleton<LoginBloc>(() => LoginBloc(sl()));
 
     /// ReAuthBloc
     sl.registerLazySingletonAsync<SharedPreferences>(
       () async => await SharedPreferences.getInstance(),
     );
-    sl.registerLazySingleton<ReAuthBloc>(
-      () => ReAuthBloc(sl<LoginUseCase>(), sl<SharedPreferences>()),
-    );
-
     /// MyOrdersBloc
     sl.registerLazySingleton<MyOrdersBloc>(
       () => MyOrdersBloc(sl<MyOrdersUseCase>(), sl<UpdateOrderStatusUseCase>()),

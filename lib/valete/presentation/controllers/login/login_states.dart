@@ -14,6 +14,9 @@ class LoginStates extends Equatable {
   final bool hasInteractedWithPassword;
   final String completePhoneNumber;
   final String? phoneErrorMessage;
+  final ReAuthStatus reAuthStatus;
+  final String reAuthError;
+
   const LoginStates({
     required this.password,
     required this.errorMessage,
@@ -25,7 +28,9 @@ class LoginStates extends Equatable {
     required this.hasInteractedWithPassword,
     required this.hasInteractedWithPhone,
     required this.completePhoneNumber,
-    required this.phoneErrorMessage
+    required this.phoneErrorMessage,
+    required this.reAuthStatus,
+    required this.reAuthError,
   });
 
   @override
@@ -40,7 +45,9 @@ class LoginStates extends Equatable {
     isPasswordObscured,
     hasInteractedWithPassword,
     hasInteractedWithPhone,
-    phoneErrorMessage
+    phoneErrorMessage,
+    reAuthStatus,
+    reAuthError,
   ];
 
   factory LoginStates.initial() {
@@ -56,6 +63,8 @@ class LoginStates extends Equatable {
       hasInteractedWithPhone: false,
       hasInteractedWithPassword: false,
       phoneErrorMessage: null,
+      reAuthStatus: ReAuthStatus.initial,
+      reAuthError: '',
     );
   }
 
@@ -71,6 +80,8 @@ class LoginStates extends Equatable {
     bool? isPasswordObscured,
     bool? hasInteractedWithPhone,
     bool? hasInteractedWithPassword,
+    ReAuthStatus? reAuthStatus,
+    String? reAuthError,
   }) {
     return LoginStates(
       completePhoneNumber: completePhoneNumber ?? this.completePhoneNumber,
@@ -81,12 +92,19 @@ class LoginStates extends Equatable {
       data: data ?? this.data,
       loginStatus: loginStatus ?? this.loginStatus,
       isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
-      hasInteractedWithPhone: hasInteractedWithPhone ?? this.hasInteractedWithPhone,
-      hasInteractedWithPassword: hasInteractedWithPassword ?? this.hasInteractedWithPassword,
+      hasInteractedWithPhone:
+          hasInteractedWithPhone ?? this.hasInteractedWithPhone,
+      hasInteractedWithPassword:
+          hasInteractedWithPassword ?? this.hasInteractedWithPassword,
       phoneErrorMessage: phoneErrorMessage,
+      reAuthStatus: reAuthStatus ?? this.reAuthStatus,
+      reAuthError: reAuthError ?? this.reAuthError,
     );
   }
 
   bool get isFormValid =>
-      isPhoneValid && isPasswordValid && hasInteractedWithPhone && hasInteractedWithPassword;
+      isPhoneValid &&
+      isPasswordValid &&
+      hasInteractedWithPhone &&
+      hasInteractedWithPassword;
 }

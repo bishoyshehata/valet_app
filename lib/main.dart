@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
+import 'package:valet_app/valete/presentation/controllers/login/login_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_events.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
@@ -67,6 +68,9 @@ void main() async {
         ),BlocProvider<ProfileBloc>(
           create: (context) =>
           sl<ProfileBloc>()
+        ),BlocProvider<LoginBloc>(
+          create: (context) =>
+          sl<LoginBloc>()
         ),
         // BlocProviders تانية لو فيه
       ],
