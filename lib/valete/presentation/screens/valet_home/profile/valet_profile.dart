@@ -9,7 +9,10 @@ import 'package:valet_app/valete/presentation/controllers/profile/profile_events
 import 'package:valet_app/valete/presentation/controllers/profile/profile_states.dart';
 import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/profile/term_and_conditions.dart';
+import '../../../../../core/services/services_locator.dart';
 import '../../../components/alert_dialog.dart';
+import '../../../controllers/home/home_bloc.dart';
+import '../../../controllers/home/home_events.dart';
 import '../../../resources/assets_manager.dart';
 import '../../../resources/colors_manager.dart';
 import '../../../resources/font_manager.dart';

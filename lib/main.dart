@@ -61,7 +61,7 @@ void main() async {
       providers: [
         BlocProvider<HomeBloc>(
           create: (context) =>
-          sl<HomeBloc>()..add(GetMyGaragesEvent())
+          sl<HomeBloc>()
         ), BlocProvider<MyOrdersBloc>(
           create: (context) =>
           sl<MyOrdersBloc>()

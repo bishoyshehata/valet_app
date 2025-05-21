@@ -24,8 +24,8 @@ class ServicesLocator {
     sl.registerLazySingleton<Dio>(() => Dio());
 
     /// HomeBloc
-    sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>()));
-/// LoginBloc
+    sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>(),initialSelectedStatus: 0));
+    /// LoginBloc
     sl.registerLazySingleton<LoginBloc>(() => LoginBloc(sl()));
 
     /// ReAuthBloc

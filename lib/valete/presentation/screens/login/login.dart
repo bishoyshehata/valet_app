@@ -28,153 +28,150 @@ class LoginScreen extends StatelessWidget {
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-          backgroundColor: ColorManager.background,
-          appBar: CustomAppBar(
-            title: AppStrings.login,
-            titleColor: ColorManager.white,
-            leading: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.all(AppMargin.m4),
-              child: Icon(Icons.login_sharp, color: ColorManager.white),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppSizeHeight.s50),
-                color: ColorManager.grey,
-              ),
+      child: Scaffold(
+        backgroundColor: ColorManager.background,
+        appBar: CustomAppBar(
+          title: AppStrings.login,
+          titleColor: ColorManager.white,
+          leading: Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.all(AppMargin.m4),
+            child: Icon(Icons.login_sharp, color: ColorManager.white),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSizeHeight.s50),
+              color: ColorManager.grey,
             ),
           ),
-          body: BlocProvider<LoginBloc>(
-            create: (context) {
-              return LoginBloc(sl<LoginUseCase>());
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
-              width: AppSizeWidth.sMaxWidth,
-              height: AppSizeHeight.sMaxInfinite,
-              child: SingleChildScrollView(
-                child: BlocConsumer<LoginBloc, LoginStates>(
-                  listener: (context, state) {
-                    switch (state.loginStatus) {
-                      case LoginStatus.error:
-                        if (state.errorMessage != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.errorMessage!),
-                              backgroundColor: Colors.red,
+        ),
+        body: BlocProvider<LoginBloc>(
+          create: (context) {
+            return LoginBloc(sl<LoginUseCase>());
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: AppPadding.p20),
+            width: AppSizeWidth.sMaxWidth,
+            height: AppSizeHeight.sMaxInfinite,
+            child: SingleChildScrollView(
+              child: BlocConsumer<LoginBloc, LoginStates>(
+                listener: (context, state) {
+                  switch (state.loginStatus) {
+                    case LoginStatus.error:
+                      if (state.errorMessage != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.errorMessage!),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                      break;
+                    case LoginStatus.success:
+                      if (state.data != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MainScreen(),
+                          ),
+                        );
+                      }
+                      break;
+                    default:
+                      break;
+                  }
+                },
+                builder: (context, state) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: AppSizeHeight.s30),
+                      TextUtils(
+                        text: AppStrings.appName,
+                        fontSize: FontSize.s70,
+                        fontFamily: 'modak',
+                        color: ColorManager.primary,
+                      ),
+                      SizedBox(height: AppSizeHeight.s100),
+
+                      // Phone field
+                      CustomPhoneField(
+                        labelText: AppStrings.enterPhone,
+                        labelSize: 15,
+                        errorText:
+                            state.hasInteractedWithPhone
+                                ? state.phoneErrorMessage
+                                : null,
+
+                        onChanged: (phone) {
+                          context.read<LoginBloc>().add(
+                            CompletePhoneChanged(
+                              phoneNumber: phone.number, // ex: 1550637983
+                              countryCode: phone.countryCode.replaceFirst(
+                                '+',
+                                '',
+                              ), // ex: 20
                             ),
                           );
-                        }
-                        break;
-                      case LoginStatus.success:
-                        if (state.data != null) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MainScreen(),
+                        },
+                      ),
+                      SizedBox(height: AppSizeHeight.s20),
+                      // Password field
+                      CustomTextFormField(
+                        labelText: AppStrings.enterPassword,
+                        obscureText: state.isPasswordObscured,
+                        onChanged:
+                            (value) => context.read<LoginBloc>().add(
+                              PasswordChanged(value),
                             ),
-                          );
-                        }
-                        break;
-                      default:
-                        break;
-                    }
-                  },
-                  builder: (context, state) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: AppSizeHeight.s30),
-                        TextUtils(
-                          text: AppStrings.appName,
-                          fontSize: FontSize.s70,
-                          fontFamily: 'modak',
+                        errorText:
+                            state.hasInteractedWithPassword &&
+                                    !state.isPasswordValid
+                                ? 'كلمة السر قصيرة'
+                                : null,
+                        icon: Icon(
+                          Icons.lock_outline,
                           color: ColorManager.primary,
                         ),
-                        SizedBox(height: AppSizeHeight.s100),
-
-                        // Phone field
-                        CustomPhoneField(
-                          labelText: AppStrings.enterPhone,
-                          labelSize: 15,
-                          errorText:
-                              state.hasInteractedWithPhone
-                                  ? state.phoneErrorMessage
-                                  : null,
-
-                          onChanged: (phone) {
-                            context.read<LoginBloc>().add(
-                              CompletePhoneChanged(
-                                phoneNumber: phone.number, // ex: 1550637983
-                                countryCode: phone.countryCode.replaceFirst(
-                                  '+',
-                                  '',
-                                ), // ex: 20
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: AppSizeHeight.s20),
-                        // Password field
-                        CustomTextFormField(
-                          labelText: AppStrings.enterPassword,
-                          obscureText: state.isPasswordObscured,
-                          onChanged:
-                              (value) => context.read<LoginBloc>().add(
-                                PasswordChanged(value),
-                              ),
-                          errorText:
-                              state.hasInteractedWithPassword &&
-                                      !state.isPasswordValid
-                                  ? 'كلمة السر قصيرة'
-                                  : null,
+                        suffixIcon: IconButton(
                           icon: Icon(
-                            Icons.lock_outline,
+                            state.isPasswordObscured
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: ColorManager.primary,
                           ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              state.isPasswordObscured
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: ColorManager.primary,
-                            ),
-                            onPressed:
-                                () => context.read<LoginBloc>().add(
-                                  TogglePasswordVisibility(),
-                                ),
-                          ),
-                        ),
-
-                        SizedBox(height: AppSizeHeight.s100),
-
-                        // Login Button
-                        CustomButton(
-                          onTap: () {
-                            context.read<LoginBloc>().add(
-                              LoginSubmitted(
-                                countryCode: state.completePhoneNumber
-                                    .replaceFirst("+", ''),
+                          onPressed:
+                              () => context.read<LoginBloc>().add(
+                                TogglePasswordVisibility(),
                               ),
-                            );
-                          },
-                          btnColor: ColorManager.primary,
-                          shadowColor: ColorManager.white,
-                          widget:
-                              state.loginStatus == LoginStatus.loading
-                                  ? Lottie.asset(LottieManager.carLoading)
-                                  : TextUtils(
-                                    text: AppStrings.login,
-                                    fontWeight: FontWeightManager.bold,
-                                    color: ColorManager.background,
-                                  ),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+
+                      SizedBox(height: AppSizeHeight.s100),
+
+                      // Login Button
+                      CustomButton(
+                        onTap: () {
+                          context.read<LoginBloc>().add(
+                            LoginSubmitted(
+                              countryCode: state.completePhoneNumber
+                                  .replaceFirst("+", ''),
+                            ),
+                          );
+                        },
+                        btnColor: ColorManager.primary,
+                        shadowColor: ColorManager.white,
+                        widget:
+                            state.loginStatus == LoginStatus.loading
+                                ? Lottie.asset(LottieManager.carLoading)
+                                : TextUtils(
+                                  text: AppStrings.login,
+                                  fontWeight: FontWeightManager.bold,
+                                  color: ColorManager.background,
+                                ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
