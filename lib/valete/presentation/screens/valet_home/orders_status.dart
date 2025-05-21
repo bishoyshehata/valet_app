@@ -94,28 +94,34 @@ class OrdersScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.center,
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                color: ColorManager.background,
-                                border: Border.all(
-                                  color: ColorManager.white,
-                                  width: 1,
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                constraints: BoxConstraints(
+                                  minWidth: 20,
+                                  minHeight: 20,
                                 ),
-                                borderRadius: BorderRadius.circular(
-                                  AppSizeHeight.s50,
+                                decoration: BoxDecoration(
+                                  color: ColorManager.background,
+                                  border: Border.all(
+                                    color: ColorManager.white,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(AppSizeHeight.s50),
                                 ),
-                              ),
-                              child: TextUtils(
-                                text:
-                                    '${state.ordersByStatus[option['id']]?.length ?? 0}',
-                                fontSize: FontSize.s10,
-                                color: ColorManager.white,
-                                fontWeight: FontWeightManager.bold,
+                                child: Center(
+                                  child: TextUtils(
+                                    text: '${state.ordersByStatus[option['id']]?.length ?? 0}',
+                                    fontSize: FontSize.s10,
+                                    color: ColorManager.white,
+                                    fontWeight: FontWeightManager.bold,
+                                  ),
+                                ),
                               ),
                             ),
+
                           ],
                         ),
                       );
