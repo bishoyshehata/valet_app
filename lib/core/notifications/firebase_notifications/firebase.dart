@@ -17,7 +17,7 @@ class FirebaseFcm {
   static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   static Future<void> setUp() async {
-    await Firebase.initializeApp();
+    // await Firebase.initializeApp();
 
     // تسجيل الكائنات في GetIt
     getIt.registerSingleton<NotificationRemoteDataSource>(NotificationRemoteDataSource());
@@ -37,7 +37,7 @@ class FirebaseFcm {
     // الاشتراك في الإشعارات
     _requestPermission();
     _subscribeToNotifications();
-    _getFcmToken();
+    getFcmToken();
     _subscribeToTopics();
 
   }
@@ -52,9 +52,15 @@ class FirebaseFcm {
     });
   }
 
-  static void _getFcmToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    print('FCM Token: $token');
+  static Future<String?> getFcmToken() async {
+    try {
+      String? token =  await FirebaseMessaging.instance.getToken();
+      print('FCM Token: $token');
+      return token ;
+    }catch(e){
+      print(e);
+    }
+    return null;
   }
 
   // دالة لإرسال إشعار اختبار

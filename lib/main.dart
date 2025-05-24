@@ -28,10 +28,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
 
-  // إنشاء قناة الإشعارات
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
 
@@ -45,13 +46,11 @@ void main() async {
   }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   await FirebaseFcm.setUp();
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
-  final fcmToken = await messaging.getToken();
+  final fcmToken = FirebaseFcm.getFcmToken();
   final prefs = await SharedPreferences.getInstance();
   prefs.setString('deviceToken', fcmToken.toString());
-
   print("📲 FCM Token: $fcmToken");
 
   ServicesLocator().onInit();
@@ -91,28 +90,28 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    // App is in foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('📩 Foreground message received');
-      print('📩 Foreground message received ${message.data}');
-      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-    });
-
-    // App is opened from background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('📩 App opened from background notification');
-      print('📩 App opened from background notification ${message.data}');
-      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-    });
-
-    // App launched from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        print('📩 App launched from terminated by notification');
-        context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-      }
-    });
+    //
+    // // App is in foreground
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print('📩 Foreground message received');
+    //   print('📩 Foreground message received ${message.data}');
+    //   context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+    // });
+    //
+    // // App is opened from background
+    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    //   print('📩 App opened from background notification');
+    //   print('📩 App opened from background notification ${message.data}');
+    //   context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+    // });
+    //
+    // // App launched from terminated state
+    // FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    //   if (message != null) {
+    //     print('📩 App launched from terminated by notification');
+    //     context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+    //   }
+    // });
   }
   @override
   Widget build(BuildContext context) {
