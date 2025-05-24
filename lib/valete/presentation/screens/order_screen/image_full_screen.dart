@@ -15,7 +15,7 @@ class FullScreenImage extends StatelessWidget {
         onTap: () => Navigator.pop(context),
         child: Center(
           child: PhotoView(
-            imageProvider: FileImage(imageFile),
+            imageProvider: FileImage(imageFile,),
             backgroundDecoration: const BoxDecoration(
               color: Colors.black,
             ),
