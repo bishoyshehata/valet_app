@@ -49,17 +49,9 @@ class ValetHomeScreen extends StatelessWidget {
                 return CustomAppBar(
                   title: title,
                   titleColor: ColorManager.white,
-                  leading: Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.all(AppMargin.m4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppSizeHeight.s50),
-                      color: ColorManager.grey,
-                    ),
-                    child: Icon(
-                      Icons.maps_home_work,
-                      color: ColorManager.white,
-                    ),
+                  leading: Icon(
+                    Icons.maps_home_work,
+                    color: ColorManager.white,
                   ),
                 );
               },

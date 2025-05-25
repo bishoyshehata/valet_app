@@ -33,15 +33,7 @@ class LoginScreen extends StatelessWidget {
         appBar: CustomAppBar(
           title: AppStrings.login,
           titleColor: ColorManager.white,
-          leading: Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.all(AppMargin.m4),
-            child: Icon(Icons.login_sharp, color: ColorManager.white),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppSizeHeight.s50),
-              color: ColorManager.grey,
-            ),
-          ),
+          leading: Icon(Icons.login_sharp, color: ColorManager.white),
         ),
         body: BlocProvider<LoginBloc>(
           create: (context) {

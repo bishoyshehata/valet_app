@@ -12,6 +12,7 @@ import '../../controllers/home/home_states.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../garage_screen/garage_screen.dart';
+import 'order_full_screen.dart';
 
 class OrderDetails extends StatelessWidget {
   final int spotIndex;
@@ -40,12 +41,28 @@ class OrderDetails extends StatelessWidget {
               textDirection: TextDirection.rtl,
               child: Scaffold(
                 backgroundColor: ColorManager.background,
-                appBar: CustomAppBar(
-                  leading: IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(
-                      Icons.arrow_back_ios,
-                      color: ColorManager.primary,
+                appBar:
+
+
+                CustomAppBar(
+                  leading: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(AppMargin.m4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        AppSizeHeight.s50,
+                      ),
+                      color: ColorManager.grey,
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: ColorManager.white,
+                      ),
                     ),
                   ),
                   title: state.data![garageIndex].spots[spotIndex].code,
@@ -70,46 +87,55 @@ class OrderDetails extends StatelessWidget {
                               AppSizeHeight.s10,
                             ),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child:
-                                data.order!.carImage != null
-                                    ? Image.network(
-                                      Uri.encodeFull(
-                                        "${ApiConstants.baseUrl}/${data.order!.carImage!}",
+                          child:
+                              data.order!.carImage != null
+                                  ? GestureDetector(
+                                    onTap:
+                                        () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => FullScreenNetworkImage(
+                                                  imageUrl:
+                                                      "${ApiConstants.baseUrl}/${data.order!.carImage!}",
+                                                ),
+                                          ),
+                                        ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.network(
+                                        Uri.encodeFull(
+                                          "${ApiConstants.baseUrl}/${data.order!.carImage!}",
+                                        ),
+                                        height: AppSizeHeight.s100,
+                                        width: AppSizeHeight.s100,
+                                        fit: BoxFit.cover,
                                       ),
-                                      height: AppSizeHeight.s45,
-                                      fit: BoxFit.cover,
-                                    )
-                                    : buildCarTypeImage(data.order!.carType),
-                          ),
+                                    ),
+                                  )
+                                  : buildCarTypeImage(data.order!.carType),
                         ),
-                        SizedBox(height:AppSizeHeight.s20 ),
+                        SizedBox(height: AppSizeHeight.s20),
 
                         TextUtils(
                           text:
-                          'هاتف العميل : ${data.order!.clientNumber.replaceRange(0, 8, '########')}',
+                              'هاتف العميل : ${data.order!.clientNumber.replaceRange(0, 8, '########')}',
                           color: ColorManager.white,
                           fontSize: FontSize.s17,
                         ),
-                        SizedBox(height:AppSizeHeight.s20 ),
+                        SizedBox(height: AppSizeHeight.s20),
                         TextUtils(
                           text: 'الجراج : ${data.order!.garageName}',
                           color: ColorManager.lightGrey,
                           fontSize: FontSize.s17,
-
                         ),
-                        SizedBox(height:AppSizeHeight.s20 ),
+                        SizedBox(height: AppSizeHeight.s20),
 
                         TextUtils(
                           text: 'الباكية : ${data.order!.spotCode}',
                           color: ColorManager.lightGrey,
                           fontSize: FontSize.s17,
-
                         ),
-
-
-
                       ],
                     ),
                   ),
