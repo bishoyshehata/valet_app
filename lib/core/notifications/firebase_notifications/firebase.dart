@@ -17,7 +17,7 @@ class FirebaseFcm {
   static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   static Future<void> setUp() async {
-    // await Firebase.initializeApp();
+    await Firebase.initializeApp();
 
     // تسجيل الكائنات في GetIt
     getIt.registerSingleton<NotificationRemoteDataSource>(NotificationRemoteDataSource());

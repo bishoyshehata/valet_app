@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
@@ -22,7 +23,9 @@ import '../../components/custom_bottun.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
+import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
+import '../login/login.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -110,9 +113,12 @@ class OrderScreen extends StatelessWidget {
                   child: Scaffold(
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
-                      title: state.phoneNumber == 'رقم هاتف العميل' ?'رقم هاتف العميل' :  state.phoneNumber.length >= 8
-                          ? state.phoneNumber.replaceRange(0, 8, '########')
-                          : state.phoneNumber,
+                      title:
+                          state.phoneNumber == 'رقم هاتف العميل'
+                              ? 'رقم هاتف العميل'
+                              : state.phoneNumber.length >= 8
+                              ? state.phoneNumber.replaceRange(0, 8, '########')
+                              : state.phoneNumber,
                       centerTitle: true,
                       titleColor: ColorManager.white,
                       leading: Container(
@@ -144,7 +150,7 @@ class OrderScreen extends StatelessWidget {
                             state.data!.garageName,
                             state.data!.spots,
                             context,
-                            spotName
+                            spotName,
                           ),
                           _buildVehicleTypeSelector(context),
                           _buildQrSection(context, state.data!.qr),
@@ -180,23 +186,29 @@ class OrderScreen extends StatelessWidget {
                                       ),
                                     );
                                   } else {
-                                    if(state.phoneNumber == 'رقم هاتف العميل'){
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                    if (state.phoneNumber ==
+                                        'رقم هاتف العميل') {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
-                                          content:
-                                          TextUtils(
-                                            text: 'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                          content: TextUtils(
+                                            text:
+                                                'برجاء الطلب من العميل عمل مسح للـ QR.',
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       );
-                                    }else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: TextUtils(
-                                            text: 'نأسف و لكن يوجد خطأ بالبيانات.',
+                                            text:
+                                                'نأسف و لكن يوجد خطأ بالبيانات.',
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -247,13 +259,34 @@ class OrderScreen extends StatelessWidget {
                 ),
               );
             case RequestState.error:
-              return Container(
-                height: 190.0,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: TextUtils(text: "Error happened in defaultOrderState"),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: Lottie.asset(LottieManager.noCars)),
+                  TextUtils(
+                    text: "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
+                    color: ColorManager.white,
+                    fontSize: FontSize.s13,
+                    noOfLines: 2,
+                    overFlow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: AppSizeHeight.s30),
+                  CustomButton(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      );
+                    },
+                    btnColor: ColorManager.primary,
+                    shadowColor: ColorManager.white,
+                    widget: TextUtils(
+                      text: 'إعادة التسجيل',
+                      color: ColorManager.background,
+                      fontWeight: FontWeightManager.bold,
+                    ),
+                  ),
+                ],
               );
           }
         },
@@ -263,11 +296,11 @@ class OrderScreen extends StatelessWidget {
 
   /// widgets
   Widget _buildGarageInfoCard(
-      String garage,
-      List<Spot> spots,
-      BuildContext context,
-      String selectedSpotName,
-      ) {
+    String garage,
+    List<Spot> spots,
+    BuildContext context,
+    String selectedSpotName,
+  ) {
     return Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
@@ -281,7 +314,7 @@ class OrderScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-         // جراج
+          // جراج
           Container(
             alignment: Alignment.centerRight,
             margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
@@ -350,39 +383,46 @@ class OrderScreen extends StatelessWidget {
                       height: AppSizeHeight.s2,
                       color: ColorManager.primary,
                     ),
-                    icon: Icon(Icons.arrow_drop_down, color: ColorManager.primary),
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: ColorManager.primary,
+                    ),
                     style: GoogleFonts.cairo(
                       color: ColorManager.primary,
                       fontSize: FontSize.s15,
                       fontWeight: FontWeight.bold,
                     ),
-                    items: spots.map((spot) {
-                      return DropdownMenuItem<String>(
-
-                        value: spot.code,
-                        child: TextUtils(text:  spot.code,color: ColorManager.primary,fontSize: FontSize.s15,fontWeight: FontWeightManager.bold,),
-                      );
-                    }).toList(),
+                    items:
+                        spots.map((spot) {
+                          return DropdownMenuItem<String>(
+                            value: spot.code,
+                            child: TextUtils(
+                              text: spot.code,
+                              color: ColorManager.primary,
+                              fontSize: FontSize.s15,
+                              fontWeight: FontWeightManager.bold,
+                            ),
+                          );
+                        }).toList(),
                     dropdownColor: ColorManager.grey,
                     onChanged: (value) {
                       if (value != null) {
-                        context.read<OrderBloc>().add(UpdateSpotNameEvent(value));
+                        context.read<OrderBloc>().add(
+                          UpdateSpotNameEvent(value),
+                        );
                       }
                     },
                   ),
-                )
-
-
+                ),
               ],
             ),
-
           ),
         ],
       ),
     );
   }
-
 }
+
 Widget _buildVehicleTypeSelector(BuildContext context) {
   return Card(
     margin: EdgeInsets.symmetric(
@@ -626,4 +666,3 @@ IconData _getVehicleIcon(VehicleType type) {
       return Icons.directions_bus;
   }
 }
-

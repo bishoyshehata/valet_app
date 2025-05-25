@@ -5,8 +5,8 @@ import 'package:valet_app/valete/data/models/my_garages_models.dart';
 import 'package:valet_app/valete/data/models/my_orders_model.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
 import '../../../core/dio/dio_helper.dart';
-import '../../../core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/notifications/firebase_notifications/firebase.dart';
 import '../../domain/entities/store_order.dart';
 import '../models/create_order_model.dart';
 
@@ -30,14 +30,13 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<ValetModel> login(String phone, String password) async {
     prefs = await SharedPreferences.getInstance();
-    String? deviceToken = prefs.getString('deviceToken');
-
+    final fcmToken = await FirebaseFcm.getFcmToken();
     final response = await DioHelper.post(
       ApiConstants.loginEndPoint,
       data: {
         'phone': phone,
         'password': password,
-        'deviceToken': deviceToken,
+        'deviceToken': fcmToken,
       },
     );
 
@@ -72,21 +71,31 @@ class ValetDataSource extends IValetDataSource {
 
   @override
   Future<List<MyGaragesModel>> myGarages() async {
+    try {
+      final response = await DioHelper.post(
+        ApiConstants.myGaragesEndPoint,
+        requiresAuth: true,
+      );
 
-    final response = await DioHelper.post(
-      ApiConstants.myGaragesEndPoint,
-      requiresAuth: true,
-    );
-
-    if (response.statusCode == 200) {
-      return (response.data['data'] as List)
-          .map((e) => MyGaragesModel.fromJson(e))
-          .toList();
-    } else if(response.statusCode == 401){
-      await markUnAuthorized();
-      throw ServerFailure(response.data['messages'][0]);
-    }else {
-      throw ServerFailure(response.data['messages'][0]);
+      if (response.statusCode == 200) {
+        return (response.data['data'] as List)
+            .map((e) => MyGaragesModel.fromJson(e))
+            .toList();
+      } else {
+        // ألقِ خطأ عام هنا إذا لم يكن 401
+        throw ServerFailure(response.data['messages']?[0] ?? 'Unknown server error');
+      }
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        await markUnAuthorized(); // انتظر اكتمال التحديث
+        throw ServerFailure(e.response?.data['messages']?[0] ?? 'Unauthorized');
+      } else {
+        // ألقِ خطأ عام لأنواع أخرى من أخطاء Dio
+        throw ServerFailure(e.message ?? 'Dio error');
+      }
+    } catch (e) {
+      // ألقِ خطأ عام للأخطاء الأخرى
+      throw ServerFailure(e.toString());
     }
   }
 
@@ -116,7 +125,7 @@ class ValetDataSource extends IValetDataSource {
     if (response.statusCode == 200) {
       return response.data['data'];
     }else if(response.statusCode == 401){
-      await markUnAuthorized();
+       markUnAuthorized();
 
       throw ServerFailure(response.data['messages'][0]);
     }
@@ -140,7 +149,7 @@ class ValetDataSource extends IValetDataSource {
           .map((e) => MyOrdersModel.fromJson(e))
           .toList();
     } else if(response.statusCode == 401){
-      await markUnAuthorized();
+       markUnAuthorized();
       throw ServerFailure(response.data['messages'][0]);
     }else {
 
@@ -159,7 +168,7 @@ class ValetDataSource extends IValetDataSource {
     if (response.statusCode == 200) {
       return response.data['data'];
     }else if(response.statusCode == 401){
-      await markUnAuthorized();
+       markUnAuthorized();
       throw ServerFailure(response.data['messages'][0]);
     } else {
 
@@ -185,4 +194,5 @@ class ValetDataSource extends IValetDataSource {
 Future<void> markUnAuthorized() async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setBool('unAuthorized', true);
+  print("Marked as Unauthorized: ${prefs.getBool('unAuthorized')}");
 }

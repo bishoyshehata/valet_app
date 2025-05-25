@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/controllers/login/login_bloc.dart';
@@ -12,14 +10,7 @@ import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/profile/valet_profile.dart';
 import '../../../../core/utils/enums.dart';
-import '../../components/custom_bottun.dart';
-import '../../components/custom_textFormField.dart';
-import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_events.dart';
-import '../../controllers/login/login_events.dart';
-import '../../resources/assets_manager.dart';
-import '../../resources/font_manager.dart';
-import '../../resources/strings_manager.dart';
 import 'orders_status.dart';
 
 class MainScreen extends StatelessWidget {

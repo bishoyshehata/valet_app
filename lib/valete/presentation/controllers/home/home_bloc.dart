@@ -15,8 +15,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
          HomeState(currentIndex: 0),
        ) {
     on<GetMyGaragesEvent>((event, emit) async {
-      print('GetAllMyOrdersEvent triggered from notification');
-
       final result = await myGaragesUseCase.myGarages();
       result.fold(
         (error) {
