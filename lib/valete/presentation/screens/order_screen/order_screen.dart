@@ -372,7 +372,7 @@ class OrderScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: AppSizeWidth.s70,
+                  width: AppSizeWidth.s100,
                   child: DropdownButton<String>(
                     value: selectedSpotName,
                     isExpanded: true,
