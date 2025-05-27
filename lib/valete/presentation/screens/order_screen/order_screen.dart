@@ -153,7 +153,7 @@ class OrderScreen extends StatelessWidget {
                             spotName,
                           ),
                           _buildVehicleTypeSelector(context),
-                          _buildQrSection(context, state.data!.qr),
+                          state.phoneNumber =='رقم هاتف العميل' ? _buildQrSection(context, state.data!.qr) : SizedBox(height: 0,),
                           _buildImageCaptureSection(context),
                           SizedBox(height: AppSizeHeight.s10),
                           BlocBuilder<OrderBloc, OrderState>(
@@ -540,7 +540,6 @@ Widget _buildQrSection(BuildContext context, String qr) {
           ),
         ),
         Container(
-          height: MediaQuery.of(context).size.height * .25,
           alignment: Alignment.center,
           margin: EdgeInsets.symmetric(vertical: AppMargin.m16),
           child: Container(
@@ -604,29 +603,33 @@ Widget _buildImageCaptureSection(BuildContext context) {
                     borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
                   child:
-                      image != null
-                          ? GestureDetector(
-                            onTap:
-                                () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) =>
-                                            FullScreenImage(imageFile: image),
-                                  ),
-                                ),
-                            child: PhotoView(
-                              imageProvider: FileImage(image),
-                              backgroundDecoration: BoxDecoration(
-                                color: ColorManager.background,
-                              ),
-                            ),
-                          )
-                          : Icon(
-                            Icons.image,
-                            size: AppSizeHeight.s100,
-                            color: ColorManager.primary,
-                          ),
+                  image != null
+                      ? GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => FullScreenImage(imageFile: image),
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: PhotoView(
+                        imageProvider: FileImage(image),
+                        backgroundDecoration: BoxDecoration(
+                          color: ColorManager.background,
+                        ),
+                        minScale: PhotoViewComputedScale.contained,
+                        maxScale: PhotoViewComputedScale.covered * 2.0,
+                      ),
+                    ),
+                  )
+                      : Icon(
+                    Icons.image,
+                    size: AppSizeHeight.s100,
+                    color: ColorManager.primary,
+                  ),
                 ),
                 Positioned(
                   bottom: AppSizeHeight.s15,

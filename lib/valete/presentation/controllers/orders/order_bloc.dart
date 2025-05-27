@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import '../../../../core/utils/enums.dart';
@@ -16,14 +19,36 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(selectedVehicleType: event.vehicleType));
       // print(event.vehicleType.name);
     });
+
     on<PickImageEvent>((event, emit) async {
-      final picker = ImagePicker();
-      final XFile? pickedFile = await picker.pickImage(
-          source: ImageSource.camera);
-      if (pickedFile != null) {
-        emit(state.copyWith(image: File(pickedFile.path)));
+      try {
+        final picker = ImagePicker();
+        final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.camera);
+
+        if (pickedFile != null) {
+          final bytes = await pickedFile.readAsBytes();
+          final originalImage = img.decodeImage(bytes);
+
+          if (originalImage == null) {
+            emit(state.copyWith(errorMessage: "تعذر في قراءة الصورة"));
+            return;
+          }
+
+          // تحويل لـ JPEG
+          final jpegData = img.encodeJpg(originalImage);
+          final tempDir = await getTemporaryDirectory();
+          final jpegFile = File(join(tempDir.path, 'converted.jpg'));
+
+          await jpegFile.writeAsBytes(jpegData);
+
+          emit(state.copyWith(image: jpegFile, errorMessage: ""));
+        }
+      } catch (e) {
+        emit(state.copyWith(errorMessage: e.toString()));
       }
     });
+
 
     on<CreateOrderEvent>((event, emit) async {
       emit(state.copyWith(defaultOrderState: RequestState.loading));

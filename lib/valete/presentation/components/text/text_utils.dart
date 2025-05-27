@@ -12,6 +12,7 @@ class TextUtils extends StatelessWidget {
   final Color? color;
   final TextOverflow? overFlow;
   final FontWeight? fontWeight;
+  final TextDirection? textDirection;
 
   const TextUtils({
     super.key,
@@ -23,6 +24,7 @@ class TextUtils extends StatelessWidget {
     this.color,
     this.overFlow,
     this.fontWeight,
+    this.textDirection
   });
 
   @override
@@ -32,6 +34,7 @@ class TextUtils extends StatelessWidget {
       textAlign: alignnment,
       maxLines: noOfLines,
       overflow: overFlow,
+      textDirection: textDirection,
       style: getFontStyle(
         fontFamily: fontFamily,
         fontSize: fontSize ?? 14,

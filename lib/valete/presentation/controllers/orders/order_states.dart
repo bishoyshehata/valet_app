@@ -17,6 +17,8 @@ class OrderState {
   final StoreOrderState storeOrderState;
   final String storeOrderError;
   final bool? storeOrderData;
+  final ImageProcessingStatus? imageStatus;
+  final String? errorMessage;
 
   OrderState({
     this.data,
@@ -31,6 +33,8 @@ class OrderState {
     this.storeOrderState = StoreOrderState.initial,
     this.storeOrderError = '',
     this.storeOrderData,
+    this.errorMessage,
+    this.imageStatus,
   });
 
   OrderState copyWith({
@@ -46,6 +50,8 @@ class OrderState {
     StoreOrderState? storeOrderState,
      String? storeOrderError,
     bool? storeOrderData,
+    ImageProcessingStatus? imageStatus,
+    String? errorMessage,
   }) {
     return OrderState(
       selectedVehicleType: selectedVehicleType ?? this.selectedVehicleType,
@@ -60,6 +66,8 @@ class OrderState {
       storeOrderState: storeOrderState ?? this.storeOrderState,
       storeOrderError: storeOrderError ?? this.storeOrderError,
       storeOrderData: storeOrderData ?? this.storeOrderData,
+      imageStatus: imageStatus ?? this.imageStatus,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }

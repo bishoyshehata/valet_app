@@ -286,7 +286,6 @@ Widget statusCard(MyOrders order, BuildContext context) {
       context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
     },
     child: Card(
-      shadowColor: ColorManager.primary,
       color: ColorManager.grey,
       margin: const EdgeInsets.all(10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -305,7 +304,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                     order.carImage != null
                         ? Image.network(
                           Uri.encodeFull(
-                            ApiConstants.baseUrl + "/" + order.carImage!,
+                            "${ApiConstants.baseUrl}/${order.carImage!}",
                           ),
                           height: AppSizeHeight.s45,
                           fit: BoxFit.cover,
@@ -320,11 +319,36 @@ Widget statusCard(MyOrders order, BuildContext context) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextUtils(
-                    text:
-                        'هاتف العميل : ${order.whatsapp.replaceRange(0, 8, '########')}',
-                    color: ColorManager.white,
+                  Text.rich(
+                    TextSpan(
+                      text: 'هاتف العميل : ',
+                      style: GoogleFonts.cairo(
+                        fontSize: FontSize.s13,
+                        fontWeight: FontWeight.normal,
+                        color: ColorManager.white,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: order.whatsapp.replaceRange(0,8,''),
+                          style: GoogleFonts.archivo(
+                            fontSize: FontSize.s13,
+                            fontWeight: FontWeight.normal,
+                            color: ColorManager.white,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '########',
+                          style: GoogleFonts.archivo(
+                            fontSize: FontSize.s13,
+                            fontWeight: FontWeight.normal,
+                            color: ColorManager.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                     // ✅ تأكد إنها كده بالظبط
                   ),
+
                   const SizedBox(height: 4),
                   TextUtils(
                     text: 'الجراج : ${order.garage.name}',
