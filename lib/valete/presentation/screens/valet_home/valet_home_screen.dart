@@ -43,7 +43,7 @@ class ValetHomeScreen extends StatelessWidget {
               builder: (context, snapshot) {
                 final title =
                     snapshot.hasData
-                        ? AppStrings.welcome + snapshot.data!
+                        ?  snapshot.data!
                         : AppStrings.welcome;
 
                 return CustomAppBar(
@@ -69,7 +69,7 @@ class ValetHomeScreen extends StatelessWidget {
                 SizedBox(height: AppSizeHeight.s10),
                 Align(
                   alignment: Alignment.center,
-                  child: CustomButton(
+                  child:state.myGaragesState!=RequestState.error? CustomButton(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -78,14 +78,13 @@ class ValetHomeScreen extends StatelessWidget {
                     },
                     elevation: 5,
                     btnColor: ColorManager.primary,
-                    shadowColor: ColorManager.white,
                     widget: TextUtils(
                       text: 'إضافة طلب',
                       fontSize: FontSize.s20,
                       color: ColorManager.background,
                       fontWeight: FontWeightManager.bold,
                     ),
-                  ),
+                  ) : SizedBox(height: 0,),
                 ),
                 SizedBox(height: AppSizeHeight.s5),
 
@@ -123,7 +122,7 @@ class ValetHomeScreen extends StatelessWidget {
                             final garage = state.data![index];
                             return InkWell(
                               onTap: () {
-                                Navigator.push(
+                                     Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder:
@@ -164,7 +163,6 @@ class ValetHomeScreen extends StatelessWidget {
                           );
                         },
                         btnColor: ColorManager.primary,
-                        shadowColor: ColorManager.white,
                         widget: TextUtils(
                           text: 'إعادة التسجيل',
                           color: ColorManager.background,
@@ -199,14 +197,13 @@ class GarageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int totalSpots = capacity;
+    final int totalSpots = spot.length;
     final int occupiedSpots = spot.where((spot) => spot.order != null).length;
     final int availableSpots = totalSpots - occupiedSpots;
 
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         return Card(
-          shadowColor: ColorManager.white,
           elevation: 5,
           color: ColorManager.grey,
           margin: EdgeInsets.only(
@@ -228,13 +225,13 @@ class GarageCard extends StatelessWidget {
                       padding: EdgeInsets.only(top: AppPadding.p5),
                       child: Icon(
                         Icons.garage_outlined,
-                        color: ColorManager.primary,
+                        color: ColorManager.white,
                       ),
                     ),
                     const SizedBox(width: 8),
                     TextUtils(
                       text: name,
-                      color: ColorManager.primary,
+                      color: ColorManager.white,
                       fontSize: FontSize.s20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -247,7 +244,7 @@ class GarageCard extends StatelessWidget {
                       padding: EdgeInsets.only(top: AppPadding.p5),
                       child: Icon(
                         Icons.location_on_outlined,
-                        color: ColorManager.primary,
+                        color: ColorManager.white,
                       ),
                     ),
                     const SizedBox(width: 8),

@@ -74,8 +74,7 @@ class OrdersScreen extends StatelessWidget {
                       child: Stack(
                         children: [
                           ChoiceChip(
-                            elevation: 3,
-                            shadowColor: ColorManager.primary,
+                            elevation: 0,
                             label: Text(option['label']),
                             selected: isSelected,
                             onSelected: (_) {
@@ -211,7 +210,7 @@ class OrdersScreen extends StatelessWidget {
                                   Lottie.asset(LottieManager.noCars),
                                   const SizedBox(height: 12),
                                   TextUtils(
-                                    text: "لا توجد طلبات في هذه الحالة",
+                                    text: "لا توجد طلبات",
                                     color: ColorManager.white,
                                     fontSize: FontSize.s14,
                                     fontWeight: FontWeightManager.bold,
@@ -254,7 +253,6 @@ class OrdersScreen extends StatelessWidget {
                             );
                           },
                           btnColor: ColorManager.primary,
-                          shadowColor: ColorManager.white,
                           widget: TextUtils(
                             text: 'إعادة التسجيل',
                             color: ColorManager.background,
@@ -302,13 +300,15 @@ Widget statusCard(MyOrders order, BuildContext context) {
                 borderRadius: BorderRadius.circular(12),
                 child:
                     order.carImage != null
-                        ? Image.network(
-                          Uri.encodeFull(
-                            "${ApiConstants.baseUrl}/${order.carImage!}",
-                          ),
-                          height: AppSizeHeight.s45,
-                          fit: BoxFit.cover,
-                        )
+                        ? FadeInImage.assetNetwork(
+                      placeholder: buildCarTypeImageForStatus(order.carType), // الصورة المؤقتة من الأصول
+                      image: Uri.encodeFull("${ApiConstants.baseUrl}/${order.carImage!}"),
+                      height: AppSizeHeight.s45,
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return buildCarTypeImage(order.carType);
+                      },
+                    )
                         : buildCarTypeImage(order.carType),
               ),
             ),
@@ -434,7 +434,6 @@ Widget getStatusButton(
           context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 2));
         },
         btnColor: ColorManager.primary,
-        shadowColor: ColorManager.primary,
         widget: buildButtonContent(
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
@@ -449,7 +448,6 @@ Widget getStatusButton(
           context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 3));
         },
         btnColor: ColorManager.primary,
-        shadowColor: ColorManager.primary,
         widget: buildButtonContent(
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
@@ -464,7 +462,6 @@ Widget getStatusButton(
           context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 4));
         },
         btnColor: ColorManager.primary,
-        shadowColor: ColorManager.primary,
         widget: buildButtonContent(
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState

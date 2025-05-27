@@ -28,17 +28,18 @@ class CustomPhoneField extends StatelessWidget {
   Widget build(BuildContext context) {
     return IntlPhoneField(
       decoration: InputDecoration(
-        labelText: labelText ?? 'رقم الهاتف',
-        labelStyle: TextStyle(
-          color: labelTextColor ?? ColorManager.white,
-          fontSize: labelSize ?? 15,
-        ),
-        hintText: hintText,
-        hintStyle: TextStyle(
-          color: ColorManager.white.withOpacity(0.6),
-          fontSize: 14,
-
-        ),
+        // labelText: labelText ?? 'رقم الهاتف',
+        // labelStyle: TextStyle(
+        //
+        //   color: labelTextColor ?? ColorManager.white,
+        //   fontSize: labelSize ?? 15,
+        // ),
+        // hintText: hintText,
+        // hintStyle: TextStyle(
+        //   color: ColorManager.white.withOpacity(0.6),
+        //   fontSize: 14,
+        //
+        // ),
         errorText: errorText, // إظهار رسالة الخطأ إذا كانت موجودة
         fillColor: ColorManager.darkGrey,
         filled: true,

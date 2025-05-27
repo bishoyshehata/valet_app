@@ -33,7 +33,6 @@ class LoginScreen extends StatelessWidget {
         appBar: CustomAppBar(
           title: AppStrings.login,
           titleColor: ColorManager.white,
-          leading: Icon(Icons.login_sharp, color: ColorManager.white),
         ),
         body: BlocProvider<LoginBloc>(
           create: (context) {
@@ -61,9 +60,7 @@ class LoginScreen extends StatelessWidget {
                       if (state.data != null) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => MainScreen(),
-                          ),
+                          MaterialPageRoute(builder: (context) => MainScreen()),
                         );
                       }
                       break;
@@ -85,8 +82,15 @@ class LoginScreen extends StatelessWidget {
                           color: ColorManager.primary,
                         ),
                         SizedBox(height: AppSizeHeight.s100),
-                    
+
                         // Phone field
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, AppPadding.p12, AppPadding.p5),
+                          child: TextUtils(text: "إدخل رقم الهاتف"),
+                          alignment: AlignmentDirectional.centerEnd,
+
+                        ),
+
                         CustomPhoneField(
                           labelText: AppStrings.enterPhone,
                           labelSize: 15,
@@ -94,7 +98,7 @@ class LoginScreen extends StatelessWidget {
                               state.hasInteractedWithPhone
                                   ? state.phoneErrorMessage
                                   : null,
-                    
+
                           onChanged: (phone) {
                             context.read<LoginBloc>().add(
                               CompletePhoneChanged(
@@ -109,6 +113,11 @@ class LoginScreen extends StatelessWidget {
                         ),
                         SizedBox(height: AppSizeHeight.s20),
                         // Password field
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, AppPadding.p12, AppPadding.p5),
+                          child: TextUtils(text: "كلمة المرور"),
+                          alignment: AlignmentDirectional.centerEnd,
+                        ),
                         CustomTextFormField(
                           labelText: AppStrings.enterPassword,
                           obscureText: state.isPasswordObscured,
@@ -138,9 +147,9 @@ class LoginScreen extends StatelessWidget {
                                 ),
                           ),
                         ),
-                    
+
                         SizedBox(height: AppSizeHeight.s100),
-                    
+
                         // Login Button
                         CustomButton(
                           onTap: () {
@@ -152,7 +161,6 @@ class LoginScreen extends StatelessWidget {
                             );
                           },
                           btnColor: ColorManager.primary,
-                          shadowColor: ColorManager.white,
                           widget:
                               state.loginStatus == LoginStatus.loading
                                   ? Lottie.asset(LottieManager.carLoading)

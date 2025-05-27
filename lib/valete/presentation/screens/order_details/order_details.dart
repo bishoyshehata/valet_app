@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:valet_app/core/network/api_constants.dart';
 import 'package:valet_app/core/utils/enums.dart';
@@ -27,6 +28,7 @@ class OrderDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         final data = state.data![garageIndex].spots[spotIndex];
@@ -116,13 +118,36 @@ class OrderDetails extends StatelessWidget {
                                   : buildCarTypeImage(data.order!.carType),
                         ),
                         SizedBox(height: AppSizeHeight.s20),
-
-                        TextUtils(
-                          text:
-                              'هاتف العميل : ${data.order!.clientNumber.replaceRange(0, 8, '########')}',
-                          color: ColorManager.white,
-                          fontSize: FontSize.s17,
+                        Text.rich(
+                          TextSpan(
+                            text: 'هاتف العميل : ',
+                            style: GoogleFonts.cairo(
+                              fontSize: FontSize.s17,
+                              fontWeight: FontWeight.normal,
+                              color: ColorManager.white,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: data.order!.clientNumber.replaceRange(0,8,''),
+                                style: GoogleFonts.archivo(
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.normal,
+                                  color: ColorManager.white,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '########',
+                                style: GoogleFonts.archivo(
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.normal,
+                                  color: ColorManager.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                          // ✅ تأكد إنها كده بالظبط
                         ),
+
                         SizedBox(height: AppSizeHeight.s20),
                         TextUtils(
                           text: 'الجراج : ${data.order!.garageName}',

@@ -135,7 +135,6 @@ class OrderScreen extends StatelessWidget {
                             SocketService().closeSocket();
                             Navigator.pop(context);
                           },
-
                           icon: Icon(
                             Icons.arrow_back,
                             color: ColorManager.white,
@@ -152,8 +151,9 @@ class OrderScreen extends StatelessWidget {
                             context,
                             spotName,
                           ),
-                          _buildVehicleTypeSelector(context),
+
                           state.phoneNumber =='رقم هاتف العميل' ? _buildQrSection(context, state.data!.qr) : SizedBox(height: 0,),
+                          _buildVehicleTypeSelector(context),
                           _buildImageCaptureSection(context),
                           SizedBox(height: AppSizeHeight.s10),
                           BlocBuilder<OrderBloc, OrderState>(
@@ -219,7 +219,6 @@ class OrderScreen extends StatelessWidget {
                                   }
                                 },
                                 btnColor: ColorManager.primary,
-                                shadowColor: ColorManager.white,
                                 width: MediaQuery.of(context).size.width * .9,
                                 radius: AppSizeHeight.s10,
                                 borderColor: ColorManager.white,
@@ -279,7 +278,6 @@ class OrderScreen extends StatelessWidget {
                       );
                     },
                     btnColor: ColorManager.primary,
-                    shadowColor: ColorManager.white,
                     widget: TextUtils(
                       text: 'إعادة التسجيل',
                       color: ColorManager.background,
@@ -308,7 +306,6 @@ class OrderScreen extends StatelessWidget {
       ),
       color: ColorManager.grey,
       elevation: 5,
-      shadowColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSizeHeight.s10),
       ),
@@ -431,7 +428,6 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
     ),
     color: ColorManager.grey,
     elevation: 5,
-    shadowColor: ColorManager.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppSizeHeight.s10),
     ),
@@ -517,7 +513,6 @@ Widget _buildQrSection(BuildContext context, String qr) {
     ),
     color: ColorManager.grey,
     elevation: 5,
-    shadowColor: ColorManager.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppSizeHeight.s10),
     ),
@@ -566,7 +561,6 @@ Widget _buildImageCaptureSection(BuildContext context) {
     ),
     color: ColorManager.grey,
     elevation: 5,
-    shadowColor: ColorManager.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppSizeHeight.s10),
     ),

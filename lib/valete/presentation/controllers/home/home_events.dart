@@ -16,5 +16,12 @@ class ChangeTabEvent extends HomeEvent {
   List<Object> get props => [index];
 }
 
+class ToggleExtraSlotsVisibilityEvent extends HomeEvent {
+  final bool show;
 
+  ToggleExtraSlotsVisibilityEvent(this.show);
+
+  @override
+  List<Object?> get props => [];
+}
 
