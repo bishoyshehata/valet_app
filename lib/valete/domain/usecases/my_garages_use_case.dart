@@ -16,7 +16,6 @@ class MyGaragesUseCase {
   Future<Either<Failure,  List<MyGarages>>> myGarages() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? isUnAuth = prefs.getBool('unAuthorized');
-    print("isUnAuthUseCase $isUnAuth");
     try {
       final result = await repository.myGarages();
       return result;
