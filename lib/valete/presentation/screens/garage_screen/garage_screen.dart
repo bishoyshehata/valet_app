@@ -341,11 +341,11 @@ class MiniParkingSlotWidget extends StatelessWidget {
               fontSize: FontSize.s15,
               fontWeight: FontWeight.bold,
             ),
-            isBusy && spot.order != null // تأكد من وجود بيانات الطلب قبل عرض السيارة
+            spot.order != null // تأكد من وجود بيانات الطلب قبل عرض السيارة
                 ? buildCarTypeImage(spot.order!.carType)
                 : Icon(
               Icons.local_parking,
-              color: isBusy ? ColorManager.background : ColorManager.white, // تغيير لون الأيقونة
+              color: isBusy ? ColorManager.background : ColorManager.primary, // تغيير لون الأيقونة
               size: AppSizeHeight.s25,
             ),
           ],
