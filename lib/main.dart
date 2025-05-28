@@ -22,7 +22,7 @@ void main() async {
   final fcmToken = await FirebaseFcm.getFcmToken();
   final prefs = await SharedPreferences.getInstance();
   prefs.setString('deviceToken', fcmToken.toString());
-
+  print(fcmToken);
   ServicesLocator().onInit();
 
   runApp(
