@@ -371,31 +371,39 @@ class OrderScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary,
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10)
+                  ),
                   width: AppSizeWidth.s100,
                   child: DropdownButton<String>(
                     value: selectedSpotName,
                     isExpanded: true,
                     underline: Container(
                       height: AppSizeHeight.s2,
-                      color: ColorManager.primary,
+                      color: ColorManager.white,
                     ),
                     icon: Icon(
                       Icons.arrow_drop_down,
-                      color: ColorManager.primary,
+                      color: ColorManager.white,
                     ),
                     style: GoogleFonts.cairo(
-                      color: ColorManager.primary,
+                      color: ColorManager.white,
                       fontSize: FontSize.s15,
                       fontWeight: FontWeight.bold,
                     ),
                     items:
                         spots.map((spot) {
                           return DropdownMenuItem<String>(
+
                             value: spot.code,
                             child: TextUtils(
                               text: spot.code,
-                              color: ColorManager.primary,
+                              color: ColorManager.white,
                               fontSize: FontSize.s15,
                               fontWeight: FontWeightManager.bold,
                             ),

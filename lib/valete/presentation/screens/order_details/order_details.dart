@@ -44,8 +44,6 @@ class OrderDetails extends StatelessWidget {
               child: Scaffold(
                 backgroundColor: ColorManager.background,
                 appBar:
-
-
                 CustomAppBar(
                   leading: Container(
                     alignment: Alignment.center,
@@ -103,16 +101,17 @@ class OrderDetails extends StatelessWidget {
                                                 ),
                                           ),
                                         ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.network(
-                                        Uri.encodeFull(
-                                          "${ApiConstants.baseUrl}/${data.order!.carImage!}",
-                                        ),
-                                        height: AppSizeHeight.s100,
-                                        width: AppSizeHeight.s100,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    child:
+
+                                    FadeInImage.assetNetwork(
+                                      placeholder: buildCarTypeImageForStatus(data.order!.carType), // الصورة المؤقتة من الأصول
+                                      image: Uri.encodeFull("${ApiConstants.baseUrl}/${data.order!.carImage!}"),
+                                      height: AppSizeHeight.s100,
+                                      width: AppSizeHeight.s100,
+                                      fit: BoxFit.cover,
+                                      imageErrorBuilder: (context, error, stackTrace) {
+                                        return buildCarTypeImage(data.order!.carType);
+                                      },
                                     ),
                                   )
                                   : buildCarTypeImage(data.order!.carType),
