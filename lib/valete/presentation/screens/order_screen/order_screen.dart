@@ -42,8 +42,6 @@ class OrderScreen extends StatelessWidget {
           sl<CreateOrderUseCase>(),
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
-
-        // init socket once and push event to bloc
         SharedPreferences.getInstance().then((prefs) {
           String? valetId = prefs.getString('valetId');
           socketService.initSocket(
@@ -57,11 +55,6 @@ class OrderScreen extends StatelessWidget {
         return bloc;
       },
       child: BlocBuilder<OrderBloc, OrderState>(
-        // buildWhen: (previous, current) =>
-        // previous.defaultOrderState != current.defaultOrderState ||
-        //     previous.phoneNumber != current.phoneNumber ||
-        //     previous.spotName != current.spotName ||
-        //       previous.data?.spots != current.data?.spots,
         builder: (context, state) {
           switch (state.defaultOrderState) {
             case RequestState.loading:
@@ -152,7 +145,9 @@ class OrderScreen extends StatelessWidget {
                             spotName,
                           ),
 
-                          state.phoneNumber =='رقم هاتف العميل' ? _buildQrSection(context, state.data!.qr) : SizedBox(height: 0,),
+                          state.phoneNumber == 'رقم هاتف العميل'
+                              ? _buildQrSection(context, state.data!.qr)
+                              : SizedBox(height: 0),
                           _buildVehicleTypeSelector(context),
                           _buildImageCaptureSection(context),
                           SizedBox(height: AppSizeHeight.s10),
@@ -337,7 +332,7 @@ class OrderScreen extends StatelessWidget {
                     text: garage,
                     style: GoogleFonts.cairo(
                       color: ColorManager.primary,
-                      fontSize: FontSize.s15,
+                      fontSize: FontSize.s17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -352,7 +347,6 @@ class OrderScreen extends StatelessWidget {
             margin: EdgeInsets.only(
               bottom: AppMargin.m16,
               right: AppMargin.m24,
-              top: AppMargin.m10,
             ),
             padding: EdgeInsets.only(right: AppPadding.p5),
             decoration: BoxDecoration(
@@ -377,7 +371,7 @@ class OrderScreen extends StatelessWidget {
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: ColorManager.primary,
-                    borderRadius: BorderRadius.circular(AppSizeHeight.s10)
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
                   width: AppSizeWidth.s100,
                   child: DropdownButton<String>(
@@ -399,7 +393,6 @@ class OrderScreen extends StatelessWidget {
                     items:
                         spots.map((spot) {
                           return DropdownMenuItem<String>(
-
                             value: spot.code,
                             child: TextUtils(
                               text: spot.code,
@@ -605,43 +598,48 @@ Widget _buildImageCaptureSection(BuildContext context) {
                     borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
                   child:
-                  image != null
-                      ? GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => FullScreenImage(imageFile: image),
-                        ),
-                      );
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: PhotoView(
-                        imageProvider: FileImage(image),
-                        backgroundDecoration: BoxDecoration(
-                          color: ColorManager.background,
-                        ),
-                        minScale: PhotoViewComputedScale.contained,
-                        maxScale: PhotoViewComputedScale.covered * 2.0,
-                      ),
-                    ),
-                  )
-                      : Icon(
-                    Icons.image,
-                    size: AppSizeHeight.s100,
-                    color: ColorManager.primary,
-                  ),
+                      image != null
+                          ? GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => FullScreenImage(imageFile: image),
+                                ),
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: PhotoView(
+                                imageProvider: FileImage(image),
+                                backgroundDecoration: BoxDecoration(
+                                  color: ColorManager.background,
+                                ),
+                                minScale: PhotoViewComputedScale.contained,
+                                maxScale: PhotoViewComputedScale.covered * 2.0,
+                              ),
+                            ),
+                          )
+                          : InkWell(
+                            onTap: () {
+                              context.read<OrderBloc>().add(PickImageEvent());
+                            },
+                            child: Icon(
+                              Icons.image,
+                              size: AppSizeHeight.s100,
+                              color: ColorManager.primary,
+                            ),
+                          ),
                 ),
                 Positioned(
                   bottom: AppSizeHeight.s15,
                   right: AppSizeHeight.s15,
-                  child: IconButton(
-                    onPressed: () {
+                  child: InkWell(
+                    onTap: () {
                       context.read<OrderBloc>().add(PickImageEvent());
                     },
-
-                    icon: Icon(
+                    child: Icon(
                       Icons.camera_alt,
                       size: AppSizeHeight.s30,
                       color: ColorManager.primary,
@@ -663,8 +661,6 @@ IconData _getVehicleIcon(VehicleType type) {
       return Icons.directions_car;
     case VehicleType.Motorcycle:
       return Icons.motorcycle;
-    case VehicleType.Bicycle:
-      return Icons.directions_bike;
     case VehicleType.Truck:
       return Icons.local_shipping;
     case VehicleType.Bus:

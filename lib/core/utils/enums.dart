@@ -10,7 +10,7 @@ enum LoginStatus { initial, loading, success, error }
 
 enum ReAuthStatus { initial, waitingForPassword, loading, success, error }
 
-enum VehicleType { Car, Bicycle, Motorcycle, Truck, Bus }
+enum VehicleType { Car, Motorcycle, Truck, Bus }
 
 enum ImageProcessingStatus { idle, picking, converting, loaded, error }
 

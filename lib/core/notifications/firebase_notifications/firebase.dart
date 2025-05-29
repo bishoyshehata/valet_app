@@ -81,8 +81,8 @@ class FirebaseFcm {
       ticker: 'New Notification',
       enableLights: true,
       priority: Priority.high,
-      color: ColorManager.error,
-      icon: '@drawable/iti_red',
+      color: ColorManager.white,
+      icon: '@drawable/app_icon',
       visibility: NotificationVisibility.public,
     );
 
