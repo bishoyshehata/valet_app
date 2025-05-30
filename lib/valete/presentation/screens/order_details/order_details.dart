@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,8 @@ import '../../components/custom_app_bar.dart';
 import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_bloc.dart';
 import '../../controllers/home/home_states.dart';
+import '../../controllers/orders/order_bloc.dart';
+import '../../controllers/orders/order_events.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../garage_screen/garage_screen.dart';
@@ -33,6 +36,18 @@ class OrderDetails extends StatelessWidget {
       builder: (context, state) {
         final data = state.data![garageIndex].spots[spotIndex];
         state = context.watch<HomeBloc>().state;
+        final selectedSpotCode = data.code; // هذا المتغير بتخزن فيه الكود المختار
+
+// في مكان بناء القائمة:
+        final filteredSpots = state.data![garageIndex].spots.where((spot) => spot.status == 0).toList();
+
+        final spotsForDropdown = filteredSpots.any((spot) => spot.code == selectedSpotCode)
+            ? filteredSpots
+            : [
+          if (selectedSpotCode != null)
+            state.data![garageIndex].spots.firstWhere((spot) => spot.code == selectedSpotCode),
+        ] + filteredSpots;
+
         switch (state.myGaragesState) {
           case RequestState.loading:
             return Center(
@@ -154,12 +169,84 @@ class OrderDetails extends StatelessWidget {
                           fontSize: FontSize.s17,
                         ),
                         SizedBox(height: AppSizeHeight.s20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'بالباكية : ',
+                              style: GoogleFonts.cairo(
+                                color: ColorManager.white,
+                                fontSize: FontSize.s17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                color: ColorManager.primary,
+                                borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                              ),
+                              width: AppSizeWidth.s100,
+                              child:   DropdownButtonHideUnderline(
+                                child: DropdownButton2<String>(
+                                  isExpanded: true,
+                                  items: spotsForDropdown.map((spot) {
+                                    return DropdownMenuItem<String>(
+                                      value: spot.code,
+                                      child: TextUtils(
+                                        text: spot.code,
+                                        color: ColorManager.background,
+                                        fontSize: FontSize.s15,
+                                        fontWeight: FontWeightManager.bold,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  value: selectedSpotCode,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      context.read<OrderBloc>().add(
+                                        UpdateSpotNameEvent(value),
+                                      );
+                                    }
+                                  },
 
-                        TextUtils(
-                          text: 'الباكية : ${data.order!.spotCode}',
-                          color: ColorManager.lightGrey,
-                          fontSize: FontSize.s17,
+                                  iconStyleData:  IconStyleData(
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios_outlined,
+                                      color: ColorManager.background,
+
+                                    ),
+                                    iconSize: 14,
+                                    iconEnabledColor: Colors.yellow,
+                                    iconDisabledColor: Colors.grey,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight:AppSizeHeight.s250 ,
+                                    width: AppSizeWidth.s120,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(14),
+                                      color: ColorManager.primary,
+                                    ),
+                                    offset: const Offset(-20, 0),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      radius: const Radius.circular(40),
+                                      thickness: MaterialStateProperty.all<double>(6),
+                                      thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                    ),
+                                  ),
+                                  menuItemStyleData:  MenuItemStyleData(
+                                    height: AppSizeHeight.s35,
+                                    padding: EdgeInsets.only(left: 14, right: 14),
+                                  ),
+                                ),
+                              ),
+
+                            ),
+                          ],
                         ),
+
                       ],
                     ),
                   ),

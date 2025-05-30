@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -374,43 +375,59 @@ class OrderScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
                   width: AppSizeWidth.s100,
-                  child: DropdownButton<String>(
-                    value: selectedSpotName,
-                    isExpanded: true,
-                    underline: Container(
-                      height: AppSizeHeight.s2,
-                      color: ColorManager.white,
-                    ),
-                    icon: Icon(
-                      Icons.arrow_drop_down,
-                      color: ColorManager.white,
-                    ),
-                    style: GoogleFonts.cairo(
-                      color: ColorManager.white,
-                      fontSize: FontSize.s15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    items:
-                        spots.map((spot) {
-                          return DropdownMenuItem<String>(
-                            value: spot.code,
-                            child: TextUtils(
-                              text: spot.code,
-                              color: ColorManager.white,
-                              fontSize: FontSize.s15,
-                              fontWeight: FontWeightManager.bold,
-                            ),
-                          );
-                        }).toList(),
-                    dropdownColor: ColorManager.grey,
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<OrderBloc>().add(
-                          UpdateSpotNameEvent(value),
+                  child:   DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                        items:  spots.map((spot) {
+                        return DropdownMenuItem<String>(
+                          value: spot.code,
+                          child: TextUtils(
+                            text: spot.code,
+                            color: ColorManager.background,
+                            fontSize: FontSize.s15,
+                            fontWeight: FontWeightManager.bold,
+                          ),
                         );
-                      }
-                    },
+                      }).toList(),
+                      value: selectedSpotName,
+                      onChanged: (value) {
+                        if (value != null) {
+                          context.read<OrderBloc>().add(
+                            UpdateSpotNameEvent(value),
+                          );
+                        }
+                      },
+
+                      iconStyleData:  IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          color: ColorManager.background,
+
+                        ),
+                        iconSize: 14,
+                        iconEnabledColor: Colors.yellow,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: AppSizeWidth.s120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: ColorManager.primary,
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(true),
+                        ),
+                      ),
+                      menuItemStyleData:  MenuItemStyleData(
+                        height: AppSizeHeight.s35,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
                   ),
+
                 ),
               ],
             ),
