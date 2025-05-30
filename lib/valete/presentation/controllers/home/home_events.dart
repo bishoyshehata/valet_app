@@ -24,4 +24,16 @@ class ToggleExtraSlotsVisibilityEvent extends HomeEvent {
   @override
   List<Object?> get props => [];
 }
+class UpdateSpotNameEvent extends HomeEvent {
+  final String spotName;
+  UpdateSpotNameEvent(this.spotName);
+
+  @override
+  List<Object?> get props => [spotName];
+}
+class ResetSpotNameEvent extends HomeEvent {
+  @override
+  List<Object?> get props =>[]  ;
+}
+
 

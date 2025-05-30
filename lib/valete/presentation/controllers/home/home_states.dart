@@ -12,6 +12,7 @@ class HomeState {
   final List<Spot>? mainSlots;
   final Map<Spot, int>? mainSpotsIndices;
   final Map<Spot, int>? extraSpotsIndices;
+  final String spotName;
 
   HomeState({
     this.myGaragesState = RequestState.loading,
@@ -22,7 +23,9 @@ class HomeState {
     this.extraSlots,
     this.mainSlots,
     this.extraSpotsIndices,
-    this.mainSpotsIndices
+    this.mainSpotsIndices ,
+    this.spotName = 'رقم الباكية',
+
   });
 
 
@@ -36,6 +39,8 @@ class HomeState {
     List<Spot>? extraSlots,
      Map<Spot, int>? mainSpotsIndices,
      Map<Spot, int>? extraSpotsIndices,
+    String? spotName,
+
   }) {
     return HomeState(
       myGaragesState: myGaragesState ?? this.myGaragesState,
@@ -47,6 +52,7 @@ class HomeState {
       mainSlots: mainSlots ?? this.mainSlots,
       extraSpotsIndices: extraSpotsIndices ?? this.extraSpotsIndices,
       mainSpotsIndices: mainSpotsIndices ?? this.mainSpotsIndices,
+      spotName: spotName ?? this.spotName,
 
     );
   }

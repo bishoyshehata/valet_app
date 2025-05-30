@@ -22,8 +22,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(state.copyWith(currentIndex: event.index));
     });
 
-
-
+    on<UpdateSpotNameEvent>((event, emit) {
+      emit(state.copyWith(spotName: event.spotName));
+    });
+    on<ResetSpotNameEvent>((event, emit) {
+      emit(state.copyWith(spotName: 'رقم الباكية')); // أو '' حسب نوع spotName
+    });
   }
 
   Future<void> _getMyGarages(GetMyGaragesEvent event, Emitter<HomeState> emit) async {
