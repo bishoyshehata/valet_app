@@ -6,6 +6,7 @@ import 'package:valet_app/valete/domain/entities/spot.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
+import '../../components/custom_bottun.dart';
 import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/home/home_states.dart';
@@ -63,7 +64,9 @@ class GarageScreen extends StatelessWidget {
                   child: Center(child: Lottie.asset(LottieManager.carLoading)),
                 );
               case RequestState.loaded:
-                if (state.data == null || state.data!.isEmpty || garageIndex >= state.data!.length) {
+                if (state.data == null ||
+                    state.data!.isEmpty ||
+                    garageIndex >= state.data!.length) {
                   return Center(
                     child: TextUtils(
                       text: 'بيانات الجراج غير متاحة أو الفهرس خاطئ.',
@@ -77,17 +80,23 @@ class GarageScreen extends StatelessWidget {
                 final allSpotsInCurrentGarage = currentGarage.spots;
 
                 // --- فصل المواقف الرئيسية والإضافية *لهذا الجراج فقط* ---
-                final mainSpots = allSpotsInCurrentGarage
-                    .where((spot) =>
-                spot.status != SpotStatus.OverFlowEmpty.index &&
-                    spot.status != SpotStatus.OverFlowBusy.index)
-                    .toList();
+                final mainSpots =
+                    allSpotsInCurrentGarage
+                        .where(
+                          (spot) =>
+                              spot.status != SpotStatus.OverFlowEmpty.index &&
+                              spot.status != SpotStatus.OverFlowBusy.index,
+                        )
+                        .toList();
 
-                final extraSpots = allSpotsInCurrentGarage
-                    .where((spot) =>
-                spot.status == SpotStatus.OverFlowEmpty.index ||
-                    spot.status == SpotStatus.OverFlowBusy.index)
-                    .toList();
+                final extraSpots =
+                    allSpotsInCurrentGarage
+                        .where(
+                          (spot) =>
+                              spot.status == SpotStatus.OverFlowEmpty.index ||
+                              spot.status == SpotStatus.OverFlowBusy.index,
+                        )
+                        .toList();
 
                 return CustomScrollView(
                   slivers: [
@@ -101,16 +110,22 @@ class GarageScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               TextUtils(
-                                text: state.showExtraSlots ? 'إخفاء الأماكن الإضافية' : 'عرض الأماكن الإضافية',
+                                text:
+                                    state.showExtraSlots
+                                        ? 'إخفاء الأماكن الإضافية'
+                                        : 'عرض الأماكن الإضافية',
                                 color: ColorManager.white,
                                 fontSize: FontSize.s17,
                                 fontWeight: FontWeight.bold,
                               ),
                               Switch(
-                                value: state.showExtraSlots, // استخدام الحالة العامة للتبديل
+                                value: state.showExtraSlots,
+                                // استخدام الحالة العامة للتبديل
                                 activeColor: ColorManager.primary,
                                 onChanged: (bool value) {
-                                  context.read<HomeBloc>().add(ToggleExtraSlotsVisibilityEvent(value));
+                                  context.read<HomeBloc>().add(
+                                    ToggleExtraSlotsVisibilityEvent(value),
+                                  );
                                 },
                               ),
                             ],
@@ -122,7 +137,10 @@ class GarageScreen extends StatelessWidget {
                     if (state.showExtraSlots && extraSpots.isNotEmpty) ...[
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
                           child: TextUtils(
                             text: "الأماكن الإضافية",
                             color: ColorManager.white,
@@ -135,15 +153,19 @@ class GarageScreen extends StatelessWidget {
                         padding: EdgeInsets.all(AppPadding.p10),
                         sliver: SliverGrid(
                           delegate: SliverChildBuilderDelegate(
-                                (context, index) => MiniParkingSlotWidget(spot: extraSpots[index]),
-                            childCount: extraSpots.length, // استخدام قائمة المواقف الإضافية *لهذا الجراج*
+                            (context, index) =>
+                                MiniParkingSlotWidget(spot: extraSpots[index]),
+                            childCount:
+                                extraSpots
+                                    .length, // استخدام قائمة المواقف الإضافية *لهذا الجراج*
                           ),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            mainAxisExtent: 100,
-                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                mainAxisExtent: 100,
+                              ),
                         ),
                       ),
                     ],
@@ -151,7 +173,10 @@ class GarageScreen extends StatelessWidget {
                     // --- عرض المواقف الرئيسية ---
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
                         child: TextUtils(
                           text: "الجراج الرئيسي",
                           color: ColorManager.white,
@@ -160,35 +185,57 @@ class GarageScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SliverPadding(
-                      padding: EdgeInsets.all(12),
-                      sliver: SliverGrid(
-                        delegate: SliverChildBuilderDelegate(
+                    mainSpots.isNotEmpty
+                        ? SliverPadding(
+                          padding: EdgeInsets.all(12),
+                          sliver: SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                            final spot = mainSpots[index]; // استخدام قائمة المواقف الرئيسية *لهذا الجراج*
-                            final isLeftSide = index % 2 == 0;
-                            // --- تحديد فهرس الموقف الأصلي ضمن قائمة الجراج الكاملة (إذا احتجت إليه) ---
-                            // final originalSpotIndex = allSpotsInCurrentGarage.indexWhere((s) => s.id == spot.id);
-                            return ParkingSlotWidget(
-                              isLeftSide: isLeftSide,
-                              // نمرر فهرس الموقف ضمن قائمة mainSpots الحالية
-                              // أو يمكنك تمرير spot.id إذا كان هذا أفضل للاستخدام لاحقاً
-                              spotindex: index,
-                              garageindex: garageIndex, // فهرس الجراج الحالي
-                              status: spot.status,
-                              spot: spot,
-                            );
-                          },
-                          childCount: mainSpots.length, // استخدام قائمة المواقف الرئيسية *لهذا الجراج*
+                                final spot =
+                                    mainSpots[index]; // استخدام قائمة المواقف الرئيسية *لهذا الجراج*
+                                final isLeftSide = index % 2 == 0;
+                                // --- تحديد فهرس الموقف الأصلي ضمن قائمة الجراج الكاملة (إذا احتجت إليه) ---
+                                // final originalSpotIndex = allSpotsInCurrentGarage.indexWhere((s) => s.id == spot.id);
+                                return ParkingSlotWidget(
+                                  isLeftSide: isLeftSide,
+                                  // نمرر فهرس الموقف ضمن قائمة mainSpots الحالية
+                                  // أو يمكنك تمرير spot.id إذا كان هذا أفضل للاستخدام لاحقاً
+                                  spotindex: index,
+                                  garageindex: garageIndex,
+                                  // فهرس الجراج الحالي
+                                  status: spot.status,
+                                  spot: spot,
+                                );
+                              },
+                              childCount:
+                                  mainSpots
+                                      .length, // استخدام قائمة المواقف الرئيسية *لهذا الجراج*
+                            ),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 0,
+                                  mainAxisSpacing: 0,
+                                  mainAxisExtent: 105,
+                                ),
+                          ),
+                        )
+                        : SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Center(child: Lottie.asset(LottieManager.noCars)),
+                              TextUtils(
+                                text: "عذراً لا يوجد سيارات بهذا الجراج",
+                                color: ColorManager.white,
+                                fontSize: FontSize.s13,
+                                noOfLines: 2,
+                                overFlow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 0,
-                          mainAxisSpacing: 0,
-                          mainAxisExtent: 105,
-                        ),
-                      ),
-                    ),
                   ],
                 );
               case RequestState.error:
@@ -341,19 +388,23 @@ class MiniParkingSlotWidget extends StatelessWidget {
               fontSize: FontSize.s15,
               fontWeight: FontWeight.bold,
             ),
-            spot.order != null // تأكد من وجود بيانات الطلب قبل عرض السيارة
+            spot.order !=
+                    null // تأكد من وجود بيانات الطلب قبل عرض السيارة
                 ? buildCarTypeImage(spot.order!.carType)
                 : Icon(
-              Icons.local_parking,
-              color: isBusy ? ColorManager.background : ColorManager.primary, // تغيير لون الأيقونة
-              size: AppSizeHeight.s25,
-            ),
+                  Icons.local_parking,
+                  color:
+                      isBusy ? ColorManager.background : ColorManager.primary,
+                  // تغيير لون الأيقونة
+                  size: AppSizeHeight.s25,
+                ),
           ],
         ),
       ),
     );
   }
 }
+
 Widget buildCarTypeImage(int carType) {
   switch (carType) {
     case 0:
