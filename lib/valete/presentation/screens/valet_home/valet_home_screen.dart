@@ -127,15 +127,17 @@ class ValetHomeScreen extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder:
                                         (context) =>
-                                            GarageScreen(garageIndex: index),
+                                            GarageScreen(garageId: garage.id),
                                   ),
                                 );
+                                     context.read<HomeBloc>().add(GetGarageSpotEvent(garage.id));
                               },
                               child: GarageCard(
                                 name: garage.name,
-                                address: garage.address,
-                                spot: garage.spots,
+                                address: garage.address?? 'غير محدد',
                                 capacity: garage.capacity,
+                                busySpots: garage.busySpotCount,
+                                emptySpots: garage.emptySpotCount,
                               ),
                             );
                           },
@@ -184,22 +186,24 @@ class ValetHomeScreen extends StatelessWidget {
 class GarageCard extends StatelessWidget {
   final String name;
   final String address;
-  final List<Spot> spot;
   final int capacity;
+  final int busySpots;
+  final int emptySpots;
 
   const GarageCard({
     super.key,
     required this.name,
     required this.address,
-    required this.spot,
     required this.capacity,
+    required this.busySpots,
+    required this.emptySpots,
   });
 
   @override
   Widget build(BuildContext context) {
-    final int totalSpots = spot.length;
-    final int occupiedSpots = spot.where((spot) => spot.order != null).length;
-    final int availableSpots = totalSpots - occupiedSpots;
+    final int totalSpots = capacity;
+    final int occupiedSpots = busySpots;
+    final int availableSpots = emptySpots;
 
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {

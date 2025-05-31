@@ -1,27 +1,36 @@
+import 'package:valet_app/valete/domain/entities/get_garage_spot.dart';
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/spot.dart';
 
 class HomeState {
   final RequestState myGaragesState;
+  final RequestState getGaragesSpotState;
   final String myGaragesErrorMessage;
+  final String getGaragesSpotErrorMessage;
   final List<MyGarages>? data;
   final int currentIndex;
   final bool showExtraSlots;
-  final List<Spot>? extraSlots;
-  final List<Spot>? mainSlots;
+  final GetGarageSpot? allSpots;
+  final List<Spot>? extraSpots;
+  final List<Spot>? mainSpots;
+  final List<Spot>? emptySpots;
   final Map<Spot, int>? mainSpotsIndices;
   final Map<Spot, int>? extraSpotsIndices;
   final String spotName;
 
   HomeState({
     this.myGaragesState = RequestState.loading,
+    this.getGaragesSpotState = RequestState.loading,
     this.myGaragesErrorMessage = '',
+    this.getGaragesSpotErrorMessage = '',
     this.data,
     this.currentIndex = 0,
     this.showExtraSlots = false,
-    this.extraSlots,
-    this.mainSlots,
+    this.extraSpots,
+    this.mainSpots,
+    this.emptySpots,
+    this.allSpots,
     this.extraSpotsIndices,
     this.mainSpotsIndices ,
     this.spotName = 'رقم الباكية',
@@ -31,12 +40,16 @@ class HomeState {
 
   HomeState copyWith({
     RequestState? myGaragesState,
+    RequestState? getGaragesSpotState,
     String? myGaragesErrorMessage,
+    String? getGaragesSpotErrorMessage,
     List<MyGarages>? data,
-    List<Spot>? mainSlots,
+    GetGarageSpot? allSpots,
+    List<Spot>? extraSpots,
+    List<Spot>? mainSpots,
+    List<Spot>? emptySpots,
     int? currentIndex,
     bool? showExtraSlots,
-    List<Spot>? extraSlots,
      Map<Spot, int>? mainSpotsIndices,
      Map<Spot, int>? extraSpotsIndices,
     String? spotName,
@@ -44,15 +57,19 @@ class HomeState {
   }) {
     return HomeState(
       myGaragesState: myGaragesState ?? this.myGaragesState,
+      getGaragesSpotState: getGaragesSpotState ?? this.getGaragesSpotState,
       myGaragesErrorMessage: myGaragesErrorMessage ?? this.myGaragesErrorMessage,
       data: data ?? this.data,
       currentIndex: currentIndex ?? this.currentIndex,
       showExtraSlots: showExtraSlots ?? this.showExtraSlots,
-      extraSlots: extraSlots ?? this.extraSlots,
-      mainSlots: mainSlots ?? this.mainSlots,
+      allSpots: allSpots ?? this.allSpots,
+      extraSpots: extraSpots ?? this.extraSpots,
+      mainSpots: mainSpots ?? this.mainSpots,
+      emptySpots: emptySpots ?? this.emptySpots,
       extraSpotsIndices: extraSpotsIndices ?? this.extraSpotsIndices,
       mainSpotsIndices: mainSpotsIndices ?? this.mainSpotsIndices,
       spotName: spotName ?? this.spotName,
+      getGaragesSpotErrorMessage: getGaragesSpotErrorMessage ?? this.getGaragesSpotErrorMessage,
 
     );
   }

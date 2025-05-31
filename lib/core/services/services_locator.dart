@@ -8,6 +8,7 @@ import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/delete_account_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/login_use_case.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
+import '../../valete/domain/usecases/get_garage_spot_use_case.dart';
 import '../../valete/domain/usecases/my_garages_use_case.dart';
 import '../../valete/domain/usecases/my_orders_use_case.dart';
 import '../../valete/domain/usecases/store_order_use_case.dart';
@@ -24,7 +25,7 @@ class ServicesLocator {
     sl.registerLazySingleton<Dio>(() => Dio());
 
     /// HomeBloc
-    sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>(),initialSelectedStatus: 0));
+    sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>(),sl<GetGarageSpotUseCase>(),initialSelectedStatus: 0));
     /// LoginBloc
     sl.registerLazySingleton<LoginBloc>(() => LoginBloc(sl()));
 
@@ -68,5 +69,7 @@ class ServicesLocator {
 
     /// DeleteValedUseCase
     sl.registerLazySingleton(() => DeleteValedUseCase(sl()));
+    /// GetGarageSpotUseCase
+    sl.registerLazySingleton(() => GetGarageSpotUseCase(sl()));
   }
 }

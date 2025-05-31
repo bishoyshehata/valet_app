@@ -17,16 +17,11 @@ import '../../components/custom_app_bar.dart';
 // تعريف SpotStatus enum (تأكد من مطابقته للقيم في الـ JSON)
 
 class GarageScreen extends StatelessWidget {
-  final int garageIndex;
+  final int garageId;
 
-  GarageScreen({super.key, required this.garageIndex});
-
-  List? extraSlots;
-
+  GarageScreen({super.key, required this.garageId});
   @override
   Widget build(BuildContext context) {
-    print(garageIndex);
-    context.read<HomeBloc>().add(GetMyGaragesEvent());
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -56,16 +51,14 @@ class GarageScreen extends StatelessWidget {
           //     (previous, current) =>
           //         previous.data != current.data,
           builder: (context, state) {
-            switch (state.myGaragesState) {
+            switch (state.getGaragesSpotState) {
               case RequestState.loading:
                 return SizedBox(
                   height: AppSizeHeight.sMaxInfinite,
                   child: Center(child: Lottie.asset(LottieManager.carLoading)),
                 );
               case RequestState.loaded:
-                if (state.data == null ||
-                    state.data!.isEmpty ||
-                    garageIndex >= state.data!.length) {
+                if (state.mainSpots!.isEmpty) {
                   return Center(
                     child: TextUtils(
                       text: 'بيانات الجراج غير متاحة أو الفهرس خاطئ.',
@@ -75,33 +68,35 @@ class GarageScreen extends StatelessWidget {
                 }
 
                 // --- الحصول على بيانات الجراج المحدد ---
-                final currentGarage = state.data![garageIndex];
-                final allSpotsInCurrentGarage = currentGarage.spots;
+                // final currentGarage = state.data![garageIndex];
+                // final allSpotsInCurrentGarage = currentGarage.spots;
 
                 // --- فصل المواقف الرئيسية والإضافية *لهذا الجراج فقط* ---
-                final mainSpots =
-                    allSpotsInCurrentGarage
-                        .where(
-                          (spot) =>
-                              spot.status != SpotStatus.OverFlowEmpty.index &&
-                              spot.status != SpotStatus.OverFlowBusy.index,
-                        )
-                        .toList();
+                // final mainSpots =
+                //     allSpotsInCurrentGarage
+                //         .where(
+                //           (spot) =>
+                //               spot.status != SpotStatus.OverFlowEmpty.index &&
+                //               spot.status != SpotStatus.OverFlowBusy.index,
+                //         )
+                //         .toList();
+                //
+                // final extraSpotsWithIndex = state.data![garageIndex].spots
+                //     .asMap()
+                //     .entries
+                //     .where((entry) =>
+                // entry.value.status == SpotStatus.OverFlowEmpty.index ||
+                //     entry.value.status == SpotStatus.OverFlowBusy.index)
+                //     .toList();
 
-                final extraSpotsWithIndex = state.data![garageIndex].spots
-                    .asMap()
-                    .entries
-                    .where((entry) =>
-                entry.value.status == SpotStatus.OverFlowEmpty.index ||
-                    entry.value.status == SpotStatus.OverFlowBusy.index)
-                    .toList();
-
-
+                final extraSpots = state.extraSpots;
+                final mainSpots = state.mainSpots;
+                final emptySpots = state.emptySpots;
                 return CustomScrollView(
                   slivers: [
                     // --- مفتاح عرض/إخفاء المواقف الإضافية ---
                     // نعرض المفتاح فقط إذا كان هناك مواقف إضافية في هذا الجراج
-                    if (extraSpotsWithIndex.isNotEmpty)
+                    if (extraSpots!.isNotEmpty)
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
@@ -133,37 +128,19 @@ class GarageScreen extends StatelessWidget {
                       ),
 
                     // --- عرض المواقف الإضافية (إذا كانت الحالة تسمح وهناك مواقف إضافية) ---
-                    if (state.showExtraSlots && extraSpotsWithIndex.isNotEmpty) ...[
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 5,
-                          ),
-                          child: TextUtils(
-                            text: "الأماكن الإضافية",
-                            color: ColorManager.white,
-                            fontSize: FontSize.s17,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                    if (state.showExtraSlots ) ...[
                       SliverPadding(
                         padding: EdgeInsets.all(AppPadding.p10),
                         sliver: SliverGrid(
                           delegate: SliverChildBuilderDelegate(
                                 (context, index) {
-                              final spotEntry = extraSpotsWithIndex[index];
-                              final spot = spotEntry.value;
-                              final originalIndex = spotEntry.key;
 
                               return MiniParkingSlotWidget(
-                                spot: spot,
-                                garageindex: garageIndex,
-                                spotindex: originalIndex, // ← index الأصلي من كل المواقف
+                                spot: extraSpots[index],
+                                spotindex: index, // ← index الأصلي من كل المواقف
                               );
                             },
-                            childCount: extraSpotsWithIndex.length,
+                            childCount: extraSpots.length,
                           ),
                           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 4,
@@ -190,19 +167,18 @@ class GarageScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    mainSpots.isNotEmpty
+                    mainSpots!.isNotEmpty
                         ? SliverPadding(
                           padding: EdgeInsets.all(12),
                           sliver: SliverGrid(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
                                 final spot =
-                                    mainSpots[index];
+                                    mainSpots![index];
                                 final isLeftSide = index % 2 == 0;
                                 return ParkingSlotWidget(
                                   isLeftSide: isLeftSide,
                                   spotindex: index,
-                                  garageindex: garageIndex,
                                   status: spot.status,
                                   spot: spot,
                                 );
@@ -263,7 +239,6 @@ class GarageScreen extends StatelessWidget {
 class ParkingSlotWidget extends StatelessWidget {
   final Spot spot;
   final int spotindex;
-  final int garageindex;
   final bool isLeftSide;
   final int status;
 
@@ -271,16 +246,16 @@ class ParkingSlotWidget extends StatelessWidget {
     super.key,
     required this.spot,
     required this.spotindex,
-    required this.garageindex,
     required this.isLeftSide,
     required this.status,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isBusy = spot.hasOrder;
     return InkWell(
       onTap: () {
-        if (spot.order != null) {
+        if (spot.hasOrder ) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -288,14 +263,13 @@ class ParkingSlotWidget extends StatelessWidget {
                   (context) => BlocProvider.value(
                     value: context.read<HomeBloc>(),
                     child: OrderDetails(
-                      spotIndex: spotindex,
-                      garageIndex: garageindex,
+                      spotId: spot.id,
                     ),
                   ),
             ),
           );
         } else {
-          print(status);
+          print(spot.id);
         }
       },
       child: Stack(
@@ -333,7 +307,7 @@ class ParkingSlotWidget extends StatelessWidget {
           Container(
             margin: EdgeInsets.all(5),
             color:
-                status == SpotStatus.Busy.index
+            isBusy
                     ? ColorManager.primary
                     : ColorManager.background,
             child: Center(
@@ -343,13 +317,13 @@ class ParkingSlotWidget extends StatelessWidget {
                   TextUtils(
                     text: spot.code,
                     color:
-                        status == SpotStatus.Busy.index
+                    isBusy
                             ? ColorManager.background
                             : ColorManager.white,
                     fontSize: FontSize.s15,
                     fontWeight: FontWeight.bold,
                   ),
-                  (spot.order != null)
+                  (spot.hasOrder )
                       ? buildCarTypeImage(spot.order!.carType)
                       : Icon(
                         Icons.local_parking,
@@ -369,16 +343,15 @@ class ParkingSlotWidget extends StatelessWidget {
 class MiniParkingSlotWidget extends StatelessWidget {
   final Spot spot;
   final int spotindex;
-  final int garageindex;
-  const MiniParkingSlotWidget({super.key, required this.spot, required this.spotindex, required this.garageindex});
+  const MiniParkingSlotWidget({super.key, required this.spot, required this.spotindex});
 
   @override
   Widget build(BuildContext context) {
-    bool isBusy = spot.status == SpotStatus.OverFlowBusy.index;
+    bool isBusy = spot.hasOrder;
 
     return InkWell(
       onTap: () {
-        if (spot.order != null) {
+        if (spot.hasOrder) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -386,8 +359,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
                   (context) => BlocProvider.value(
                 value: context.read<HomeBloc>(),
                 child: OrderDetails(
-                  spotIndex: spotindex,
-                  garageIndex: garageindex,
+                  spotId: spot.id,
                 ),
               ),
             ),
@@ -395,6 +367,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
         } else {
           print(spot.status);
         }
+        print(spot.id);
       },
       child: Card(
         color: isBusy ? ColorManager.primary : ColorManager.darkGrey,
@@ -408,8 +381,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
                 fontSize: FontSize.s15,
                 fontWeight: FontWeight.bold,
               ),
-              spot.order !=
-                      null // تأكد من وجود بيانات الطلب قبل عرض السيارة
+              spot.hasOrder
                   ? buildCarTypeImage(spot.order!.carType)
                   : Icon(
                     Icons.local_parking,

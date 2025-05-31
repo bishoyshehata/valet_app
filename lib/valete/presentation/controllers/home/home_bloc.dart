@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:valet_app/valete/domain/usecases/get_garage_spot_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/spot.dart';
@@ -7,15 +8,39 @@ import 'home_states.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final MyGaragesUseCase myGaragesUseCase;
+  final GetGarageSpotUseCase getGarageSpotUseCase;
 
   HomeBloc(
     this.myGaragesUseCase,
-      {
+    this.getGarageSpotUseCase, {
     int initialSelectedStatus = 0,
-  }) : super(
-         HomeState(currentIndex: 0),
-       ) {
+  }) : super(HomeState(currentIndex: 0)) {
     on<GetMyGaragesEvent>(_getMyGarages);
+    on<GetGarageSpotEvent>((event, emit) async {
+      final garageSpots = await getGarageSpotUseCase.getGarageSpot(
+        event.garageId,
+      );
+      garageSpots.fold(
+        (error) {
+          print(error);
+          emit(
+            state.copyWith(
+              getGaragesSpotErrorMessage: error.message,
+              getGaragesSpotState: RequestState.error,
+            ),
+          );
+        },
+        (garageSpots) => emit(
+          state.copyWith(
+            getGaragesSpotState: RequestState.loaded,
+            mainSpots: garageSpots.mainSpots,
+            extraSpots: garageSpots.extraSpots,
+            emptySpots: garageSpots.emptySpots,
+            allSpots: garageSpots
+          ),
+        ),
+      );
+    });
     on<ToggleExtraSlotsVisibilityEvent>(_toggleExtraSlotsVisibility);
 
     on<ChangeTabEvent>((event, emit) {
@@ -30,23 +55,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
   }
 
-  Future<void> _getMyGarages(GetMyGaragesEvent event, Emitter<HomeState> emit) async {
+  Future<void> _getMyGarages(
+    GetMyGaragesEvent event,
+    Emitter<HomeState> emit,
+  ) async {
     // (اختياري) يمكنك إصدار حالة تحميل هنا إذا أردت
     // emit(state.copyWith(myGaragesState: RequestState.loading));
 
     final result = await myGaragesUseCase.myGarages(); // استدعاء الـ UseCase
 
     result.fold(
-          (error) {
+      (error) {
         // في حالة الخطأ، قم بتحديث الحالة برسالة الخطأ
+        print(error);
         emit(
           state.copyWith(
             myGaragesState: RequestState.error,
-            myGaragesErrorMessage: error.message, // افترض أن Failure له خاصية message
+            myGaragesErrorMessage:
+                error.message, // افترض أن Failure له خاصية message
           ),
         );
       },
-          (data) {
+      (data) {
         // في حالة النجاح، قم بتحديث الحالة بقائمة الجراجات المستلمة فقط
         emit(
           state.copyWith(
@@ -60,7 +90,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   // احتفظ بهذا المعالج إذا كنت لا تزال تريد مفتاح تبديل عام
-  void _toggleExtraSlotsVisibility(ToggleExtraSlotsVisibilityEvent event, Emitter<HomeState> emit) {
+  void _toggleExtraSlotsVisibility(
+    ToggleExtraSlotsVisibilityEvent event,
+    Emitter<HomeState> emit,
+  ) {
     emit(state.copyWith(showExtraSlots: event.show));
   }
 }

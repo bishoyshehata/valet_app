@@ -12,7 +12,8 @@ class MyGaragesModel extends MyGarages {
     required super.capacityOverFlow,
     required super.capacity,
     required super.companyId,
-    required super.spots,
+   required super.emptySpotCount,
+   required super.busySpotCount,
   });
 
  factory MyGaragesModel.fromJson(Map<String, dynamic> json)=>
@@ -26,9 +27,11 @@ class MyGaragesModel extends MyGarages {
        capacityOverFlow: json['capacityOverFlow'],
        capacity: json['capacity'],
        companyId: json['companyId'],
-       spots:  (json['spots'] as List)
-           .map((spot) => Spot.fromJson(spot))
-           .toList(),
+       emptySpotCount: json['emptySpotCount'],
+       busySpotCount: json['busySpotCount'],
+       // spots:  (json['spots'] as List)
+       //     .map((spot) => Spot.fromJson(spot))
+       //     .toList(),
      );
 
 

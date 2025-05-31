@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
  class Order extends Equatable {
   final int id;
-  final String garageName;
-  final String spotCode;
+  final String? garageName;
+  final String? spotCode;
   final String clientNumber;
   final String? carImage;
   final int carType;

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/domain/entities/default_order.dart';
+import 'package:valet_app/valete/domain/entities/get_garage_spot.dart';
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import 'package:valet_app/valete/domain/entities/my_orders.dart';
 import 'package:valet_app/valete/domain/entities/store_order.dart';
@@ -76,6 +77,17 @@ class ValetRepository extends IValetRepository {
   Future<Either<Failure, bool>> deleteValet(int valetId)async {
     try {
       final result = await valetDataSource.deleteValet(valetId);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, GetGarageSpot>> getGarageSpot(int garageId)async {
+
+    try {
+      final result = await valetDataSource.getGarageSpot(garageId);
       return Right(result);
     } on ServerFailure catch (failure) {
       return Left(ServerFailure(failure.message));

@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/core/network/api_constants.dart';
+import 'package:valet_app/valete/data/models/get_garage_spot_model.dart';
 import 'package:valet_app/valete/data/models/my_garages_models.dart';
 import 'package:valet_app/valete/data/models/my_orders_model.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
+import 'package:valet_app/valete/domain/entities/get_garage_spot.dart';
 import '../../../core/dio/dio_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/notifications/firebase_notifications/firebase.dart';
@@ -18,6 +20,7 @@ abstract class IValetDataSource {
   Future<List<MyOrdersModel>> myOrders(int status);
   Future<bool> updateOrderStatus(int orderId,int newStatus);
   Future<bool> deleteValet(int valetId);
+  Future<GetGarageSpotModel> getGarageSpot(int garageId);
 }
 
 
@@ -186,6 +189,21 @@ class ValetDataSource extends IValetDataSource {
 
     if (response.statusCode == 200) {
       return response.data['succeeded'];
+    } else {
+      throw ServerFailure(response.data['messages'][0]);
+    }
+  }
+
+  @override
+  Future<GetGarageSpotModel> getGarageSpot(int garageId) async{
+
+    final response = await DioHelper.post(
+      ApiConstants.getGarageSpotEndPoint(garageId),
+      requiresAuth: true,
+    );
+
+    if (response.statusCode == 200) {
+      return GetGarageSpotModel.fromJson(response.data['data']);;
     } else {
       throw ServerFailure(response.data['messages'][0]);
     }

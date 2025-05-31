@@ -9,6 +9,12 @@ class GetMyGaragesEvent extends HomeEvent {
   @override
   List<Object?> get props => [];
 }
+class GetGarageSpotEvent extends HomeEvent {
+  late final int garageId ;
+  GetGarageSpotEvent(this.garageId);
+  @override
+  List<Object?> get props => [garageId];
+}
 class ChangeTabEvent extends HomeEvent {
   final int index;
    ChangeTabEvent(this.index);

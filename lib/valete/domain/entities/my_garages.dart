@@ -5,14 +5,15 @@ abstract class MyGarages extends Equatable {
   final int id;
   final int priority;
   final String name;
-  final String description;
-  final String address;
+  final String? description;
+  final String? address;
   final String addedOn;
   final String? companyName;
   final bool capacityOverFlow;
   final int capacity;
   final int companyId;
-  final List<Spot> spots;
+  final int busySpotCount;
+  final int emptySpotCount;
 
   const MyGarages({
     required this.id,
@@ -25,6 +26,7 @@ abstract class MyGarages extends Equatable {
     required this.capacityOverFlow,
     required this.capacity,
     required this.companyId,
-    required this.spots,
+    required this.emptySpotCount,
+    required this.busySpotCount,
   });
 }

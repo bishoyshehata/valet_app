@@ -19,42 +19,27 @@ import '../garage_screen/garage_screen.dart';
 import 'order_full_screen.dart';
 
 class OrderDetails extends StatelessWidget {
-  final int spotIndex;
-  final int garageIndex;
-  String? selectedSpotCode;
+  final int spotId;
    OrderDetails({
     super.key,
-    required this.spotIndex,
-    required this.garageIndex,
+    required this.spotId,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-        final data = state.data![garageIndex].spots[spotIndex];
-        state = context.watch<HomeBloc>().state;
-        state.spotName == 'رقم الباكية';
-        selectedSpotCode  =  state.spotName == 'رقم الباكية' ? data.code:state.spotName  ;
-        print(selectedSpotCode);
-
-        print(selectedSpotCode);
-        // في مكان بناء القائمة:
-        final filteredSpots =
-            state.data![garageIndex].spots
-                .where((spot) => spot.status == 0)
-                .toList();
-
-        final spotsForDropdown =
-            filteredSpots.any((spot) => spot.code == selectedSpotCode)
-                ? filteredSpots
-                : [
-                      if (selectedSpotCode != null)
-                        state.data![garageIndex].spots.firstWhere(
-                          (spot) => spot.code == selectedSpotCode,
-                        ),
-                    ] +
-                    filteredSpots;
+        final spot = [
+          ...?state.allSpots?.mainSpots,
+          ...?state.allSpots?.extraSpots,
+          ...?state.allSpots?.emptySpots,
+        ].firstWhere(
+              (spot) => spot.id == spotId,
+        );
+        final emptySpotCodes = state.emptySpots?.map((s) => s.code).toList() ?? [];
+        String? dropdownValue = (state.spotName != 'رقم الباكية' && emptySpotCodes.contains(state.spotName))
+            ? state.spotName
+            : null;
 
         switch (state.myGaragesState) {
           case RequestState.loading:
@@ -88,7 +73,7 @@ class OrderDetails extends StatelessWidget {
                         icon: Icon(Icons.arrow_back, color: ColorManager.white),
                       ),
                     ),
-                    title: state.data![garageIndex].spots[spotIndex].code,
+                    title: spot.code,
                     centerTitle: true,
                     titleColor: ColorManager.white,
                   ),
@@ -111,7 +96,7 @@ class OrderDetails extends StatelessWidget {
                               ),
                             ),
                             child:
-                                data.order!.carImage != null
+                            spot.order!.carImage != null
                                     ? GestureDetector(
                                       onTap:
                                           () => Navigator.push(
@@ -120,17 +105,17 @@ class OrderDetails extends StatelessWidget {
                                               builder:
                                                   (_) => FullScreenNetworkImage(
                                                     imageUrl:
-                                                        "${ApiConstants.baseUrl}/${data.order!.carImage!}",
+                                                        "${ApiConstants.baseUrl}/${spot.order!.carImage!}",
                                                   ),
                                             ),
                                           ),
                                       child: FadeInImage.assetNetwork(
                                         placeholder: buildCarTypeImageForStatus(
-                                          data.order!.carType,
+                                          spot.order!.carType,
                                         ),
                                         // الصورة المؤقتة من الأصول
                                         image: Uri.encodeFull(
-                                          "${ApiConstants.baseUrl}/${data.order!.carImage!}",
+                                          "${ApiConstants.baseUrl}/${spot.order!.carImage!}",
                                         ),
                                         height: AppSizeHeight.s100,
                                         width: AppSizeHeight.s100,
@@ -141,12 +126,12 @@ class OrderDetails extends StatelessWidget {
                                           stackTrace,
                                         ) {
                                           return buildCarTypeImage(
-                                            data.order!.carType,
+                                            spot.order!.carType,
                                           );
                                         },
                                       ),
                                     )
-                                    : buildCarTypeImage(data.order!.carType),
+                                    : buildCarTypeImage(spot.order!.carType),
                           ),
                           SizedBox(height: AppSizeHeight.s20),
                           Text.rich(
@@ -159,7 +144,7 @@ class OrderDetails extends StatelessWidget {
                               ),
                               children: [
                                 TextSpan(
-                                  text: data.order!.clientNumber.replaceRange(
+                                  text: spot.order!.clientNumber.replaceRange(
                                     0,
                                     8,
                                     '',
@@ -185,7 +170,7 @@ class OrderDetails extends StatelessWidget {
 
                           SizedBox(height: AppSizeHeight.s20),
                           TextUtils(
-                            text: 'الجراج : ${data.order!.garageName}',
+                            text: 'الجراج : ${spot.order!.garageName ?? "غير محدد"}',
                             color: ColorManager.lightGrey,
                             fontSize: FontSize.s17,
                           ),
@@ -218,18 +203,18 @@ class OrderDetails extends StatelessWidget {
                                   child: DropdownButton2<String>(
                                     isExpanded: true,
                                     items:
-                                        spotsForDropdown.map((spot) {
+                                        emptySpotCodes.map((code) {
                                           return DropdownMenuItem<String>(
-                                            value: spot.code,
+                                            value: code,
                                             child: TextUtils(
-                                              text: spot.code,
+                                              text: code,
                                               color: ColorManager.background,
                                               fontSize: FontSize.s15,
                                               fontWeight: FontWeightManager.bold,
                                             ),
                                           );
                                         }).toList(),
-                                    value:selectedSpotCode,
+                                    value:dropdownValue,
                                     onChanged: (value) {
                                       if (value != null) {
                                         context.read<HomeBloc>().add(
@@ -237,6 +222,15 @@ class OrderDetails extends StatelessWidget {
                                         );
                                       }
                                     },
+                                    hint: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextUtils(
+                                        text: spot.code,
+                                        color: ColorManager.background,
+                                        fontSize: FontSize.s15,
+                                        fontWeight: FontWeightManager.bold,
+                                      ),
+                                    ),
                                     iconStyleData: IconStyleData(
                                       icon: Icon(
                                         Icons.arrow_forward_ios_outlined,
