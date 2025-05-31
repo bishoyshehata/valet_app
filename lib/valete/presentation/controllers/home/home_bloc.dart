@@ -46,16 +46,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
     });
     on<UpdateOrderSpotEvent>((event,emit)async {
+      emit(state.copyWith(updateOrderSpotState: UpdateOrderSpotState.loading));
 
       final updateResult  = await updateOrderSpotUseCase.updateOrderSpot(event.orderId, event.spotId);
       updateResult.fold((error){
         print("xxxxxxxxxxxxxxxx$error");
 
-        emit(state.copyWith(updateOrderSpotErrorMessage: error.message,updateOrderSpotState: RequestState.error));
+        emit(state.copyWith(updateOrderSpotErrorMessage: error.message,updateOrderSpotState: UpdateOrderSpotState.error));
       }, (result){
         print("=============$result");
-          emit(state.copyWith(updateOrderSpotState: RequestState.loaded,updateResult: result));
+          emit(state.copyWith(updateOrderSpotState: UpdateOrderSpotState.loaded,updateResult: result));
+
       });
+      await Future.delayed(Duration(milliseconds: 500));
+
     });
     on<ToggleExtraSlotsVisibilityEvent>(_toggleExtraSlotsVisibility);
 

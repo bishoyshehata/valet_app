@@ -20,7 +20,7 @@ class HomeState {
   final String spotName;
   final bool? updateResult;
   final String updateOrderSpotErrorMessage;
-  final RequestState updateOrderSpotState;
+  final UpdateOrderSpotState updateOrderSpotState;
 
   HomeState({
     this.myGaragesState = RequestState.loading,
@@ -28,7 +28,7 @@ class HomeState {
     this.myGaragesErrorMessage = '',
     this.getGaragesSpotErrorMessage = '',
     this.updateOrderSpotErrorMessage = '',
-    this.updateOrderSpotState = RequestState.loading,
+    this.updateOrderSpotState = UpdateOrderSpotState.initial,
     this.updateResult,
     this.data,
     this.currentIndex = 0,
@@ -61,7 +61,7 @@ class HomeState {
     String? spotName,
     bool? updateResult,
     String? updateOrderSpotErrorMessage,
-    RequestState? updateOrderSpotState,
+    UpdateOrderSpotState? updateOrderSpotState,
 
   }) {
     return HomeState(

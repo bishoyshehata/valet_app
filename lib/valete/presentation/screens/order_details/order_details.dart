@@ -53,6 +53,7 @@ class OrderDetails extends StatelessWidget {
             ...?state.allSpots?.emptySpots,
           ].firstWhere(
                 (spot) => spot.code == dropdownValue,
+             
           );
         }
 
@@ -287,10 +288,13 @@ class OrderDetails extends StatelessWidget {
                           CustomButton(
                             onTap: () {
                               context.read<HomeBloc>().add(UpdateOrderSpotEvent(spot.order!.id,newSpot!.id));
-                              context.read<HomeBloc>().add(GetGarageSpotEvent(garageId));
+
                               Navigator.pop(context);
+                              // context.read<HomeBloc>().add(GetGarageSpotEvent(garageId));
+
                               print(spot.order!.id);
                               print(newSpot!.id);
+                              print(garageId);
                             },
                             btnColor: state.spotName == 'رقم الباكية'
                                 ? ColorManager.darkGrey
