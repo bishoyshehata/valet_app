@@ -15,6 +15,13 @@ class GetGarageSpotEvent extends HomeEvent {
   @override
   List<Object?> get props => [garageId];
 }
+class UpdateOrderSpotEvent extends HomeEvent {
+  late final int orderId ;
+  late final int spotId ;
+  UpdateOrderSpotEvent(this.orderId,this.spotId);
+  @override
+  List<Object?> get props => [orderId,spotId];
+}
 class ChangeTabEvent extends HomeEvent {
   final int index;
    ChangeTabEvent(this.index);

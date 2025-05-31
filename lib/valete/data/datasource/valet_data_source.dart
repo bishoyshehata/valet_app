@@ -21,6 +21,7 @@ abstract class IValetDataSource {
   Future<bool> updateOrderStatus(int orderId,int newStatus);
   Future<bool> deleteValet(int valetId);
   Future<GetGarageSpotModel> getGarageSpot(int garageId);
+  Future<bool> updateOrderSpot(int orderId , int spotId);
 }
 
 
@@ -205,6 +206,25 @@ class ValetDataSource extends IValetDataSource {
     if (response.statusCode == 200) {
       return GetGarageSpotModel.fromJson(response.data['data']);;
     } else {
+      throw ServerFailure(response.data['messages'][0]);
+    }
+  }
+
+  @override
+  Future<bool> updateOrderSpot(int orderId, int spotId) async{
+
+    final response = await DioHelper.post(
+      ApiConstants.updateOrderSpotEndPoint(orderId, spotId),
+      requiresAuth: true,
+    );
+
+    if (response.statusCode == 200) {
+      return response.data['data'];
+    }else if(response.statusCode == 401){
+      markUnAuthorized();
+      throw ServerFailure(response.data['messages'][0]);
+    } else {
+
       throw ServerFailure(response.data['messages'][0]);
     }
   }

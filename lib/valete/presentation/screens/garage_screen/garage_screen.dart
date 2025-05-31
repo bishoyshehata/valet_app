@@ -66,29 +66,6 @@ class GarageScreen extends StatelessWidget {
                     ),
                   );
                 }
-
-                // --- الحصول على بيانات الجراج المحدد ---
-                // final currentGarage = state.data![garageIndex];
-                // final allSpotsInCurrentGarage = currentGarage.spots;
-
-                // --- فصل المواقف الرئيسية والإضافية *لهذا الجراج فقط* ---
-                // final mainSpots =
-                //     allSpotsInCurrentGarage
-                //         .where(
-                //           (spot) =>
-                //               spot.status != SpotStatus.OverFlowEmpty.index &&
-                //               spot.status != SpotStatus.OverFlowBusy.index,
-                //         )
-                //         .toList();
-                //
-                // final extraSpotsWithIndex = state.data![garageIndex].spots
-                //     .asMap()
-                //     .entries
-                //     .where((entry) =>
-                // entry.value.status == SpotStatus.OverFlowEmpty.index ||
-                //     entry.value.status == SpotStatus.OverFlowBusy.index)
-                //     .toList();
-
                 final extraSpots = state.extraSpots;
                 final mainSpots = state.mainSpots;
                 final emptySpots = state.emptySpots;
@@ -137,6 +114,7 @@ class GarageScreen extends StatelessWidget {
 
                               return MiniParkingSlotWidget(
                                 spot: extraSpots[index],
+                                garageId: garageId,
                                 spotindex: index, // ← index الأصلي من كل المواقف
                               );
                             },
@@ -178,6 +156,7 @@ class GarageScreen extends StatelessWidget {
                                 final isLeftSide = index % 2 == 0;
                                 return ParkingSlotWidget(
                                   isLeftSide: isLeftSide,
+                                  garageId: garageId,
                                   spotindex: index,
                                   status: spot.status,
                                   spot: spot,
@@ -239,6 +218,7 @@ class GarageScreen extends StatelessWidget {
 class ParkingSlotWidget extends StatelessWidget {
   final Spot spot;
   final int spotindex;
+  final int garageId;
   final bool isLeftSide;
   final int status;
 
@@ -248,6 +228,7 @@ class ParkingSlotWidget extends StatelessWidget {
     required this.spotindex,
     required this.isLeftSide,
     required this.status,
+    required this.garageId,
   });
 
   @override
@@ -264,6 +245,7 @@ class ParkingSlotWidget extends StatelessWidget {
                     value: context.read<HomeBloc>(),
                     child: OrderDetails(
                       spotId: spot.id,
+                      garageId: garageId,
                     ),
                   ),
             ),
@@ -343,7 +325,8 @@ class ParkingSlotWidget extends StatelessWidget {
 class MiniParkingSlotWidget extends StatelessWidget {
   final Spot spot;
   final int spotindex;
-  const MiniParkingSlotWidget({super.key, required this.spot, required this.spotindex});
+  final int garageId;
+  const MiniParkingSlotWidget({super.key, required this.spot, required this.spotindex, required this.garageId});
 
   @override
   Widget build(BuildContext context) {
@@ -360,6 +343,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
                 value: context.read<HomeBloc>(),
                 child: OrderDetails(
                   spotId: spot.id,
+                  garageId: garageId,
                 ),
               ),
             ),

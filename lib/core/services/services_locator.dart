@@ -12,6 +12,7 @@ import '../../valete/domain/usecases/get_garage_spot_use_case.dart';
 import '../../valete/domain/usecases/my_garages_use_case.dart';
 import '../../valete/domain/usecases/my_orders_use_case.dart';
 import '../../valete/domain/usecases/store_order_use_case.dart';
+import '../../valete/domain/usecases/update_order_spot_use_case.dart';
 import '../../valete/domain/usecases/update_order_status_use_case.dart';
 import '../../valete/presentation/controllers/home/home_bloc.dart';
 import '../../valete/presentation/controllers/login/login_bloc.dart';
@@ -25,7 +26,15 @@ class ServicesLocator {
     sl.registerLazySingleton<Dio>(() => Dio());
 
     /// HomeBloc
-    sl.registerLazySingleton<HomeBloc>(() => HomeBloc(sl<MyGaragesUseCase>(),sl<GetGarageSpotUseCase>(),initialSelectedStatus: 0));
+    sl.registerLazySingleton<HomeBloc>(
+      () => HomeBloc(
+        sl<MyGaragesUseCase>(),
+        sl<GetGarageSpotUseCase>(),
+        sl<UpdateOrderSpotUseCase>(),
+        initialSelectedStatus: 0,
+      ),
+    );
+
     /// LoginBloc
     sl.registerLazySingleton<LoginBloc>(() => LoginBloc(sl()));
 
@@ -33,6 +42,7 @@ class ServicesLocator {
     sl.registerLazySingletonAsync<SharedPreferences>(
       () async => await SharedPreferences.getInstance(),
     );
+
     /// MyOrdersBloc
     sl.registerLazySingleton<MyOrdersBloc>(
       () => MyOrdersBloc(sl<MyOrdersUseCase>(), sl<UpdateOrderStatusUseCase>()),
@@ -69,7 +79,11 @@ class ServicesLocator {
 
     /// DeleteValedUseCase
     sl.registerLazySingleton(() => DeleteValedUseCase(sl()));
+
     /// GetGarageSpotUseCase
     sl.registerLazySingleton(() => GetGarageSpotUseCase(sl()));
+
+    /// UpdateOrderSpotUseCase
+    sl.registerLazySingleton(() => UpdateOrderSpotUseCase(sl()));
   }
 }

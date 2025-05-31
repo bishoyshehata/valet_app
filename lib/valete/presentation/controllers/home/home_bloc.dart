@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valet_app/valete/domain/usecases/get_garage_spot_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/update_order_spot_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/spot.dart';
 import 'home_events.dart';
@@ -9,10 +10,13 @@ import 'home_states.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final MyGaragesUseCase myGaragesUseCase;
   final GetGarageSpotUseCase getGarageSpotUseCase;
+  final UpdateOrderSpotUseCase updateOrderSpotUseCase;
 
   HomeBloc(
     this.myGaragesUseCase,
-    this.getGarageSpotUseCase, {
+    this.getGarageSpotUseCase,
+    this.updateOrderSpotUseCase,
+      {
     int initialSelectedStatus = 0,
   }) : super(HomeState(currentIndex: 0)) {
     on<GetMyGaragesEvent>(_getMyGarages);
@@ -40,6 +44,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         ),
       );
+    });
+    on<UpdateOrderSpotEvent>((event,emit)async {
+
+      final updateResult  = await updateOrderSpotUseCase.updateOrderSpot(event.orderId, event.spotId);
+      updateResult.fold((error){
+        print("xxxxxxxxxxxxxxxx$error");
+
+        emit(state.copyWith(updateOrderSpotErrorMessage: error.message,updateOrderSpotState: RequestState.error));
+      }, (result){
+        print("=============$result");
+          emit(state.copyWith(updateOrderSpotState: RequestState.loaded,updateResult: result));
+      });
     });
     on<ToggleExtraSlotsVisibilityEvent>(_toggleExtraSlotsVisibility);
 

@@ -18,12 +18,18 @@ class HomeState {
   final Map<Spot, int>? mainSpotsIndices;
   final Map<Spot, int>? extraSpotsIndices;
   final String spotName;
+  final bool? updateResult;
+  final String updateOrderSpotErrorMessage;
+  final RequestState updateOrderSpotState;
 
   HomeState({
     this.myGaragesState = RequestState.loading,
     this.getGaragesSpotState = RequestState.loading,
     this.myGaragesErrorMessage = '',
     this.getGaragesSpotErrorMessage = '',
+    this.updateOrderSpotErrorMessage = '',
+    this.updateOrderSpotState = RequestState.loading,
+    this.updateResult,
     this.data,
     this.currentIndex = 0,
     this.showExtraSlots = true,
@@ -53,6 +59,9 @@ class HomeState {
      Map<Spot, int>? mainSpotsIndices,
      Map<Spot, int>? extraSpotsIndices,
     String? spotName,
+    bool? updateResult,
+    String? updateOrderSpotErrorMessage,
+    RequestState? updateOrderSpotState,
 
   }) {
     return HomeState(
@@ -70,6 +79,9 @@ class HomeState {
       mainSpotsIndices: mainSpotsIndices ?? this.mainSpotsIndices,
       spotName: spotName ?? this.spotName,
       getGaragesSpotErrorMessage: getGaragesSpotErrorMessage ?? this.getGaragesSpotErrorMessage,
+      updateResult: updateResult ?? this.updateResult,
+      updateOrderSpotErrorMessage: updateOrderSpotErrorMessage ?? this.updateOrderSpotErrorMessage,
+      updateOrderSpotState: updateOrderSpotState ?? this.updateOrderSpotState,
 
     );
   }

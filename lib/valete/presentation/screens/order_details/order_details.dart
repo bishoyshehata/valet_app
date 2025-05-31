@@ -8,6 +8,7 @@ import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import '../../../domain/entities/spot.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_bloc.dart';
@@ -20,9 +21,13 @@ import 'order_full_screen.dart';
 
 class OrderDetails extends StatelessWidget {
   final int spotId;
+  final int garageId;
+
+  Spot? newSpot;
    OrderDetails({
     super.key,
     required this.spotId,
+    required this.garageId,
   });
 
   @override
@@ -36,10 +41,20 @@ class OrderDetails extends StatelessWidget {
         ].firstWhere(
               (spot) => spot.id == spotId,
         );
+
         final emptySpotCodes = state.emptySpots?.map((s) => s.code).toList() ?? [];
         String? dropdownValue = (state.spotName != 'رقم الباكية' && emptySpotCodes.contains(state.spotName))
             ? state.spotName
             : null;
+        if (dropdownValue != null) {
+           newSpot = [
+            ...?state.allSpots?.mainSpots,
+            ...?state.allSpots?.extraSpots,
+            ...?state.allSpots?.emptySpots,
+          ].firstWhere(
+                (spot) => spot.code == dropdownValue,
+          );
+        }
 
         switch (state.myGaragesState) {
           case RequestState.loading:
@@ -271,7 +286,11 @@ class OrderDetails extends StatelessWidget {
                           SizedBox(height: AppSizeHeight.s100),
                           CustomButton(
                             onTap: () {
-
+                              context.read<HomeBloc>().add(UpdateOrderSpotEvent(spot.order!.id,newSpot!.id));
+                              context.read<HomeBloc>().add(GetGarageSpotEvent(garageId));
+                              Navigator.pop(context);
+                              print(spot.order!.id);
+                              print(newSpot!.id);
                             },
                             btnColor: state.spotName == 'رقم الباكية'
                                 ? ColorManager.darkGrey

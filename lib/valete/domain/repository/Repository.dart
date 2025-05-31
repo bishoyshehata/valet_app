@@ -19,5 +19,6 @@ abstract class IValetRepository{
   Future<Either<Failure , bool >> updateOrderStatus(int orderId , int newStatus);
   Future<Either<Failure , bool >> deleteValet(int valetId);
   Future<Either<Failure , GetGarageSpot >> getGarageSpot(int garageId);
+  Future<Either<Failure , bool >> updateOrderSpot(int orderId , int spotId);
 
 }

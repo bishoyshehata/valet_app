@@ -93,4 +93,14 @@ class ValetRepository extends IValetRepository {
       return Left(ServerFailure(failure.message));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> updateOrderSpot(int orderId, int spotId) async{
+    try {
+      final result = await valetDataSource.updateOrderSpot(orderId , spotId);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message));
+    }
+  }
 }
