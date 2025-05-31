@@ -480,13 +480,13 @@ Color getStatusColor(int status) {
     case 0:
       return Colors.orange;
     case 1:
-      return Colors.blue;
+      return Colors.white;
     case 2:
-      return Colors.teal;
+      return Colors.white;
     case 3:
-      return Colors.green;
+      return Colors.white;
     case 4:
-      return Colors.grey;
+      return Colors.greenAccent;
     default:
       return Colors.black;
   }
