@@ -36,7 +36,7 @@ class CreateOrderModel extends CreateOrder {
             code: spotJson['code'],
             garageId: spotJson['garageId'],
             addedOn: spotJson['addedOn'],
-            hasOrder: spotJson['hasOrder'],
+            hasOrder: spotJson['hasOrder'] ?? false,
           ))
               .toList(),
           );

@@ -8,7 +8,7 @@ class CreateOrder extends Equatable {
   final String garageName;
   final String garageAddress;
   final String spotName;
-  final bool isOverFlow;
+  final bool? isOverFlow;
   final int capacityEmpty;
   final int capacityFull;
   final int totalBusy;

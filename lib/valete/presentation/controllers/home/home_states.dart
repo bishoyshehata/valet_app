@@ -26,7 +26,7 @@ class HomeState {
     this.getGaragesSpotErrorMessage = '',
     this.data,
     this.currentIndex = 0,
-    this.showExtraSlots = false,
+    this.showExtraSlots = true,
     this.extraSpots,
     this.mainSpots,
     this.emptySpots,

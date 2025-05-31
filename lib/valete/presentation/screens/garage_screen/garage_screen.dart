@@ -255,7 +255,7 @@ class ParkingSlotWidget extends StatelessWidget {
     final isBusy = spot.hasOrder;
     return InkWell(
       onTap: () {
-        if (spot.hasOrder ) {
+        if (spot.hasOrder == true ) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -307,7 +307,7 @@ class ParkingSlotWidget extends StatelessWidget {
           Container(
             margin: EdgeInsets.all(5),
             color:
-            isBusy
+            isBusy== true
                     ? ColorManager.primary
                     : ColorManager.background,
             child: Center(
@@ -317,13 +317,13 @@ class ParkingSlotWidget extends StatelessWidget {
                   TextUtils(
                     text: spot.code,
                     color:
-                    isBusy
+                    isBusy== true
                             ? ColorManager.background
                             : ColorManager.white,
                     fontSize: FontSize.s15,
                     fontWeight: FontWeight.bold,
                   ),
-                  (spot.hasOrder )
+                  (spot.hasOrder== true )
                       ? buildCarTypeImage(spot.order!.carType)
                       : Icon(
                         Icons.local_parking,
@@ -347,11 +347,11 @@ class MiniParkingSlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isBusy = spot.hasOrder;
+    bool isBusy = spot.hasOrder== true;
 
     return InkWell(
       onTap: () {
-        if (spot.hasOrder) {
+        if (spot.hasOrder== true) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -381,7 +381,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
                 fontSize: FontSize.s15,
                 fontWeight: FontWeight.bold,
               ),
-              spot.hasOrder
+              spot.hasOrder== true
                   ? buildCarTypeImage(spot.order!.carType)
                   : Icon(
                     Icons.local_parking,

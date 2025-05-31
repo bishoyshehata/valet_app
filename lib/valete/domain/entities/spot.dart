@@ -6,7 +6,7 @@ class Spot extends Equatable {
   final int id;
   final int status;
   final String code;
-  final bool hasOrder;
+  final bool? hasOrder;
   final String? addedOn;
   final int? garageId;
   final Order? order;

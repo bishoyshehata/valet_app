@@ -48,12 +48,16 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
 
       final result = await myOrdersUseCase.myOrders(status);
       result.fold(
-        (error) => emit(
-          state.copyWith(
-            myOrdersState: RequestState.error,
-            myOrdersErrorMessage: error.message,
-          ),
-        ),
+        (error) {
+          print("////////////////////////////////////////$error");
+
+          emit(
+            state.copyWith(
+              myOrdersState: RequestState.error,
+              myOrdersErrorMessage: error.message,
+            ),
+          );
+        },
         (ordersList) {
           final updatedMap = Map<int, List<MyOrders>>.from(
             state.ordersByStatus,
