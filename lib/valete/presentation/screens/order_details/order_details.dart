@@ -22,12 +22,15 @@ import 'order_full_screen.dart';
 class OrderDetails extends StatelessWidget {
   final int spotId;
   final int garageId;
+  final String garageName;
 
   Spot? newSpot;
-   OrderDetails({
+
+  OrderDetails({
     super.key,
     required this.spotId,
     required this.garageId,
+    required this.garageName,
   });
 
   @override
@@ -38,23 +41,21 @@ class OrderDetails extends StatelessWidget {
           ...?state.allSpots?.mainSpots,
           ...?state.allSpots?.extraSpots,
           ...?state.allSpots?.emptySpots,
-        ].firstWhere(
-              (spot) => spot.id == spotId,
-        );
+        ].firstWhere((spot) => spot.id == spotId);
 
-        final emptySpotCodes = state.emptySpots?.map((s) => s.code).toList() ?? [];
-        String? dropdownValue = (state.spotName != 'رقم الباكية' && emptySpotCodes.contains(state.spotName))
-            ? state.spotName
-            : null;
+        final emptySpotCodes =
+            state.emptySpots?.map((s) => s.code).toList() ?? [];
+        String? dropdownValue =
+            (state.spotName != 'رقم الباكية' &&
+                    emptySpotCodes.contains(state.spotName))
+                ? state.spotName
+                : null;
         if (dropdownValue != null) {
-           newSpot = [
+          newSpot = [
             ...?state.allSpots?.mainSpots,
             ...?state.allSpots?.extraSpots,
             ...?state.allSpots?.emptySpots,
-          ].firstWhere(
-                (spot) => spot.code == dropdownValue,
-             
-          );
+          ].firstWhere((spot) => spot.code == dropdownValue);
         }
 
         switch (state.myGaragesState) {
@@ -66,7 +67,7 @@ class OrderDetails extends StatelessWidget {
             return Directionality(
               textDirection: TextDirection.rtl,
               child: WillPopScope(
-                onWillPop:() async{
+                onWillPop: () async {
                   context.read<HomeBloc>().add(ResetSpotNameEvent());
                   return true;
                 },
@@ -112,7 +113,7 @@ class OrderDetails extends StatelessWidget {
                               ),
                             ),
                             child:
-                            spot.order!.carImage != null
+                                spot.order!.carImage != null
                                     ? GestureDetector(
                                       onTap:
                                           () => Navigator.push(
@@ -186,7 +187,7 @@ class OrderDetails extends StatelessWidget {
 
                           SizedBox(height: AppSizeHeight.s20),
                           TextUtils(
-                            text: 'الجراج : ${spot.order!.garageName ?? "غير محدد"}',
+                            text: 'الجراج : $garageName',
                             color: ColorManager.lightGrey,
                             fontSize: FontSize.s17,
                           ),
@@ -226,11 +227,12 @@ class OrderDetails extends StatelessWidget {
                                               text: code,
                                               color: ColorManager.background,
                                               fontSize: FontSize.s15,
-                                              fontWeight: FontWeightManager.bold,
+                                              fontWeight:
+                                                  FontWeightManager.bold,
                                             ),
                                           );
                                         }).toList(),
-                                    value:dropdownValue,
+                                    value: dropdownValue,
                                     onChanged: (value) {
                                       if (value != null) {
                                         context.read<HomeBloc>().add(
@@ -267,9 +269,13 @@ class OrderDetails extends StatelessWidget {
                                       scrollbarTheme: ScrollbarThemeData(
                                         radius: const Radius.circular(40),
                                         thickness:
-                                            MaterialStateProperty.all<double>(6),
+                                            MaterialStateProperty.all<double>(
+                                              6,
+                                            ),
                                         thumbVisibility:
-                                            MaterialStateProperty.all<bool>(true),
+                                            MaterialStateProperty.all<bool>(
+                                              true,
+                                            ),
                                       ),
                                     ),
                                     menuItemStyleData: MenuItemStyleData(
@@ -284,36 +290,50 @@ class OrderDetails extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: AppSizeHeight.s100),
-                          CustomButton(
-                            onTap: () {
-                              context.read<HomeBloc>().add(UpdateOrderSpotEvent(spot.order!.id,newSpot!.id));
-
-                              Navigator.pop(context);
-                              // context.read<HomeBloc>().add(GetGarageSpotEvent(garageId));
-
-                              print(spot.order!.id);
-                              print(newSpot!.id);
-                              print(garageId);
-                            },
-                            btnColor: state.spotName == 'رقم الباكية'
-                                ? ColorManager.darkGrey
-                                :  ColorManager.primary,
-                            widget: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.edit,size: AppSizeHeight.s20,color: ColorManager.background,),
-                                SizedBox(width: AppSizeWidth.s10,),
-                                TextUtils(
-                                  text: 'تأكيد التعديل',
-                                  color: ColorManager.background,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeightManager.bold,
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
+                      ),
+                    ),
+                  ),
+
+                  bottomSheet: Material(
+                    color: ColorManager.background,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: AppSizeHeight.s25),
+                      child: CustomButton(
+                        onTap: () {
+                          context.read<HomeBloc>().add(
+                            UpdateOrderSpotEvent(spot.order!.id, newSpot!.id),
+                          );
+
+                          Navigator.pop(context);
+                          // context.read<HomeBloc>().add(GetGarageSpotEvent(garageId));
+
+                          print(spot.order!.id);
+                          print(newSpot!.id);
+                          print(garageId);
+                        },
+
+                        btnColor:
+                            state.spotName == 'رقم الباكية'
+                                ? ColorManager.darkGrey
+                                : ColorManager.primary,
+                        widget: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              size: AppSizeHeight.s20,
+                              color: ColorManager.background,
+                            ),
+                            SizedBox(width: AppSizeWidth.s10),
+                            TextUtils(
+                              text: 'تأكيد التعديل',
+                              color: ColorManager.background,
+                              fontSize: FontSize.s17,
+                              fontWeight: FontWeightManager.bold,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

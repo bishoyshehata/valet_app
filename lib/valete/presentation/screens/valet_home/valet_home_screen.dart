@@ -127,7 +127,7 @@ class ValetHomeScreen extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder:
                                         (context) =>
-                                            GarageScreen(garageId: garage.id),
+                                            GarageScreen(garageId: garage.id , garageName : garage.name),
                                   ),
                                 );
                                      context.read<HomeBloc>().add(GetGarageSpotEvent(garage.id));

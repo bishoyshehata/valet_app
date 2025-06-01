@@ -18,8 +18,9 @@ import '../../components/custom_app_bar.dart';
 
 class GarageScreen extends StatelessWidget {
   final int garageId;
+  final String garageName;
 
-  GarageScreen({super.key, required this.garageId});
+  GarageScreen({super.key, required this.garageId, required this.garageName});
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -36,7 +37,7 @@ class GarageScreen extends StatelessWidget {
         child: Scaffold(
           backgroundColor: ColorManager.background,
           appBar: CustomAppBar(
-            title: 'موقف السيارات',
+            title:garageName,
             centerTitle: true,
             titleColor: ColorManager.white,
             leading: Container(
@@ -122,7 +123,8 @@ class GarageScreen extends StatelessWidget {
                                 return MiniParkingSlotWidget(
                                   spot: extraSpots[index],
                                   garageId: garageId,
-                                  spotindex: index, // ← index الأصلي من كل المواقف
+                                  spotindex: index,
+                                  garageName: garageName,// ← index الأصلي من كل المواقف
                                 );
                               },
                               childCount: extraSpots.length,
@@ -159,7 +161,7 @@ class GarageScreen extends StatelessWidget {
                               delegate: SliverChildBuilderDelegate(
                                 (context, index) {
                                   final spot =
-                                      mainSpots![index];
+                                      mainSpots[index];
                                   final isLeftSide = index % 2 == 0;
                                   return ParkingSlotWidget(
                                     isLeftSide: isLeftSide,
@@ -167,6 +169,7 @@ class GarageScreen extends StatelessWidget {
                                     spotindex: index,
                                     status: spot.status,
                                     spot: spot,
+                                    garageName: garageName,
                                   );
                                 },
                                 childCount:
@@ -229,6 +232,7 @@ class ParkingSlotWidget extends StatelessWidget {
   final int garageId;
   final bool isLeftSide;
   final int status;
+  final String garageName;
 
   const ParkingSlotWidget({
     super.key,
@@ -236,7 +240,7 @@ class ParkingSlotWidget extends StatelessWidget {
     required this.spotindex,
     required this.isLeftSide,
     required this.status,
-    required this.garageId,
+    required this.garageId, required this.garageName,
   });
 
   @override
@@ -254,6 +258,7 @@ class ParkingSlotWidget extends StatelessWidget {
                     child: OrderDetails(
                       spotId: spot.id,
                       garageId: garageId,
+                      garageName: garageName,
                     ),
                   ),
             ),
@@ -334,7 +339,8 @@ class MiniParkingSlotWidget extends StatelessWidget {
   final Spot spot;
   final int spotindex;
   final int garageId;
-  const MiniParkingSlotWidget({super.key, required this.spot, required this.spotindex, required this.garageId});
+  final String garageName;
+  const MiniParkingSlotWidget({super.key, required this.spot, required this.spotindex, required this.garageId,required this.garageName});
 
   @override
   Widget build(BuildContext context) {
@@ -352,6 +358,7 @@ class MiniParkingSlotWidget extends StatelessWidget {
                 child: OrderDetails(
                   spotId: spot.id,
                   garageId: garageId,
+                    garageName : garageName
                 ),
               ),
             ),

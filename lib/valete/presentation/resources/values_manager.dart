@@ -134,6 +134,7 @@ class AppSizeHeight {
   static double s60 = 60.0.h;
   static double s65 = 65.0.h;
   static double s70 = 70.0.h;
+  static double s75 = 75.0.h;
   static double s80 = 80.0.h;
   static double s90 = 90.0.h;
   static double s95 = 95.0.h;

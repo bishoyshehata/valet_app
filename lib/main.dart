@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Valet App',
+          title: 'Lag Valet',
           home: SplashScreen(),
         );
       },

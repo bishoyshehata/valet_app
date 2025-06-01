@@ -75,13 +75,8 @@ class LoginScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: AppSizeHeight.s30),
-                        TextUtils(
-                          text: AppStrings.appName,
-                          fontSize: FontSize.s70,
-                          fontFamily: 'modak',
-                          color: ColorManager.primary,
-                        ),
-                        SizedBox(height: AppSizeHeight.s100),
+                        Image.asset(AssetsManager.appIconLogin,height: AppSizeHeight.s120,),
+                        SizedBox(height: AppSizeHeight.s30),
 
                         // Phone field
                         Container(
