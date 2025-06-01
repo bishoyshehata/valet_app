@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
+import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
@@ -21,6 +22,7 @@ import '../../../domain/entities/spot.dart';
 import '../../components/text/text_utils.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/custom_bottun.dart';
+import '../../controllers/myorders/my_orders_events.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
@@ -56,6 +58,11 @@ class OrderScreen extends StatelessWidget {
         return bloc;
       },
       child: BlocBuilder<OrderBloc, OrderState>(
+        buildWhen: (previous, current) {
+          return previous.defaultOrderState != current.defaultOrderState ||
+              previous.phoneNumber != current.phoneNumber ||
+              previous.spotName != current.spotName;
+        },
         builder: (context, state) {
           switch (state.defaultOrderState) {
             case RequestState.loading:
@@ -159,117 +166,131 @@ class OrderScreen extends StatelessWidget {
                     bottomSheet: BlocBuilder<OrderBloc, OrderState>(
                       builder: (context, state) {
                         return Material(
-                            color: ColorManager.background,
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
-                            child: Padding(
+                          color: ColorManager.background,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25),
+                            topRight: Radius.circular(25),
+                          ),
+                          child: Padding(
                             padding: EdgeInsets.only(bottom: AppSizeHeight.s25),
 
-                          child: CustomButton(
-                            onTap: state.data!.spots.isNotEmpty? () async {
-                              if (state.selectedVehicleType != null &&
-                                  spotId != null &&
-                                  state.phoneNumber != 'رقم هاتف العميل') {
-                                File? carImage;
-                                if (state.image != null) {
-                                  carImage = state.image;
-                                }
+                            child: CustomButton(
+                              onTap:
+                                  state.data!.spots.isNotEmpty
+                                      ? () async {
+                                        if (state.selectedVehicleType != null &&
+                                            spotId != null &&
+                                            state.phoneNumber !=
+                                                'رقم هاتف العميل') {
+                                          File? carImage;
+                                          if (state.image != null) {
+                                            carImage = state.image;
+                                          }
 
-                                final model = StoreOrderModel(
-                                  carImageFile: carImage,
-                                  spotId: spotId,
-                                  carType: state.selectedVehicleType.index,
-                                  ClientNumber: state.phoneNumber,
-                                  garageId: state.data!.garageId,
-                                );
+                                          final model = StoreOrderModel(
+                                            carImageFile: carImage,
+                                            spotId: spotId,
+                                            carType:
+                                                state.selectedVehicleType.index,
+                                            ClientNumber: state.phoneNumber,
+                                            garageId: state.data!.garageId,
+                                          );
 
-                                context.read<OrderBloc>().add(
-                                  StoreOrderEvent(model),
-                                );
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MainScreen(),
-                                  ),
-                                );
-                              } else {
-                                if (state.phoneNumber ==
-
-                                    'رقم هاتف العميل') {
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).showSnackBar(
-                                    SnackBar(
-                                      content: TextUtils(
-                                        text:
-                                        'برجاء الطلب من العميل عمل مسح للـ QR.',
-                                        color: ColorManager.primary,
-                                        fontSize: FontSize.s13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).showSnackBar(
-                                    SnackBar(
-                                      content: TextUtils(
-                                        text:
-                                        'نأسف و لكن يوجد خطأ بالبيانات.',
-                                        color: ColorManager.primary,
-                                        fontSize: FontSize.s13,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            } : (){
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(
-                                  SnackBar(
-                                    content: TextUtils(
-                                      text:
-                                      'نأسف و لكن لا يوجد أماكن متاحة بالجراج .',
-                                      color: ColorManager.primary,
-                                      fontSize: FontSize.s13,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                              );
-
-                            },
-                            btnColor: state.data!.spots.isNotEmpty?ColorManager.primary:ColorManager.lightGrey,
-                            width: MediaQuery.of(context).size.width,
-                            borderColor: ColorManager.white,
-                            elevation: 5,
-                            widget: switch (state.storeOrderState) {
-                              StoreOrderState.initial => TextUtils(
-                                text: "تأكيد الطلب",
-                                color: state.data!.spots.isNotEmpty?ColorManager.background:ColorManager.white,
-                                fontSize: FontSize.s17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              StoreOrderState.loading =>
+                                          context.read<OrderBloc>().add(
+                                            StoreOrderEvent(model),
+                                          );
+                                          context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) => MainScreen(),
+                                            ),
+                                          );
+                                        } else {
+                                          if (state.phoneNumber ==
+                                              'رقم هاتف العميل') {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: TextUtils(
+                                                  text:
+                                                      'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                                  color: ColorManager.primary,
+                                                  fontSize: FontSize.s13,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: TextUtils(
+                                                  text:
+                                                      'نأسف و لكن يوجد خطأ بالبيانات.',
+                                                  color: ColorManager.primary,
+                                                  fontSize: FontSize.s13,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      }
+                                      : () {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: TextUtils(
+                                              text:
+                                                  'نأسف و لكن لا يوجد أماكن متاحة بالجراج .',
+                                              color: ColorManager.primary,
+                                              fontSize: FontSize.s13,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                              btnColor:
+                                  state.data!.spots.isNotEmpty
+                                      ? ColorManager.primary
+                                      : ColorManager.lightGrey,
+                              width: MediaQuery.of(context).size.width,
+                              borderColor: ColorManager.white,
+                              elevation: 5,
+                              widget: switch (state.storeOrderState) {
+                                StoreOrderState.initial => TextUtils(
+                                  text: "تأكيد الطلب",
+                                  color:
+                                      state.data!.spots.isNotEmpty
+                                          ? ColorManager.background
+                                          : ColorManager.white,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                StoreOrderState.loading =>
                                   CircularProgressIndicator(
                                     color: ColorManager.white,
                                   ),
-                              StoreOrderState.loaded => TextUtils(
-                                text: "تأكيد الطلب",
-                                color: ColorManager.primary,
-                                fontSize: FontSize.s17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              StoreOrderState.error => TextUtils(
-                                text: "تأكيد الطلب",
-                                color: ColorManager.primary,
-                                fontSize: FontSize.s17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            },
-                          ),
+                                StoreOrderState.loaded => TextUtils(
+                                  text: "تأكيد الطلب",
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                StoreOrderState.error => TextUtils(
+                                  text: "تأكيد الطلب",
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              },
                             ),
+                          ),
                         );
                       },
                     ),
@@ -398,34 +419,38 @@ class OrderScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
                   width: AppSizeWidth.s100,
-                  child:   DropdownButtonHideUnderline(
+                  child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,
-                        items:  spots.map((spot) {
-                        return DropdownMenuItem<String>(
-                          value: spot.code,
-                          child: TextUtils(
-                            text: spot.code,
-                            color: ColorManager.background,
-                            fontSize: FontSize.s15,
-                            fontWeight: FontWeightManager.bold,
-                          ),
-                        );
-                      }).toList(),
+                      items:
+                          spots.map((spot) {
+                            return DropdownMenuItem<String>(
+                              value: spot.code,
+                              child: TextUtils(
+                                text: spot.code,
+                                color: ColorManager.background,
+                                fontSize: FontSize.s15,
+                                fontWeight: FontWeightManager.bold,
+                              ),
+                            );
+                          }).toList(),
                       value: selectedSpotName,
                       onChanged: (value) {
-                        if (value != null) {
-                          context.read<OrderBloc>().add(
-                            UpdateSpotNameEvent(value),
-                          );
-                        }
+                        context.read<OrderBloc>().add(
+                          UpdateSpotNameEvent(value!),
+                        );
+                        print(value);
                       },
-                      hint: TextUtils(text: "الجراج ممتلئ", color: ColorManager.background,fontSize: FontSize.s11,fontWeight: FontWeightManager.bold,),
-                      iconStyleData:  IconStyleData(
+                      hint: TextUtils(
+                        text: "الجراج ممتلئ",
+                        color: ColorManager.background,
+                        fontSize: FontSize.s11,
+                        fontWeight: FontWeightManager.bold,
+                      ),
+                      iconStyleData: IconStyleData(
                         icon: Icon(
                           Icons.arrow_forward_ios_outlined,
                           color: ColorManager.background,
-
                         ),
                         iconSize: 14,
                         iconEnabledColor: Colors.yellow,
@@ -441,16 +466,17 @@ class OrderScreen extends StatelessWidget {
                         scrollbarTheme: ScrollbarThemeData(
                           radius: const Radius.circular(40),
                           thickness: MaterialStateProperty.all<double>(6),
-                          thumbVisibility: MaterialStateProperty.all<bool>(true),
+                          thumbVisibility: MaterialStateProperty.all<bool>(
+                            true,
+                          ),
                         ),
                       ),
-                      menuItemStyleData:  MenuItemStyleData(
+                      menuItemStyleData: MenuItemStyleData(
                         height: AppSizeHeight.s35,
                         padding: EdgeInsets.only(left: 14, right: 14),
                       ),
                     ),
                   ),
-
                 ),
               ],
             ),
@@ -497,6 +523,9 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: BlocBuilder<OrderBloc, OrderState>(
+            buildWhen:
+                (previous, current) =>
+                    previous.selectedVehicleType != current.selectedVehicleType,
             builder: (context, state) {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -548,9 +577,7 @@ Widget _buildQrSection(BuildContext context, String qr) {
   Uint8List qrBytes = base64Decode(base64String);
 
   return Card(
-
     margin: EdgeInsets.symmetric(
-
       horizontal: AppMargin.m16,
       vertical: AppMargin.m10,
     ),
@@ -577,19 +604,86 @@ Widget _buildQrSection(BuildContext context, String qr) {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Container(
-          alignment: Alignment.center,
-          margin: EdgeInsets.symmetric(vertical: AppMargin.m16,horizontal: AppMargin.m16),
-          child: Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(AppSizeHeight.s10),
-              ),
-              border: Border.all(width: 5, color: ColorManager.primary),
-            ),
-            child: Image.memory(qrBytes),
-          ),
+        BlocBuilder<OrderBloc, OrderState>(
+          builder: (context, state) {
+            switch (state.defaultOrderState) {
+              case RequestState.loading:
+                return SizedBox(
+                  height: AppSizeHeight.sMaxInfinite,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder:
+                        (context, index) => Shimmer.fromColors(
+                          baseColor: Colors.grey[850]!,
+                          highlightColor: Colors.grey[800]!,
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              right: AppMargin.m12,
+                              top: AppMargin.m12,
+                              left: AppMargin.m12,
+                            ),
+                            height: AppSizeHeight.s120,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                        ),
+                    separatorBuilder: (context, index) => SizedBox(height: 10),
+                    itemCount: 4,
+                  ),
+                );
+              case RequestState.loaded:
+                return Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(
+                    vertical: AppMargin.m16,
+                    horizontal: AppMargin.m16,
+                  ),
+                  child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(AppSizeHeight.s10),
+                      ),
+                      border: Border.all(width: 5, color: ColorManager.primary),
+                    ),
+                    child: Image.memory(qrBytes),
+                  ),
+                );
+              case RequestState.error:
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(child: Lottie.asset(LottieManager.noCars)),
+                    TextUtils(
+                      text: "عذراً لقد حدث خطب ما !",
+                      color: ColorManager.white,
+                      fontSize: FontSize.s13,
+                      noOfLines: 2,
+                      overFlow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: AppSizeHeight.s30),
+                    CustomButton(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                        );
+                      },
+                      btnColor: ColorManager.primary,
+                      widget: TextUtils(
+                        text: 'إعادة التسجيل',
+                        color: ColorManager.background,
+                        fontWeight: FontWeightManager.bold,
+                      ),
+                    ),
+                  ],
+                );
+            }
+          },
         ),
       ],
     ),
@@ -626,6 +720,7 @@ Widget _buildImageCaptureSection(BuildContext context) {
           ),
         ),
         BlocBuilder<OrderBloc, OrderState>(
+          buildWhen: (previous, current) => previous.image != current.image,
           builder: (context, state) {
             final image = state.image;
             return Stack(

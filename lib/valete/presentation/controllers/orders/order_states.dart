@@ -25,7 +25,7 @@ class OrderState {
     this.defaultOrderState = RequestState.loading,
     this.createOrderError = '',
     required this.selectedVehicleType,
-    this.image,
+    this.image = null,
     this.imageBytes,
     this.isLoading = false,
     this.phoneNumber = 'رقم هاتف العميل',

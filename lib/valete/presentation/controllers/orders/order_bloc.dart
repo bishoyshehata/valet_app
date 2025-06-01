@@ -38,7 +38,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           // تحويل لـ JPEG
           final jpegData = img.encodeJpg(originalImage);
           final tempDir = await getTemporaryDirectory();
-          final jpegFile = File(join(tempDir.path, 'converted.jpg'));
+          final jpegFile = File(join(tempDir.path, 'converted_${DateTime.now().millisecondsSinceEpoch}.jpg'));
 
           await jpegFile.writeAsBytes(jpegData);
 
