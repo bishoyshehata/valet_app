@@ -178,8 +178,7 @@ class OrderScreen extends StatelessWidget {
 
                             child: CustomButton(
                               onTap:
-                                  state.data!.spots.isNotEmpty
-                                      ? () async {
+                                   () async {
                                         if (state.selectedVehicleType != null &&
                                             spotId != null &&
                                             state.phoneNumber !=
@@ -247,24 +246,10 @@ class OrderScreen extends StatelessWidget {
                                             );
                                           }
                                         }
-                                      }
-                                      : () {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: TextUtils(
-                                              text:
-                                                  'نأسف و لكن لا يوجد أماكن متاحة بالجراج .',
-                                              color: ColorManager.primary,
-                                              fontSize: FontSize.s13,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        );
                                       },
                               btnColor:
-                                  state.data!.spots.isNotEmpty
+                              state.phoneNumber !=
+                                  'رقم هاتف العميل'
                                       ? ColorManager.primary
                                       : ColorManager.lightGrey,
                               width: MediaQuery.of(context).size.width,
@@ -274,7 +259,8 @@ class OrderScreen extends StatelessWidget {
                                 StoreOrderState.initial => TextUtils(
                                   text: "تأكيد الطلب",
                                   color:
-                                      state.data!.spots.isNotEmpty
+                                  state.phoneNumber !=
+                                      'رقم هاتف العميل'
                                           ? ColorManager.background
                                           : ColorManager.white,
                                   fontSize: FontSize.s17,
@@ -306,7 +292,7 @@ class OrderScreen extends StatelessWidget {
                 ),
               );
             case RequestState.error:
-              return Column(
+              return   state.data != null ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Center(child: Lottie.asset(LottieManager.noCars)),
@@ -333,7 +319,53 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              );
+              ) : Directionality(
+                textDirection: TextDirection.rtl,
+                child: Scaffold(
+                  backgroundColor: ColorManager.background,
+                  body: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(height: AppSizeHeight.s50,),
+                      Container(
+                        alignment: Alignment.center,
+                        width: AppSizeWidth.s50,
+                        height: AppSizeWidth.s50,
+                        margin: EdgeInsets.all(AppMargin.m4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            AppSizeHeight.s50,
+                          ),
+                          color: ColorManager.grey,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            SocketService().closeSocket();
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: ColorManager.white,
+                          ),
+                        ),
+                      ),
+                      Center(child: Image.asset(AssetsManager.apology,height: AppSizeHeight.s200,)),
+                      Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        child: TextUtils(
+                          text: "عذراً لقد إمتلأ الجراج٫٫",
+                          color: ColorManager.white,
+                          fontSize: FontSize.s13,
+                          noOfLines: 2,
+                          overFlow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ) ;
           }
         },
       ),
