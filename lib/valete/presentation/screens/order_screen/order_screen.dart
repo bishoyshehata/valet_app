@@ -22,6 +22,8 @@ import '../../../domain/entities/spot.dart';
 import '../../components/text/text_utils.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/custom_bottun.dart';
+import '../../controllers/home/home_bloc.dart';
+import '../../controllers/home/home_events.dart' show ChangeTabEvent;
 import '../../controllers/myorders/my_orders_events.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
@@ -199,14 +201,20 @@ class OrderScreen extends StatelessWidget {
                                           context.read<OrderBloc>().add(
                                             StoreOrderEvent(model),
                                           );
+
                                           context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (context) => MainScreen(),
-                                            ),
-                                          );
+                                          Future.delayed(Duration(seconds: 1)).then((_) {
+                                            context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => MainScreen(),
+                                              ),
+                                            );
+                                          });
+
+
+
                                         } else {
                                           if (state.phoneNumber ==
                                               'رقم هاتف العميل') {
@@ -716,10 +724,18 @@ Widget _buildImageCaptureSection(BuildContext context) {
                     onTap: () {
                       context.read<OrderBloc>().add(PickImageEvent());
                     },
-                    child: Icon(
-                      Icons.camera_alt,
-                      size: AppSizeHeight.s30,
-                      color: ColorManager.grey,
+                    child: Container(
+                      width: AppSizeWidth.s40,
+                      height: AppSizeWidth.s40,
+                      decoration: BoxDecoration(
+                        color: ColorManager.lightGrey,
+                        borderRadius: BorderRadius.circular(AppSizeWidth.s50)
+                      ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        size: AppSizeHeight.s30,
+                        color: ColorManager.grey,
+                      ),
                     ),
                   ),
                 ),

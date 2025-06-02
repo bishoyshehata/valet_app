@@ -26,7 +26,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
       garageSpots.fold(
         (error) {
-          print(error);
           emit(
             state.copyWith(
               getGaragesSpotErrorMessage: error.message,
@@ -35,7 +34,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
         },
         (garageSpots) {
-          print(garageSpots.emptySpots);
           emit(
             state.copyWith(
                 getGaragesSpotState: RequestState.loaded,
@@ -53,11 +51,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       final updateResult  = await updateOrderSpotUseCase.updateOrderSpot(event.orderId, event.spotId,event.garageId);
       updateResult.fold((error){
-        print("xxxxxxxxxxxxxxxx$error");
 
         emit(state.copyWith(updateOrderSpotErrorMessage: error.message,updateOrderSpotState: UpdateOrderSpotState.error));
       }, (result){
-        print("=============$result");
           emit(state.copyWith(updateOrderSpotState: UpdateOrderSpotState.loaded,updateResult: result));
 
       });
