@@ -109,7 +109,7 @@ class OrdersScreen extends StatelessWidget {
                                   minHeight: 20,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: ColorManager.background,
+                                  color:option['id'] == 1  && state.ordersByStatus[option['id']]!.length > 0 ?ColorManager.warning :ColorManager.background,
                                   border: Border.all(
                                     color: ColorManager.white,
                                     width: 1,
@@ -412,7 +412,7 @@ String getStatusText(int status) {
     case 0:
       return 'منتظر';
     case 1:
-      return 'تم الطلب';
+      return 'مطلوب الأن';
     case 2:
       return 'في الطريق';
     case 3:
@@ -438,7 +438,7 @@ Widget getStatusButton(
         onTap: () {
           context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 2));
         },
-        btnColor: ColorManager.primary,
+        btnColor: ColorManager.warning,
         widget: buildButtonContent(
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
@@ -485,7 +485,7 @@ Color getStatusColor(int status) {
     case 0:
       return Colors.orange;
     case 1:
-      return Colors.white;
+      return Colors.redAccent;
     case 2:
       return Colors.white;
     case 3:
@@ -542,18 +542,3 @@ Widget buildButtonContent(UpdateOrderState state, String text) {
   };
 }
 
-void handleOrderUpdate(BuildContext context, int orderId, int newStatus) {
-  StreamSubscription? subscription;
-  subscription = context.read<MyOrdersBloc>().stream.listen((state) {
-    if (state.updateOrderStatus == true && state.updatingOrderId == orderId) {
-      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-      subscription?.cancel();
-    }
-  });
-
-  Future.delayed(Duration.zero, () {
-    context.read<MyOrdersBloc>().add(
-      UpdateOrderStatusEvent(orderId, newStatus),
-    );
-  });
-}
