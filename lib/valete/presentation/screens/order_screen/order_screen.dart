@@ -606,83 +606,23 @@ Widget _buildQrSection(BuildContext context, String qr) {
         ),
         BlocBuilder<OrderBloc, OrderState>(
           builder: (context, state) {
-            switch (state.defaultOrderState) {
-              case RequestState.loading:
-                return SizedBox(
-                  height: AppSizeHeight.sMaxInfinite,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder:
-                        (context, index) => Shimmer.fromColors(
-                          baseColor: Colors.grey[850]!,
-                          highlightColor: Colors.grey[800]!,
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              right: AppMargin.m12,
-                              top: AppMargin.m12,
-                              left: AppMargin.m12,
-                            ),
-                            height: AppSizeHeight.s120,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                        ),
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                    itemCount: 4,
+            return Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(
+                vertical: AppMargin.m16,
+                horizontal: AppMargin.m16,
+              ),
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(AppSizeHeight.s10),
                   ),
-                );
-              case RequestState.loaded:
-                return Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(
-                    vertical: AppMargin.m16,
-                    horizontal: AppMargin.m16,
-                  ),
-                  child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(AppSizeHeight.s10),
-                      ),
-                      border: Border.all(width: 5, color: ColorManager.primary),
-                    ),
-                    child: Image.memory(qrBytes),
-                  ),
-                );
-              case RequestState.error:
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: Lottie.asset(LottieManager.noCars)),
-                    TextUtils(
-                      text: "عذراً لقد حدث خطب ما !",
-                      color: ColorManager.white,
-                      fontSize: FontSize.s13,
-                      noOfLines: 2,
-                      overFlow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: AppSizeHeight.s30),
-                    CustomButton(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
-                          ),
-                        );
-                      },
-                      btnColor: ColorManager.primary,
-                      widget: TextUtils(
-                        text: 'إعادة التسجيل',
-                        color: ColorManager.background,
-                        fontWeight: FontWeightManager.bold,
-                      ),
-                    ),
-                  ],
-                );
-            }
+                  border: Border.all(width: 5, color: ColorManager.primary),
+                ),
+                child: Image.memory(qrBytes),
+              ),
+            );
           },
         ),
       ],

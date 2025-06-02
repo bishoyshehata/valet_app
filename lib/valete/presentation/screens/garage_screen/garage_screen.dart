@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/domain/entities/spot.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
@@ -14,7 +15,6 @@ import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
 import '../../components/custom_app_bar.dart';
 
-// تعريف SpotStatus enum (تأكد من مطابقته للقيم في الـ JSON)
 
 class GarageScreen extends StatelessWidget {
   final int garageId;
@@ -34,192 +34,244 @@ class GarageScreen extends StatelessWidget {
             print("✅ Spot updated, fetching new spots...");
           }
         },
-        child: Scaffold(
-          backgroundColor: ColorManager.background,
-          appBar: CustomAppBar(
-            title:garageName,
-            centerTitle: true,
-            titleColor: ColorManager.white,
-            leading: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.all(AppMargin.m4),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppSizeHeight.s50),
-                color: ColorManager.grey,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-
-                icon: Icon(Icons.arrow_back, color: ColorManager.white),
-              ),
-            ),
-          ),
-          body: BlocBuilder<HomeBloc, HomeState>(
-
-            builder: (context, state) {
-
-              switch (state.getGaragesSpotState) {
+        child: BlocBuilder<HomeBloc,HomeState>(
+          builder:(context, state) {
+              switch(state.getGaragesSpotState){
                 case RequestState.loading:
                   return SizedBox(
                     height: AppSizeHeight.sMaxInfinite,
-                    child: Center(child: Lottie.asset(LottieManager.carLoading)),
-                  );
-                case RequestState.loaded:
-                  if (state.mainSpots!.isEmpty) {
-                    return Center(
-                      child: TextUtils(
-                        text: 'بيانات الجراج غير متاحة أو الفهرس خاطئ.',
-                        color: ColorManager.white,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder:
+                          (context, index) => Shimmer.fromColors(
+                        baseColor: Colors.grey[850]!,
+                        highlightColor: Colors.grey[800]!,
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            right: AppMargin.m12,
+                            top: AppMargin.m12,
+                            left: AppMargin.m12,
+                          ),
+                          height: AppSizeHeight.s120,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
                       ),
-                    );
-                  }
-                  final extraSpots = state.extraSpots;
-                  final mainSpots = state.mainSpots;
-                  return CustomScrollView(
-                    slivers: [
-                      // --- مفتاح عرض/إخفاء المواقف الإضافية ---
-                      // نعرض المفتاح فقط إذا كان هناك مواقف إضافية في هذا الجراج
-                      if (extraSpots!.isNotEmpty)
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                TextUtils(
-                                  text:
-                                      state.showExtraSlots
-                                          ? 'إخفاء الأماكن الإضافية'
-                                          : 'عرض الأماكن الإضافية',
+                      separatorBuilder:
+                          (context, index) => SizedBox(height: 10),
+                      itemCount: 4,
+                    ),
+                  );
+
+                case RequestState.loaded:
+                  return Scaffold(
+                    backgroundColor: ColorManager.background,
+                    appBar: CustomAppBar(
+                      title:garageName,
+                      centerTitle: true,
+                      titleColor: ColorManager.white,
+                      leading: Container(
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.all(AppMargin.m4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(AppSizeHeight.s50),
+                          color: ColorManager.grey,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+
+                          icon: Icon(Icons.arrow_back, color: ColorManager.white),
+                        ),
+                      ),
+                    ),
+                    body: BlocBuilder<HomeBloc, HomeState>(
+
+                      builder: (context, state) {
+
+                        switch (state.getGaragesSpotState) {
+                          case RequestState.loading:
+                            return SizedBox(
+                              height: AppSizeHeight.sMaxInfinite,
+                              child: Center(child: Lottie.asset(LottieManager.carLoading)),
+                            );
+                          case RequestState.loaded:
+                            if (state.mainSpots!.isEmpty) {
+                              return Center(
+                                child: TextUtils(
+                                  text: 'بيانات الجراج غير متاحة',
                                   color: ColorManager.white,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                                Switch(
-                                  value: state.showExtraSlots,
-                                  // استخدام الحالة العامة للتبديل
-                                  activeColor: ColorManager.primary,
-                                  onChanged: (bool value) {
-                                    context.read<HomeBloc>().add(
-                                      ToggleExtraSlotsVisibilityEvent(value),
-                                    );
-                                  },
+                              );
+                            }
+                            final extraSpots = state.extraSpots;
+                            final mainSpots = state.mainSpots;
+                            return CustomScrollView(
+                              slivers: [
+                                // --- مفتاح عرض/إخفاء المواقف الإضافية ---
+                                // نعرض المفتاح فقط إذا كان هناك مواقف إضافية في هذا الجراج
+                                if (extraSpots!.isNotEmpty)
+                                  SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          TextUtils(
+                                            text:
+                                            state.showExtraSlots
+                                                ? 'إخفاء الأماكن الإضافية'
+                                                : 'عرض الأماكن الإضافية',
+                                            color: ColorManager.white,
+                                            fontSize: FontSize.s17,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          Switch(
+                                            value: state.showExtraSlots,
+                                            // استخدام الحالة العامة للتبديل
+                                            activeColor: ColorManager.primary,
+                                            onChanged: (bool value) {
+                                              context.read<HomeBloc>().add(
+                                                ToggleExtraSlotsVisibilityEvent(value),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                // --- عرض المواقف الإضافية (إذا كانت الحالة تسمح وهناك مواقف إضافية) ---
+                                if (state.showExtraSlots ) ...[
+                                  SliverPadding(
+                                    padding: EdgeInsets.all(AppPadding.p10),
+                                    sliver: SliverGrid(
+                                      delegate: SliverChildBuilderDelegate(
+                                            (context, index) {
+
+                                          return MiniParkingSlotWidget(
+                                            spot: extraSpots[index],
+                                            garageId: garageId,
+                                            spotindex: index,
+                                            garageName: garageName,// ← index الأصلي من كل المواقف
+                                          );
+                                        },
+                                        childCount: extraSpots.length,
+                                      ),
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 4,
+                                        crossAxisSpacing: 12,
+                                        mainAxisSpacing: 12,
+                                        mainAxisExtent: 100,
+                                      ),
+                                    ),
+
+                                  ),
+                                ],
+                                // --- عرض المواقف الرئيسية ---
+                                SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    child: TextUtils(
+                                      text: "الجراج الرئيسي",
+                                      color: ColorManager.white,
+                                      fontSize: FontSize.s17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                mainSpots!.isNotEmpty
+                                    ? SliverPadding(
+                                  padding: EdgeInsets.all(12),
+                                  sliver: SliverGrid(
+                                    delegate: SliverChildBuilderDelegate(
+                                          (context, index) {
+                                        final spot =
+                                        mainSpots[index];
+                                        final isLeftSide = index % 2 == 0;
+                                        return ParkingSlotWidget(
+                                          isLeftSide: isLeftSide,
+                                          garageId: garageId,
+                                          spotindex: index,
+                                          status: spot.status,
+                                          spot: spot,
+                                          garageName: garageName,
+                                        );
+                                      },
+                                      childCount:
+                                      mainSpots
+                                          .length, // استخدام قائمة المواقف الرئيسية *لهذا الجراج*
+                                    ),
+                                    gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 0,
+                                      mainAxisExtent: 105,
+                                    ),
+                                  ),
+                                )
+                                    : SliverFillRemaining(
+                                  hasScrollBody: false,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Center(child: Lottie.asset(LottieManager.noCars)),
+                                      TextUtils(
+                                        text: "عذراً لا يوجد سيارات بهذا الجراج",
+                                        color: ColorManager.white,
+                                        fontSize: FontSize.s13,
+                                        noOfLines: 2,
+                                        overFlow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
-                            ),
-                          ),
-                        ),
-
-                      // --- عرض المواقف الإضافية (إذا كانت الحالة تسمح وهناك مواقف إضافية) ---
-                      if (state.showExtraSlots ) ...[
-                        SliverPadding(
-                          padding: EdgeInsets.all(AppPadding.p10),
-                          sliver: SliverGrid(
-                            delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-
-                                return MiniParkingSlotWidget(
-                                  spot: extraSpots[index],
-                                  garageId: garageId,
-                                  spotindex: index,
-                                  garageName: garageName,// ← index الأصلي من كل المواقف
-                                );
-                              },
-                              childCount: extraSpots.length,
-                            ),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              mainAxisExtent: 100,
-                            ),
-                          ),
-
-                        ),
-                      ],
-                      // --- عرض المواقف الرئيسية ---
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                          child: TextUtils(
-                            text: "الجراج الرئيسي",
-                            color: ColorManager.white,
-                            fontSize: FontSize.s17,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      mainSpots!.isNotEmpty
-                          ? SliverPadding(
-                            padding: EdgeInsets.all(12),
-                            sliver: SliverGrid(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final spot =
-                                      mainSpots[index];
-                                  final isLeftSide = index % 2 == 0;
-                                  return ParkingSlotWidget(
-                                    isLeftSide: isLeftSide,
-                                    garageId: garageId,
-                                    spotindex: index,
-                                    status: spot.status,
-                                    spot: spot,
-                                    garageName: garageName,
-                                  );
-                                },
-                                childCount:
-                                    mainSpots
-                                        .length, // استخدام قائمة المواقف الرئيسية *لهذا الجراج*
-                              ),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 0,
-                                    mainAxisSpacing: 0,
-                                    mainAxisExtent: 105,
-                                  ),
-                            ),
-                          )
-                          : SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                            );
+                          case RequestState.error:
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(child: Lottie.asset(LottieManager.noCars)),
                                 TextUtils(
-                                  text: "عذراً لا يوجد سيارات بهذا الجراج",
+                                  text: "يوجد خطب ما بالجراج وجارى إصلاحه",
                                   color: ColorManager.white,
                                   fontSize: FontSize.s13,
                                   noOfLines: 2,
                                   overFlow: TextOverflow.ellipsis,
                                 ),
                               ],
-                            ),
-                          ),
-                    ],
+                            );
+                        }
+                      },
+                    ),
                   );
                 case RequestState.error:
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(child: Lottie.asset(LottieManager.noCars)),
-                      TextUtils(
-                        text: "يوجد خطب ما بالجراج وجارى إصلاحه",
-                        color: ColorManager.white,
-                        fontSize: FontSize.s13,
-                        noOfLines: 2,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  );
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(child: Lottie.asset(LottieManager.noCars)),
+                    TextUtils(
+                      text:
+                      "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
+                      color: ColorManager.white,
+                      fontSize: FontSize.s13,
+                      noOfLines: 2,
+                      overFlow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: AppSizeHeight.s30),
+                  ],
+                );
               }
-            },
-          ),
+          } ,
+
         ),
       ),
     );

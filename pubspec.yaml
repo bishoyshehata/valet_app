@@ -53,7 +53,7 @@ flutter_launcher_icons:
     ios: true
     image_path: "assets/images/app_icon.png"
     remove_alpha_ios: true
-
+    collection: ^1.19.1
 
 flutter_lints: ^5.0.0
 

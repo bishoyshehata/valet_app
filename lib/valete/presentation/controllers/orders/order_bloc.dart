@@ -71,6 +71,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(spotName: event.spotName));
     });
 
+
     on<StoreOrderEvent>((event, emit) async {
       emit(state.copyWith(storeOrderState: StoreOrderState.loading));
 

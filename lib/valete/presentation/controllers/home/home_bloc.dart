@@ -34,21 +34,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ),
           );
         },
-        (garageSpots) => emit(
-          state.copyWith(
-            getGaragesSpotState: RequestState.loaded,
-            mainSpots: garageSpots.mainSpots,
-            extraSpots: garageSpots.extraSpots,
-            emptySpots: garageSpots.emptySpots,
-            allSpots: garageSpots
-          ),
-        ),
+        (garageSpots) {
+          print(garageSpots.emptySpots);
+          emit(
+            state.copyWith(
+                getGaragesSpotState: RequestState.loaded,
+                mainSpots: garageSpots.mainSpots,
+                extraSpots: garageSpots.extraSpots,
+                emptySpots: garageSpots.emptySpots,
+                allSpots: garageSpots
+            ),
+          );
+        }
       );
     });
     on<UpdateOrderSpotEvent>((event,emit)async {
       emit(state.copyWith(updateOrderSpotState: UpdateOrderSpotState.loading));
 
-      final updateResult  = await updateOrderSpotUseCase.updateOrderSpot(event.orderId, event.spotId);
+      final updateResult  = await updateOrderSpotUseCase.updateOrderSpot(event.orderId, event.spotId,event.garageId);
       updateResult.fold((error){
         print("xxxxxxxxxxxxxxxx$error");
 
@@ -70,8 +73,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<UpdateSpotNameEvent>((event, emit) {
       emit(state.copyWith(spotName: event.spotName));
     });
+    on<UpdateGarageNameEvent>((event, emit) {
+      emit(state.copyWith(garageId: event.garageName));
+    });
     on<ResetSpotNameEvent>((event, emit) {
-      emit(state.copyWith(spotName: 'رقم الباكية')); // أو '' حسب نوع spotName
+      emit(state.copyWith(spotName: 'رقم الباكية',garageId: 'رقم الباكية')); // أو '' حسب نوع spotName
     });
   }
 

@@ -8,7 +8,7 @@ class ApiConstants {
   static String updateOrderStatusEndPoint(int orderId , int newStatus)=> '$baseUrl/api/Valet/updateOrderStatus/$orderId/$newStatus';
   static String deleteValetEndPoint(int valetId)=> '$baseUrl/api/Valet/Delete/$valetId';
   static String getGarageSpotEndPoint(int garageId)=> '$baseUrl/api/Valet/getGarageSpot/$garageId';
-  static String updateOrderSpotEndPoint(int orderId , int spotId)=> '$baseUrl/api/Valet/UpdateOrderSpot/$orderId/$spotId';
+  static String updateOrderSpotEndPoint(int orderId , int spotId,int garageId)=> '$baseUrl/api/Valet/UpdateOrderSpot/$orderId/$spotId/$garageId';
 
 
 

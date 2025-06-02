@@ -18,6 +18,7 @@ class HomeState {
   final Map<Spot, int>? mainSpotsIndices;
   final Map<Spot, int>? extraSpotsIndices;
   final String spotName;
+  final String garageId;
   final bool? updateResult;
   final String updateOrderSpotErrorMessage;
   final UpdateOrderSpotState updateOrderSpotState;
@@ -40,6 +41,7 @@ class HomeState {
     this.extraSpotsIndices,
     this.mainSpotsIndices ,
     this.spotName = 'رقم الباكية',
+    this.garageId = 'رقم الباكية',
 
   });
 
@@ -59,6 +61,7 @@ class HomeState {
      Map<Spot, int>? mainSpotsIndices,
      Map<Spot, int>? extraSpotsIndices,
     String? spotName,
+    String? garageId,
     bool? updateResult,
     String? updateOrderSpotErrorMessage,
     UpdateOrderSpotState? updateOrderSpotState,
@@ -78,6 +81,7 @@ class HomeState {
       extraSpotsIndices: extraSpotsIndices ?? this.extraSpotsIndices,
       mainSpotsIndices: mainSpotsIndices ?? this.mainSpotsIndices,
       spotName: spotName ?? this.spotName,
+      garageId: garageId ?? this.garageId,
       getGaragesSpotErrorMessage: getGaragesSpotErrorMessage ?? this.getGaragesSpotErrorMessage,
       updateResult: updateResult ?? this.updateResult,
       updateOrderSpotErrorMessage: updateOrderSpotErrorMessage ?? this.updateOrderSpotErrorMessage,

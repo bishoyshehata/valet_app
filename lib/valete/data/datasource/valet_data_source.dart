@@ -21,7 +21,7 @@ abstract class IValetDataSource {
   Future<bool> updateOrderStatus(int orderId,int newStatus);
   Future<bool> deleteValet(int valetId);
   Future<GetGarageSpotModel> getGarageSpot(int garageId);
-  Future<bool> updateOrderSpot(int orderId , int spotId);
+  Future<bool> updateOrderSpot(int orderId , int spotId,int garageId);
 }
 
 
@@ -211,10 +211,10 @@ class ValetDataSource extends IValetDataSource {
   }
 
   @override
-  Future<bool> updateOrderSpot(int orderId, int spotId) async{
+  Future<bool> updateOrderSpot(int orderId, int spotId,int garageId) async{
 
     final response = await DioHelper.post(
-      ApiConstants.updateOrderSpotEndPoint(orderId, spotId),
+      ApiConstants.updateOrderSpotEndPoint(orderId, spotId, garageId),
       requiresAuth: true,
     );
 

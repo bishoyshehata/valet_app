@@ -12,11 +12,11 @@ class UpdateOrderSpotUseCase {
 
   UpdateOrderSpotUseCase(this.repository);
 
-  Future<Either<Failure,  bool >> updateOrderSpot(int orderId , int spotId) async {
+  Future<Either<Failure,  bool >> updateOrderSpot(int orderId , int spotId,int garageId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? isUnAuth = prefs.getBool('unAuthorized');
     try {
-      final result = await repository.updateOrderSpot(orderId ,spotId);
+      final result = await repository.updateOrderSpot(orderId ,spotId, garageId);
       return result;
     } catch (e) {
       if(isUnAuth == true){

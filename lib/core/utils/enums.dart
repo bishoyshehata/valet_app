@@ -1,4 +1,5 @@
 enum RequestState { loading, loaded, error }
+enum RequestStatess {initial, loading, loaded, error }
 
 enum StoreOrderState { initial, loading, loaded, error }
 enum UpdateOrderSpotState { initial, loading, loaded, error }
