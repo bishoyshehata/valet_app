@@ -54,218 +54,223 @@ class OrdersScreen extends StatelessWidget {
         ),
       ),
 
-      body: Column(
-        children: [
-          SizedBox(
-            height: 70,
-            child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
-              // buildWhen: (prev, curr) => prev.selectedStatus != curr.selectedStatus,
-              builder: (context, state) {
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: statusOptions.length,
-                  itemBuilder: (context, index) {
-                    final option = statusOptions[index];
-                    final isSelected = state.selectedStatus == option['id'];
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+        },
+        child: Column(
+          children: [
+            SizedBox(
+              height: 70,
+              child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                // buildWhen: (prev, curr) => prev.selectedStatus != curr.selectedStatus,
+                builder: (context, state) {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: statusOptions.length,
+                    itemBuilder: (context, index) {
+                      final option = statusOptions[index];
+                      final isSelected = state.selectedStatus == option['id'];
 
-                    return Container(
-                      margin: EdgeInsets.only(top: AppMargin.m8),
-                      padding: EdgeInsets.all(AppPadding.p6),
-                      child: Stack(
-                        children: [
-                          ChoiceChip(
-                            elevation: 0,
-                            label: Text(option['label']),
-                            selected: isSelected,
-                            onSelected: (_) {
-                              context.read<MyOrdersBloc>().add(
-                                GetMyOrdersEvent(option['id']),
-                              );
-                            },
-                            selectedColor: ColorManager.primary,
-                            backgroundColor: ColorManager.grey,
-                            labelStyle: GoogleFonts.cairo(
-                              color:
-                                  isSelected
-                                      ? ColorManager.background
-                                      : ColorManager.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
-                              ),
-                              decoration: BoxDecoration(
-                                color: ColorManager.background,
-                                border: Border.all(
-                                  color: ColorManager.white,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  AppSizeHeight.s50,
-                                ),
-                              ),
-                              child: Center(
-                                child: TextUtils(
-                                  text:
-                                      '${state.ordersByStatus[option['id']]?.length ?? 0}',
-                                  fontSize: FontSize.s10,
-                                  color: ColorManager.white,
-                                  fontWeight: FontWeightManager.bold,
-                                ),
+                      return Container(
+                        margin: EdgeInsets.only(top: AppMargin.m8),
+                        padding: EdgeInsets.all(AppPadding.p6),
+                        child: Stack(
+                          children: [
+                            ChoiceChip(
+                              elevation: 0,
+                              label: Text(option['label']),
+                              selected: isSelected,
+                              onSelected: (_) {
+                                context.read<MyOrdersBloc>().add(
+                                  GetMyOrdersEvent(option['id']),
+                                );
+                              },
+                              selectedColor: ColorManager.primary,
+                              backgroundColor: ColorManager.grey,
+                              labelStyle: GoogleFonts.cairo(
+                                color:
+                                    isSelected
+                                        ? ColorManager.background
+                                        : ColorManager.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          Expanded(
-            child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
-              // buildWhen: (previous, current) => previous.orders != current.orders ,
-              builder: (context, state) {
-                final orders = state.ordersByStatus[state.selectedStatus] ?? [];
-
-                switch (state.myOrdersState) {
-                  case RequestState.loading:
-                    return SizedBox(
-                      height: AppSizeHeight.sMaxInfinite,
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder:
-                            (context, index) => Shimmer.fromColors(
-                              baseColor: Colors.grey[850]!,
-                              highlightColor: Colors.grey[800]!,
+                            Positioned(
+                              top: 0,
+                              right: 0,
                               child: Container(
-                                margin: EdgeInsets.only(
-                                  right: AppMargin.m12,
-                                  top: AppMargin.m12,
-                                  left: AppMargin.m12,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 2,
                                 ),
-                                height: AppSizeHeight.s120,
+                                constraints: BoxConstraints(
+                                  minWidth: 20,
+                                  minHeight: 20,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: ColorManager.background,
+                                  border: Border.all(
+                                    color: ColorManager.white,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizeHeight.s50,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: TextUtils(
+                                    text:
+                                        '${state.ordersByStatus[option['id']]?.length ?? 0}',
+                                    fontSize: FontSize.s10,
+                                    color: ColorManager.white,
+                                    fontWeight: FontWeightManager.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                        separatorBuilder:
-                            (context, index) => SizedBox(height: 10),
-                        itemCount: 4,
-                      ),
-                    );
-                  case RequestState.loaded:
-                    if (orders.isEmpty) {
-                      return FutureBuilder(
-                        future: Future.delayed(Duration(seconds: 2)),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState !=
-                              ConnectionState.done) {
-                            // بنعرض shimmer مؤقت لحد ما نفحص فعلاً إن مفيش طلبات
-                            return SizedBox(
-                              height: AppSizeHeight.sMaxInfinite,
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                itemBuilder:
-                                    (context, index) => Shimmer.fromColors(
-                                      baseColor: Colors.grey[850]!,
-                                      highlightColor: Colors.grey[800]!,
-                                      child: Container(
-                                        margin: EdgeInsets.symmetric(
-                                          horizontal: AppMargin.m12,
-                                          vertical: AppMargin.m12,
-                                        ),
-                                        height: AppSizeHeight.s120,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                // buildWhen: (previous, current) => previous.orders != current.orders ,
+                builder: (context, state) {
+                  final orders = state.ordersByStatus[state.selectedStatus] ?? [];
+
+                  switch (state.myOrdersState) {
+                    case RequestState.loading:
+                      return SizedBox(
+                        height: AppSizeHeight.sMaxInfinite,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder:
+                              (context, index) => Shimmer.fromColors(
+                                baseColor: Colors.grey[850]!,
+                                highlightColor: Colors.grey[800]!,
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                    right: AppMargin.m12,
+                                    top: AppMargin.m12,
+                                    left: AppMargin.m12,
+                                  ),
+                                  height: AppSizeHeight.s120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                          separatorBuilder:
+                              (context, index) => SizedBox(height: 10),
+                          itemCount: 4,
+                        ),
+                      );
+                    case RequestState.loaded:
+                      if (orders.isEmpty) {
+                        return FutureBuilder(
+                          future: Future.delayed(Duration(seconds: 2)),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState !=
+                                ConnectionState.done) {
+                              // بنعرض shimmer مؤقت لحد ما نفحص فعلاً إن مفيش طلبات
+                              return SizedBox(
+                                height: AppSizeHeight.sMaxInfinite,
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (context, index) => Shimmer.fromColors(
+                                        baseColor: Colors.grey[850]!,
+                                        highlightColor: Colors.grey[800]!,
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: AppMargin.m12,
+                                            vertical: AppMargin.m12,
+                                          ),
+                                          height: AppSizeHeight.s120,
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
                                           ),
                                         ),
                                       ),
+                                  separatorBuilder:
+                                      (context, index) => SizedBox(height: 10),
+                                  itemCount: 4,
+                                ),
+                              );
+                            } else {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Lottie.asset(LottieManager.noCars),
+                                    const SizedBox(height: 12),
+                                    TextUtils(
+                                      text: "لا توجد طلبات",
+                                      color: ColorManager.white,
+                                      fontSize: FontSize.s14,
+                                      fontWeight: FontWeightManager.bold,
                                     ),
-                                separatorBuilder:
-                                    (context, index) => SizedBox(height: 10),
-                                itemCount: 4,
-                              ),
-                            );
-                          } else {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Lottie.asset(LottieManager.noCars),
-                                  const SizedBox(height: 12),
-                                  TextUtils(
-                                    text: "لا توجد طلبات",
-                                    color: ColorManager.white,
-                                    fontSize: FontSize.s14,
-                                    fontWeight: FontWeightManager.bold,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          final order = orders[index];
+                          return statusCard(order, context);
                         },
                       );
-                    }
-                    return ListView.builder(
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        final order = orders[index];
-                        return statusCard(order, context);
-                      },
-                    );
-                  case RequestState.error:
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(child: Lottie.asset(LottieManager.noCars)),
-                        TextUtils(
-                          text:
-                              "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
-                          color: ColorManager.white,
-                          fontSize: FontSize.s13,
-                          noOfLines: 2,
-                          overFlow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: AppSizeHeight.s30),
-                        CustomButton(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
-                              ),
-                            );
-                          },
-                          btnColor: ColorManager.primary,
-                          widget: TextUtils(
-                            text: 'إعادة التسجيل',
-                            color: ColorManager.background,
-                            fontWeight: FontWeightManager.bold,
+                    case RequestState.error:
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(child: Lottie.asset(LottieManager.noCars)),
+                          TextUtils(
+                            text:
+                                "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
+                            color: ColorManager.white,
+                            fontSize: FontSize.s13,
+                            noOfLines: 2,
+                            overFlow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    );
-                }
-              },
+                          SizedBox(height: AppSizeHeight.s30),
+                          CustomButton(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginScreen(),
+                                ),
+                              );
+                            },
+                            btnColor: ColorManager.primary,
+                            widget: TextUtils(
+                              text: 'إعادة التسجيل',
+                              color: ColorManager.background,
+                              fontWeight: FontWeightManager.bold,
+                            ),
+                          ),
+                        ],
+                      );
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
