@@ -9,6 +9,7 @@ class HomeState {
   final String myGaragesErrorMessage;
   final String getGaragesSpotErrorMessage;
   final List<MyGarages>? data;
+  final int? garagesStatusCode;
   final int currentIndex;
   final bool showExtraSlots;
   final GetGarageSpot? allSpots;
@@ -40,6 +41,7 @@ class HomeState {
     this.allSpots,
     this.extraSpotsIndices,
     this.mainSpotsIndices ,
+    this.garagesStatusCode ,
     this.spotName = 'رقم الباكية',
     this.garageId = 'رقم الباكية',
 
@@ -65,6 +67,7 @@ class HomeState {
     bool? updateResult,
     String? updateOrderSpotErrorMessage,
     UpdateOrderSpotState? updateOrderSpotState,
+    int? garagesStatusCode,
 
   }) {
     return HomeState(
@@ -86,6 +89,7 @@ class HomeState {
       updateResult: updateResult ?? this.updateResult,
       updateOrderSpotErrorMessage: updateOrderSpotErrorMessage ?? this.updateOrderSpotErrorMessage,
       updateOrderSpotState: updateOrderSpotState ?? this.updateOrderSpotState,
+      garagesStatusCode: garagesStatusCode ?? this.garagesStatusCode,
 
     );
   }

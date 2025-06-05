@@ -54,7 +54,7 @@ class ValetDataSource extends IValetDataSource {
       prefs.setString('valetPhone', result.phone.toString());
       return result;
     } else {
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
@@ -69,13 +69,13 @@ class ValetDataSource extends IValetDataSource {
     if (response.statusCode == 200) {
       return CreateOrderModel.fromJson(response.data['data']);
     } else {
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
   @override
   Future<List<MyGaragesModel>> myGarages() async {
-    try {
+
       final response = await DioHelper.post(
         ApiConstants.myGaragesEndPoint,
         requiresAuth: true,
@@ -85,22 +85,9 @@ class ValetDataSource extends IValetDataSource {
         return (response.data['data'] as List)
             .map((e) => MyGaragesModel.fromJson(e))
             .toList();
-      } else {
-        // ألقِ خطأ عام هنا إذا لم يكن 401
-        throw ServerFailure(response.data['messages']?[0] ?? 'Unknown server error');
       }
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 401) {
-        await markUnAuthorized(); // انتظر اكتمال التحديث
-        throw ServerFailure(e.response?.data['messages']?[0] ?? 'Unauthorized');
-      } else {
-        // ألقِ خطأ عام لأنواع أخرى من أخطاء Dio
-        throw ServerFailure(e.message ?? 'Dio error');
-      }
-    } catch (e) {
-      // ألقِ خطأ عام للأخطاء الأخرى
-      throw ServerFailure(e.toString());
-    }
+      throw ServerFailure(response.data['messages']?[0] ?? 'Unknown server error' ,response.statusCode!);
+
   }
 
   @override
@@ -131,11 +118,11 @@ class ValetDataSource extends IValetDataSource {
     }else if(response.statusCode == 401){
        markUnAuthorized();
 
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
     else {
 
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
@@ -154,10 +141,10 @@ class ValetDataSource extends IValetDataSource {
           .toList();
     } else if(response.statusCode == 401){
        markUnAuthorized();
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }else {
 
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
@@ -173,10 +160,10 @@ class ValetDataSource extends IValetDataSource {
       return response.data['data'];
     }else if(response.statusCode == 401){
        markUnAuthorized();
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     } else {
 
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
@@ -191,7 +178,7 @@ class ValetDataSource extends IValetDataSource {
     if (response.statusCode == 200) {
       return response.data['succeeded'];
     } else {
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
@@ -206,7 +193,7 @@ class ValetDataSource extends IValetDataSource {
     if (response.statusCode == 200) {
       return GetGarageSpotModel.fromJson(response.data['data']);;
     } else {
-      throw ServerFailure(response.data['messages'][0]);
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
     }
   }
 
@@ -220,13 +207,9 @@ class ValetDataSource extends IValetDataSource {
 
     if (response.statusCode == 200) {
       return response.data['data'];
-    }else if(response.statusCode == 401){
-      markUnAuthorized();
-      throw ServerFailure(response.data['messages'][0]);
-    } else {
-
-      throw ServerFailure(response.data['messages'][0]);
     }
+      throw ServerFailure(response.data['messages'][0] ,response.statusCode!);
+
   }
 }
 Future<void> markUnAuthorized() async {

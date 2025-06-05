@@ -15,7 +15,7 @@ class CreateOrderUseCase {
       return result;
     } catch (e) {
 
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(e.toString(), ));
     }
   }
 }

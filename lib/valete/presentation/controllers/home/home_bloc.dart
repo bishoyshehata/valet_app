@@ -94,7 +94,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           state.copyWith(
             myGaragesState: RequestState.error,
             myGaragesErrorMessage:
-                error.message, // افترض أن Failure له خاصية message
+                error.message,
+            garagesStatusCode: error.statusCode
+
           ),
         );
       },

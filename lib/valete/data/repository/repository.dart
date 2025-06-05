@@ -20,7 +20,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.login(phone, password);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -30,7 +30,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.createOrder();
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
   @override
@@ -39,7 +39,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.myGarages();
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -49,7 +49,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.storeOrder(storeOrder);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -59,7 +59,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.myOrders(status);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -69,7 +69,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.updateOrderStatus(orderId,newStatus);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -79,7 +79,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.deleteValet(valetId);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -90,7 +90,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.getGarageSpot(garageId);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 
@@ -100,7 +100,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.updateOrderSpot(orderId , spotId, garageId);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message));
+      return Left(ServerFailure(failure.message , failure.statusCode));
     }
   }
 }

@@ -18,6 +18,7 @@ import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import '../../components/custom_app_bar.dart';
 import '../../controllers/home/home_events.dart';
 import '../../resources/strings_manager.dart';
+import '../error_screen/error_screen.dart';
 import '../order_screen/order_screen.dart';
 
 class ValetHomeScreen extends StatelessWidget {
@@ -88,7 +89,7 @@ class ValetHomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: AppSizeHeight.s5),
 
-                switch (state.myGaragesState) {
+                switch(state.myGaragesState) {
                   RequestState.loading => ListView.separated(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
@@ -142,37 +143,7 @@ class ValetHomeScreen extends StatelessWidget {
                             );
                           },
                         ),
-                  RequestState.error => Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Center(child: Lottie.asset(LottieManager.noCars)),
-                      TextUtils(
-                        text:
-                            "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
-                        color: ColorManager.white,
-                        fontSize: FontSize.s13,
-                        noOfLines: 2,
-                        overFlow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: AppSizeHeight.s30),
-                      CustomButton(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
-                        },
-                        btnColor: ColorManager.primary,
-                        widget: TextUtils(
-                          text: 'إعادة التسجيل',
-                          color: ColorManager.background,
-                          fontWeight: FontWeightManager.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                  RequestState.error => ErrorScreen(statusCode: state.garagesStatusCode,),
                 },
               ],
             ),
