@@ -10,8 +10,13 @@ class GetMyOrdersEvent extends MyOrdersEvent {
   List<Object?> get props => [newStatus];
 }
 class GetAllMyOrdersEvent extends MyOrdersEvent {
+  final List<int>? statuses; // لو null يبقى كل الحالات
+
+  GetAllMyOrdersEvent({this.statuses});
+
   @override
-  List<Object?> get props => [];
+
+  List<Object?> get props => [statuses];
 }
 class UpdateOrderStatusEvent extends MyOrdersEvent{
   final int orderId;

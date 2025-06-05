@@ -76,29 +76,35 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
     on<GetAllMyOrdersEvent>((event, emit) async {
       Map<int, List<MyOrders>> newOrdersByStatus = {};
 
-      for (int status = 0; status <= 4; status++) {
+      List<int> statusesToLoad = event.statuses ?? [0, 1, 2, 3, 4];
+
+      for (int status in statusesToLoad) {
         final result = await myOrdersUseCase.myOrders(status);
 
         result.fold(
-          (error) {
+              (error) {
             emit(
               state.copyWith(
                 myOrdersState: RequestState.error,
                 myOrdersErrorMessage: error.message,
               ),
             );
-            return; // وقف اللوب لو في خطأ
+            return;
           },
-          (data) {
+              (data) {
             newOrdersByStatus[status] = List.from(data);
           },
         );
       }
 
+      // دمج الجديد مع القديم
+      final updatedMap = Map<int, List<MyOrders>>.from(state.ordersByStatus)
+        ..addAll(newOrdersByStatus);
+
       emit(
         state.copyWith(
           myOrdersState: RequestState.loaded,
-          ordersByStatus: newOrdersByStatus,
+          ordersByStatus: updatedMap,
         ),
       );
     });

@@ -61,27 +61,10 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    // App is in foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('📩 Foreground message received');
-      print('📩 Foreground message received ${message.data}');
-      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NotificationService.init(context);
     });
 
-    // App is opened from background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('📩 App opened from background notification');
-      print('📩 App opened from background notification ${message.data}');
-      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-    });
-
-    // App launched from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      if (message != null) {
-        print('📩 App launched from terminated by notification');
-        context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-      }
-    });
   }
   @override
   Widget build(BuildContext context) {
