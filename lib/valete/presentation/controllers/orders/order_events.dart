@@ -14,7 +14,6 @@ class CreateOrderEvent extends OrderEvent{
   @override
   List<Object?> get props => [];
 }
-
 class PickImageEvent extends OrderEvent {
   @override
   List<Object?> get props => [];
@@ -26,7 +25,6 @@ class UpdatePhoneNumberEvent extends OrderEvent {
   @override
   List<Object?> get props =>[phoneNumber];
 }
-
 class UpdateSpotNameEvent extends OrderEvent {
   final String spotName;
   UpdateSpotNameEvent(this.spotName);
@@ -34,7 +32,6 @@ class UpdateSpotNameEvent extends OrderEvent {
   @override
   List<Object?> get props => [spotName];
 }
-
 class StoreOrderEvent extends OrderEvent {
   final StoreOrderModel storeData;
 

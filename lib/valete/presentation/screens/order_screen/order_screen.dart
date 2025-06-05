@@ -49,6 +49,8 @@ class OrderScreen extends StatelessWidget {
         )..add(CreateOrderEvent());
         SharedPreferences.getInstance().then((prefs) {
           String? valetId = prefs.getString('valetId');
+          SocketService().closeSocket();
+
           socketService.initSocket(
             saiesId: valetId!,
             onPhoneReceived: (phone) {

@@ -18,17 +18,23 @@ final getIt = GetIt.instance;
 class NotificationService {
   static Future<void> init(BuildContext context) async {
     // Foreground
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('📩 Foreground message received');
       print(message.data);
       context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
     });
+  });
 
     // Background (when app is opened by tapping the notification)
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('📩 Opened from background');
       print(message.data);
       context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+    });
     });
 
     // Terminated (cold start)
