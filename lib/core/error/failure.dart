@@ -55,6 +55,7 @@ Never handleHttpError(Response? response, DioException? dioError) {
 }
 
 String extractFirstErrorMessage(dynamic errorData) {
+  print(errorData);
   if (errorData == null) return "حدث خطأ غير متوقع";
 
   if (errorData is String) {
@@ -76,30 +77,13 @@ String extractFirstErrorMessage(dynamic errorData) {
     }
   }
 
-  if (errorData is Map && errorData.containsKey('message')) {
-    return errorData['message'].toString();
+  if (errorData is Map && errorData.containsKey('messages')) {
+    return errorData['messages'][0].toString();
   }
 
   return "حدث خطأ غير متوقع";
 }
 
-Never handleDioException(DioException e) {
-  if (e.type == DioExceptionType.connectionTimeout ||
-      e.type == DioExceptionType.receiveTimeout ||
-      e.type == DioExceptionType.sendTimeout) {
-    throw ServerFailure('انتهت مهلة الاتصال بالخادم. حاول مرة أخرى.', 0);
-  } else if (e.type == DioExceptionType.connectionError) {
-    throw ServerFailure('لا يوجد اتصال بالإنترنت. تحقق من الشبكة.', 0);
-  } else if (e.type == DioExceptionType.cancel) {
-    throw ServerFailure('تم إلغاء الطلب.', 0);
-  } else if (e.type == DioExceptionType.badResponse) {
-    final statusCode = e.response?.statusCode ?? 0;
-    final message = extractFirstErrorMessage(e.response?.data) ?? 'خطأ غير معروف من السيرفر.';
-    throw ServerFailure(message, statusCode);
-  } else {
-    throw ServerFailure('حدث خطأ غير متوقع أثناء الاتصال بالخادم.', 0);
-  }
-}
 
 
 

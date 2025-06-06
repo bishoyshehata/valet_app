@@ -18,7 +18,6 @@ class MyGaragesUseCase {
 
     try {
       final result = await repository.myGarages();
-      print('Repository result: $result');
       return result;
     } on ServerFailure catch (e) {
       print('ServerFailure caught in UseCase: ${e.message}, statusCode: ${e.statusCode}');

@@ -6,7 +6,10 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
+import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
+import '../myorders/my_orders_bloc.dart';
+import '../myorders/my_orders_events.dart';
 import 'order_events.dart';
 import 'order_states.dart';
 
@@ -90,6 +93,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
               (data) {
 
             emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
+            MyOrdersBloc(sl(),sl()).add(GetAllMyOrdersEvent());
+            MyOrdersBloc(sl(),sl()).add(GetMyOrdersEvent(0),);
+
           },
         );
     });

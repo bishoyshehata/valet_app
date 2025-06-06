@@ -203,22 +203,18 @@ class OrderScreen extends StatelessWidget {
                                               garageId: state.data!.garageId,
                                             );
 
-                                            context.read<OrderBloc>().add(
-                                              StoreOrderEvent(model),
+                                              context.read<OrderBloc>().add( StoreOrderEvent(model),);
+                                            context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text("تم إنشاء الطلب بنجاح")),
                                             );
 
-                                            context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-                                            Future.delayed(Duration(seconds: 1)).then((_) {
-                                              context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                            Future.delayed(Duration(milliseconds: 100), () {
                                               Navigator.pushReplacement(
                                                 context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => MainScreen(),
-                                                ),
+                                                MaterialPageRoute(builder: (_) => MainScreen()),
                                               );
                                             });
-
-
 
                                           } else {
                                             if (state.phoneNumber ==
@@ -283,7 +279,12 @@ class OrderScreen extends StatelessWidget {
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                StoreOrderState.error => buildStoreOrderErrorWidget(context , state.createOrderStatusCode,state.createOrderError)
+                                StoreOrderState.error => TextUtils(
+                                  text: "عذرا حدث خطأ",
+                                  color: ColorManager.primary,
+                                  fontSize: FontSize.s17,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               },
                             ),
                           ),

@@ -121,7 +121,7 @@ class ValetDataSource extends IValetDataSource {
       }
 
       final response = await DioHelper.post(
-        ApiConstants.storeOrderEndPoint+"kass",
+        ApiConstants.storeOrderEndPoint,
         data: formMap,
         isFormData: true,
         requiresAuth: true,

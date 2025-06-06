@@ -38,10 +38,8 @@ class ValetRepository extends IValetRepository {
   Future<Either<Failure, List<MyGarages>>> myGarages() async {
     try {
       final result = await valetDataSource.myGarages();
-      print('Datasource result: $result');
       return Right(result);
     } on ServerFailure catch (e) {
-      print('ServerFailure caught in repo: ${e.message}, statusCode: ${e.statusCode}');
       return Left(e);
     }
   }
