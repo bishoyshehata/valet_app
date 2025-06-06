@@ -88,8 +88,7 @@ class ValetHomeScreen extends StatelessWidget {
                   ) : SizedBox(height: 0,),
                 ),
                 SizedBox(height: AppSizeHeight.s5),
-
-                switch(state.myGaragesState) {
+                  switch(state.myGaragesState) {
                   RequestState.loading => ListView.separated(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
@@ -143,7 +142,7 @@ class ValetHomeScreen extends StatelessWidget {
                             );
                           },
                         ),
-                  RequestState.error => ErrorScreen(statusCode: state.garagesStatusCode,),
+                  RequestState.error => buildErrorBody(context, state.garagesStatusCode)
                 },
               ],
             ),

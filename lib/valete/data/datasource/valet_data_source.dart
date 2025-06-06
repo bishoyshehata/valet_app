@@ -76,17 +76,25 @@ class ValetDataSource extends IValetDataSource {
   @override
   Future<List<MyGaragesModel>> myGarages() async {
 
-      final response = await DioHelper.post(
-        ApiConstants.myGaragesEndPoint,
-        requiresAuth: true,
-      );
+     try {
+       final response = await DioHelper.post(
+         ApiConstants.myGaragesEndPoint,
+         requiresAuth: true,
+       );
 
-      if (response.statusCode == 200) {
-        return (response.data['data'] as List)
-            .map((e) => MyGaragesModel.fromJson(e))
-            .toList();
-      }
-      throw ServerFailure(response.data['messages']?[0] ?? 'Unknown server error' ,response.statusCode!);
+       if (response.statusCode == 200) {
+         return (response.data['data'] as List)
+             .map((e) => MyGaragesModel.fromJson(e))
+             .toList();
+       }
+     }on DioException catch (e) {
+       final statusCode = e.response?.statusCode;
+       final message = e.response?.data['messages']?[0] ?? 'Unknown error';
+
+       throw ServerFailure(message, statusCode); // هنا الـ statusCode فعلاً يتبعت
+     }
+
+     throw ServerFailure(  'Unknown server error' , 500);
 
   }
 

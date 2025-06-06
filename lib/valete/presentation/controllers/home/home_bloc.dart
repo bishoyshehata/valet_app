@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:valet_app/valete/domain/usecases/get_garage_spot_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
@@ -87,18 +88,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final result = await myGaragesUseCase.myGarages(); // استدعاء الـ UseCase
 
     result.fold(
-      (error) {
-        // في حالة الخطأ، قم بتحديث الحالة برسالة الخطأ
-        print(error);
-        emit(
-          state.copyWith(
-            myGaragesState: RequestState.error,
-            myGaragesErrorMessage:
-                error.message,
-            garagesStatusCode: error.statusCode
+          (error) {
+        debugPrint('✖️ Error Message: ${error.message}');
+        debugPrint('📡 Status Code: ${error.statusCode}');
 
-          ),
-        );
+        emit(state.copyWith(
+          myGaragesState: RequestState.error,
+          myGaragesErrorMessage: error.message,
+          garagesStatusCode: error.statusCode,
+        ));
       },
       (data) {
         // في حالة النجاح، قم بتحديث الحالة بقائمة الجراجات المستلمة فقط

@@ -9,68 +9,67 @@ import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
 import '../login/login.dart';
 
-class ErrorScreen extends StatelessWidget {
-  final int? statusCode; // لازم final في StatelessWidget
-
-  const ErrorScreen({super.key, required this.statusCode});
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (statusCode) {
-      400 => _buildErrorMessage("عذراً يوجد مشكلة بالبيانات"),
-      401 => _buildSessionExpired(context),
-      500 => _buildErrorMessage("خطأ في الخادم، حاول لاحقاً"),
-      _ => _buildErrorMessage("حدث خطأ غير متوقع"),
-    };
-  }
-
-  Widget _buildErrorMessage(String message) {
-    return Scaffold(
-      body: Center(
+Widget buildErrorBody(BuildContext context, int? statusCode) {
+  switch (statusCode) {
+    case 400:
+      return const Center(
         child: Text(
-          message,
-          style: const TextStyle(color: Colors.red, fontSize: 18),
+          "عذراً يوجد مشكلة بالبيانات",
+          style: TextStyle(color: Colors.red, fontSize: 18),
           textAlign: TextAlign.center,
         ),
-      ),
-    );
-  }
-
-  Widget _buildSessionExpired(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(child: Lottie.asset(LottieManager.noCars)),
-            TextUtils(
-              text:
-              "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
-              color: ColorManager.white,
-              fontSize: FontSize.s13,
-              noOfLines: 2,
-              overFlow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: AppSizeHeight.s30),
-            CustomButton(
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                  ),
-                );
-              },
-              btnColor: ColorManager.primary,
-              widget: TextUtils(
-                text: 'إعادة التسجيل',
-                color: ColorManager.background,
-                fontWeight: FontWeightManager.bold,
+      );
+    case 401:
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppPadding.p20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(LottieManager.noCars),
+              SizedBox(height: AppSizeHeight.s20),
+              TextUtils(
+                text: "عذراً لقد إنتهت الجلسة برجاء تسجيل الدخول مرة أخرى",
+                color: ColorManager.white,
+                fontSize: FontSize.s13,
+                noOfLines: 2,
+                overFlow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+              SizedBox(height: AppSizeHeight.s30),
+              CustomButton(
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
+                  );
+                },
+                btnColor: ColorManager.primary,
+                widget: TextUtils(
+                  text: 'إعادة التسجيل',
+                  color: ColorManager.background,
+                  fontWeight: FontWeightManager.bold,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    case 500:
+      return const Center(
+        child: Text(
+          "خطأ في الخادم، حاول لاحقاً",
+          style: TextStyle(color: Colors.red, fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+      );
+    default:
+      return const Center(
+        child: Text(
+          "حدث خطأ غير متوقع",
+          style: TextStyle(color: Colors.red, fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+      );
   }
 }

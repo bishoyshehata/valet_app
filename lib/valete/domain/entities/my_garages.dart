@@ -22,7 +22,7 @@ abstract class MyGarages extends Equatable {
     required this.description,
     required this.address,
     required this.addedOn,
-     this.companyName ,
+    required this.companyName ,
     required this.capacityOverFlow,
     required this.capacity,
     required this.companyId,

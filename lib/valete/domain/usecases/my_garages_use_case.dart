@@ -14,16 +14,21 @@ class MyGaragesUseCase {
   MyGaragesUseCase(this.repository);
 
   Future<Either<Failure,  List<MyGarages>>> myGarages() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? isUnAuth = prefs.getBool('unAuthorized');
     try {
       final result = await repository.myGarages();
       return result;
-    } catch (e) {
-        if(isUnAuth == true){
-          sl<LoginBloc>().add(TokenExpiredEvent());
-        }
-      return Left(ServerFailure(e.toString()));
-    }
+    }  catch (e) {
+  // ... (check for isUnAuth)
+
+  if (e is Failure) {
+  // Return the original Failure to preserve statusCode
+  return Left(e);
+  } else {
+  // Wrap unexpected errors
+  print("Caught unexpected error in MyGaragesUseCase: $e");
+  return Left(ServerFailure(e.toString()));
   }
+  }
+
+}
 }

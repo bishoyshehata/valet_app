@@ -34,10 +34,10 @@ class ValetRepository extends IValetRepository {
     }
   }
   @override
-  Future<Either<Failure,  List<MyGarages> >> myGarages() async{
+  Future<Either<Failure, List<MyGarages>>> myGarages() async{
     try {
       final result = await valetDataSource.myGarages();
-      return Right(result);
+      return Right(result as List<MyGarages>);
     } on ServerFailure catch (failure) {
       return Left(ServerFailure(failure.message , failure.statusCode));
     }
