@@ -295,7 +295,6 @@ class ParkingSlotWidget extends StatelessWidget {
                     value: context.read<HomeBloc>(),
                     child: OrderDetails(
                       spotId: spot.id,
-                      garageId: garageId,
                       garageName: garageName,
                     ),
                   ),
@@ -395,7 +394,6 @@ class MiniParkingSlotWidget extends StatelessWidget {
                 value: context.read<HomeBloc>(),
                 child: OrderDetails(
                   spotId: spot.id,
-                  garageId: garageId,
                     garageName : garageName
                 ),
               ),

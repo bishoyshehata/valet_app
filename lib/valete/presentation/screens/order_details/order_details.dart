@@ -20,13 +20,11 @@ import 'package:collection/collection.dart';
 
 class OrderDetails extends StatelessWidget {
   final int spotId;
-  final int garageId;
   final String garageName;
   Spot? newSpot;
   OrderDetails({
     super.key,
     required this.spotId,
-    required this.garageId,
     required this.garageName,
   });
   Spot? findSpotById(HomeState state, int id) {

@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
+import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
 import '../../../../core/network/api_constants.dart';
 import '../../../domain/entities/my_orders.dart';
 import '../../components/custom_app_bar.dart';
@@ -213,122 +214,126 @@ Widget statusCard(MyOrders order, BuildContext context) {
             curr.updatingOrderId == order.id,
     listener: (context, state) {
       context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-      // // Reset state to avoid repeated triggers
       context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
     },
-    child: Card(
-      color: ColorManager.grey,
-      margin: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // صورة السيارة أو صورة بديلة
-            SizedBox(
-              width: AppSizeWidth.s75,
-              height: AppSizeHeight.s80,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child:
-                    order.carImage != null
-                        ? FadeInImage.assetNetwork(
-                      placeholder: buildCarTypeImageForStatus(order.carType), // الصورة المؤقتة من الأصول
-                      image: Uri.encodeFull("${ApiConstants.baseUrl}/${order.carImage!}"),
-                      height: AppSizeHeight.s45,
-                      fit: BoxFit.cover,
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return buildCarTypeImage(order.carType);
+    child: InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetails(spotId: order.spotId, garageName: order.garage.name),));
+      },
+      child: Card(
+        color: ColorManager.grey,
+        margin: const EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // صورة السيارة أو صورة بديلة
+              SizedBox(
+                width: AppSizeWidth.s75,
+                height: AppSizeHeight.s80,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child:
+                      order.carImage != null
+                          ? FadeInImage.assetNetwork(
+                        placeholder: buildCarTypeImageForStatus(order.carType), // الصورة المؤقتة من الأصول
+                        image: Uri.encodeFull("${ApiConstants.baseUrl}/${order.carImage!}"),
+                        height: AppSizeHeight.s45,
+                        fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return buildCarTypeImage(order.carType);
+                        },
+                      )
+                          : buildCarTypeImage(order.carType),
+                ),
+              ),
+
+              const SizedBox(width: 16),
+              // البيانات
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: 'هاتف العميل : ',
+                        style: GoogleFonts.cairo(
+                          fontSize: FontSize.s13,
+                          fontWeight: FontWeight.normal,
+                          color: ColorManager.white,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: order.whatsapp.replaceRange(0,8,''),
+                            style: GoogleFonts.archivo(
+                              fontSize: FontSize.s13,
+                              fontWeight: FontWeight.normal,
+                              color: ColorManager.white,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '########',
+                            style: GoogleFonts.archivo(
+                              fontSize: FontSize.s13,
+                              fontWeight: FontWeight.normal,
+                              color: ColorManager.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                       // ✅ تأكد إنها كده بالظبط
+                    ),
+
+                    const SizedBox(height: 4),
+                    TextUtils(
+                      text: 'الجراج : ${order.garage.name}',
+                      color: ColorManager.lightGrey,
+                    ),
+                    TextUtils(
+                      text: 'الباكية : ${order.spot.code}',
+                      color: ColorManager.lightGrey,
+                    ),
+                    TextUtils(
+                      text: 'تمت الإضافة: ${formatDate(order.garage.addedOn)}',
+                      color: ColorManager.lightGrey,
+                    ),
+                    const SizedBox(height: 6),
+                    // الحالة بلون خاص
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: getStatusColor(order.status).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        getStatusText(order.status),
+                        style: TextStyle(
+                          color: getStatusColor(order.status),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: AppSizeHeight.s5),
+                    BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                      builder: (context, state) {
+                        return getStatusButton(
+                          order.status,
+                          context,
+                          order.id,
+                          state,
+                        );
                       },
-                    )
-                        : buildCarTypeImage(order.carType),
+                    ),
+                  ],
+                ),
               ),
-            ),
-
-            const SizedBox(width: 16),
-            // البيانات
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      text: 'هاتف العميل : ',
-                      style: GoogleFonts.cairo(
-                        fontSize: FontSize.s13,
-                        fontWeight: FontWeight.normal,
-                        color: ColorManager.white,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: order.whatsapp.replaceRange(0,8,''),
-                          style: GoogleFonts.archivo(
-                            fontSize: FontSize.s13,
-                            fontWeight: FontWeight.normal,
-                            color: ColorManager.white,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '########',
-                          style: GoogleFonts.archivo(
-                            fontSize: FontSize.s13,
-                            fontWeight: FontWeight.normal,
-                            color: ColorManager.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                     // ✅ تأكد إنها كده بالظبط
-                  ),
-
-                  const SizedBox(height: 4),
-                  TextUtils(
-                    text: 'الجراج : ${order.garage.name}',
-                    color: ColorManager.lightGrey,
-                  ),
-                  TextUtils(
-                    text: 'الباكية : ${order.spot.code}',
-                    color: ColorManager.lightGrey,
-                  ),
-                  TextUtils(
-                    text: 'تمت الإضافة: ${formatDate(order.garage.addedOn)}',
-                    color: ColorManager.lightGrey,
-                  ),
-                  const SizedBox(height: 6),
-                  // الحالة بلون خاص
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: getStatusColor(order.status).withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      getStatusText(order.status),
-                      style: TextStyle(
-                        color: getStatusColor(order.status),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: AppSizeHeight.s5),
-                  BlocBuilder<MyOrdersBloc, MyOrdersState>(
-                    builder: (context, state) {
-                      return getStatusButton(
-                        order.status,
-                        context,
-                        order.id,
-                        state,
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     ),
