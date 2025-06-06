@@ -142,7 +142,7 @@ class ValetHomeScreen extends StatelessWidget {
                             );
                           },
                         ),
-                  RequestState.error => buildErrorBody(context, state.garagesStatusCode)
+                  RequestState.error => buildErrorBody(context, state.garagesStatusCode,state.myGaragesErrorMessage)
                 },
               ],
             ),

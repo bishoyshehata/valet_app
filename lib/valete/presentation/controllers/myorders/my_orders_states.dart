@@ -5,6 +5,7 @@ class MyOrdersState {
   final int selectedStatus;
   final RequestState myOrdersState;
   final String myOrdersErrorMessage;
+  final int myOrdersStatusCode;
   final Map<int, List<MyOrders>> ordersByStatus;
   final UpdateOrderState updateOrderStatusState;
   final String updateOrderStatusErrorMessage;
@@ -16,6 +17,7 @@ class MyOrdersState {
     this.selectedStatus = 1,
     this.myOrdersState = RequestState.loading,
     this.myOrdersErrorMessage = '',
+    this.myOrdersStatusCode = 0,
     this.ordersByStatus = const {},
     this.updateOrderStatus,
     this.updatingOrderId,
@@ -30,6 +32,7 @@ class MyOrdersState {
     int? selectedStatus,
     RequestState? myOrdersState,
     String? myOrdersErrorMessage,
+    int? myOrdersStatusCode,
     Map<int, List<MyOrders>>? ordersByStatus,
     UpdateOrderState? updateOrderStatusState,
     String? updateOrderStatusErrorMessage,
@@ -41,6 +44,7 @@ class MyOrdersState {
       selectedStatus: selectedStatus ?? this.selectedStatus,
       myOrdersState: myOrdersState ?? this.myOrdersState,
       myOrdersErrorMessage: myOrdersErrorMessage ?? this.myOrdersErrorMessage,
+      myOrdersStatusCode: myOrdersStatusCode ?? this.myOrdersStatusCode,
       ordersByStatus: ordersByStatus ?? this.ordersByStatus,
       updateOrderStatusState: updateOrderStatusState ?? this.updateOrderStatusState,
       updateOrderStatusErrorMessage: updateOrderStatusErrorMessage ?? this.updateOrderStatusErrorMessage,

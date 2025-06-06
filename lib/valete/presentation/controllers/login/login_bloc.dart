@@ -48,9 +48,12 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
         final result = await loginUseCase.login(state.completePhoneNumber.replaceFirst("+", ''), state.password);
         result.fold(
               (error) {
+                print('✖️ Error Message: ${error.message}');
+                print('📡 Status Code: ${error.statusCode ?? 'غير متوفر'}');
             emit(state.copyWith(
               loginStatus: LoginStatus.error,
               errorMessage: error.message,
+              statusCode: error.statusCode
             ));
           },
               (valet) {
@@ -62,6 +65,7 @@ class LoginBloc extends Bloc<LoginEvents, LoginStates> {
           state.copyWith(
             loginStatus: LoginStatus.error,
             errorMessage: "أسف و لكن عليك إستكمال بياناتك",
+
           ),
         );
       }

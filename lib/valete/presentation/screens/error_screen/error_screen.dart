@@ -9,14 +9,46 @@ import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
 import '../login/login.dart';
 
-Widget buildErrorBody(BuildContext context, int? statusCode) {
+Widget buildErrorBody(BuildContext context, int? statusCode ,String? statusMessage) {
   switch (statusCode) {
     case 400:
-      return const Center(
-        child: Text(
-          "عذراً يوجد مشكلة بالبيانات",
-          style: TextStyle(color: Colors.red, fontSize: 18),
-          textAlign: TextAlign.center,
+      return  Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppPadding.p20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(LottieManager.noCars),
+              SizedBox(height: AppSizeHeight.s20),
+              TextUtils(
+                text: statusMessage!,
+                color: ColorManager.white,
+                fontSize: FontSize.s13,
+                noOfLines: 2,
+                overFlow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      );
+    case 404:
+      return  Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppPadding.p20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(LottieManager.noCars),
+              SizedBox(height: AppSizeHeight.s20),
+              TextUtils(
+                text: statusMessage!,
+                color: ColorManager.white,
+                fontSize: FontSize.s13,
+                noOfLines: 2,
+                overFlow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       );
     case 401:
@@ -29,7 +61,7 @@ Widget buildErrorBody(BuildContext context, int? statusCode) {
               Lottie.asset(LottieManager.noCars),
               SizedBox(height: AppSizeHeight.s20),
               TextUtils(
-                text: "عذراً لقد إنتهت الجلسة برجاء تسجيل الدخول مرة أخرى",
+                text: statusMessage!,
                 color: ColorManager.white,
                 fontSize: FontSize.s13,
                 noOfLines: 2,
@@ -56,11 +88,23 @@ Widget buildErrorBody(BuildContext context, int? statusCode) {
         ),
       );
     case 500:
-      return const Center(
-        child: Text(
-          "خطأ في الخادم، حاول لاحقاً",
-          style: TextStyle(color: Colors.red, fontSize: 18),
-          textAlign: TextAlign.center,
+      return  Center(
+        child: Padding(
+          padding: const EdgeInsets.all(AppPadding.p20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset(LottieManager.noCars),
+              SizedBox(height: AppSizeHeight.s20),
+              TextUtils(
+                text: statusMessage!,
+                color: ColorManager.white,
+                fontSize: FontSize.s13,
+                noOfLines: 2,
+                overFlow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       );
     default:

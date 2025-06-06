@@ -89,8 +89,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     result.fold(
           (error) {
-        debugPrint('✖️ Error Message: ${error.message}');
-        debugPrint('📡 Status Code: ${error.statusCode}');
+            print('📡 Status Code: ${error.statusCode ?? 'غير متوفر'}');
 
         emit(state.copyWith(
           myGaragesState: RequestState.error,
@@ -98,17 +97,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           garagesStatusCode: error.statusCode,
         ));
       },
-      (data) {
-        // في حالة النجاح، قم بتحديث الحالة بقائمة الجراجات المستلمة فقط
-        emit(
-          state.copyWith(
-            myGaragesState: RequestState.loaded,
-            data: data, // تخزين قائمة الجراجات كما هي
-            // لا تقم بتعبئة extraSlots أو mainSlots هنا
-          ),
-        );
+          (data) {
+        emit(state.copyWith(
+          myGaragesState: RequestState.loaded,
+          data: data,
+        ));
       },
     );
+
   }
 
   // احتفظ بهذا المعالج إذا كنت لا تزال تريد مفتاح تبديل عام

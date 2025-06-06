@@ -8,6 +8,7 @@ class LoginStates extends Equatable {
   final bool isPasswordValid;
   final String? errorMessage;
   final Valet? data;
+  final int? statusCode;
   final LoginStatus loginStatus;
   final bool isPasswordObscured;
   final bool hasInteractedWithPhone;
@@ -24,6 +25,7 @@ class LoginStates extends Equatable {
     required this.isPasswordValid,
     required this.loginStatus,
     required this.data,
+    required this.statusCode,
     required this.isPasswordObscured,
     required this.hasInteractedWithPassword,
     required this.hasInteractedWithPhone,
@@ -41,6 +43,7 @@ class LoginStates extends Equatable {
     isPasswordValid,
     isPhoneValid,
     data,
+    statusCode,
     loginStatus,
     isPasswordObscured,
     hasInteractedWithPassword,
@@ -59,6 +62,7 @@ class LoginStates extends Equatable {
       errorMessage: null,
       loginStatus: LoginStatus.initial,
       data: null,
+      statusCode: 0,
       isPasswordObscured: true,
       hasInteractedWithPhone: false,
       hasInteractedWithPassword: false,
@@ -76,6 +80,7 @@ class LoginStates extends Equatable {
     String? errorMessage,
     String? phoneErrorMessage,
     Valet? data,
+    int? statusCode,
     LoginStatus? loginStatus,
     bool? isPasswordObscured,
     bool? hasInteractedWithPhone,
@@ -90,6 +95,7 @@ class LoginStates extends Equatable {
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
       errorMessage: errorMessage ?? this.errorMessage,
       data: data ?? this.data,
+      statusCode: statusCode ?? this.statusCode,
       loginStatus: loginStatus ?? this.loginStatus,
       isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
       hasInteractedWithPhone:

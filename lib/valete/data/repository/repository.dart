@@ -9,6 +9,8 @@ import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/entities/valet.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
+import '../../../core/error/exceptions.dart';
+
 
 class ValetRepository extends IValetRepository {
   final IValetDataSource valetDataSource;
@@ -20,7 +22,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.login(phone, password);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 
@@ -30,18 +32,21 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.createOrder();
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
-  @override
-  Future<Either<Failure, List<MyGarages>>> myGarages() async{
+  Future<Either<Failure, List<MyGarages>>> myGarages() async {
     try {
       final result = await valetDataSource.myGarages();
-      return Right(result as List<MyGarages>);
-    } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      print('Datasource result: $result');
+      return Right(result);
+    } on ServerFailure catch (e) {
+      print('ServerFailure caught in repo: ${e.message}, statusCode: ${e.statusCode}');
+      return Left(e);
     }
   }
+
+
 
   @override
   Future<Either<Failure, bool>> storeOrder(StoreOrder storeOrder) async{
@@ -49,7 +54,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.storeOrder(storeOrder);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 
@@ -59,7 +64,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.myOrders(status);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 
@@ -69,7 +74,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.updateOrderStatus(orderId,newStatus);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 
@@ -79,7 +84,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.deleteValet(valetId);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 
@@ -90,7 +95,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.getGarageSpot(garageId);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 
@@ -100,7 +105,7 @@ class ValetRepository extends IValetRepository {
       final result = await valetDataSource.updateOrderSpot(orderId , spotId, garageId);
       return Right(result);
     } on ServerFailure catch (failure) {
-      return Left(ServerFailure(failure.message , failure.statusCode));
+      return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
 }
