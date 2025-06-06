@@ -18,6 +18,7 @@ import '../../controllers/myorders/my_orders_states.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
+import '../error_screen/main_error_screen.dart';
 import '../garage_screen/garage_screen.dart';
 import '../login/login.dart';
 
@@ -172,99 +173,32 @@ class OrdersScreen extends StatelessWidget {
                         ),
                       );
                     case RequestState.loaded:
-                      if (orders.isEmpty) {
-                        return FutureBuilder(
-                          future: Future.delayed(Duration(seconds: 2)),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState !=
-                                ConnectionState.done) {
-                              // بنعرض shimmer مؤقت لحد ما نفحص فعلاً إن مفيش طلبات
-                              return SizedBox(
-                                height: AppSizeHeight.sMaxInfinite,
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  itemBuilder:
-                                      (context, index) => Shimmer.fromColors(
-                                        baseColor: Colors.grey[850]!,
-                                        highlightColor: Colors.grey[800]!,
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                            horizontal: AppMargin.m12,
-                                            vertical: AppMargin.m12,
-                                          ),
-                                          height: AppSizeHeight.s120,
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  separatorBuilder:
-                                      (context, index) => SizedBox(height: 10),
-                                  itemCount: 4,
-                                ),
-                              );
-                            } else {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Lottie.asset(LottieManager.noCars),
-                                    const SizedBox(height: 12),
-                                    TextUtils(
-                                      text: "لا توجد طلبات",
-                                      color: ColorManager.white,
-                                      fontSize: FontSize.s14,
-                                      fontWeight: FontWeightManager.bold,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      }
-                      return ListView.builder(
+                      return orders.isNotEmpty
+                          ? ListView.builder(
                         itemCount: orders.length,
                         itemBuilder: (context, index) {
                           final order = orders[index];
                           return statusCard(order, context);
                         },
-                      );
-                    case RequestState.error:
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(child: Lottie.asset(LottieManager.noCars)),
-                          TextUtils(
-                            text:
-                                "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
-                            color: ColorManager.white,
-                            fontSize: FontSize.s13,
-                            noOfLines: 2,
-                            overFlow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: AppSizeHeight.s30),
-                          CustomButton(
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginScreen(),
-                                ),
-                              );
-                            },
-                            btnColor: ColorManager.primary,
-                            widget: TextUtils(
-                              text: 'إعادة التسجيل',
-                              color: ColorManager.background,
+                      )
+                          :Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(LottieManager.noCars),
+                            const SizedBox(height: 12),
+                            TextUtils(
+                              text: "لا توجد طلبات",
+                              color: ColorManager.white,
+                              fontSize: FontSize.s14,
                               fontWeight: FontWeightManager.bold,
                             ),
-                          ),
-                        ],
-                      );
+                          ],
+                        ),
+                      ) ;
+
+                    case RequestState.error:
+                      return buildErrorBody(context, state.myOrdersStatusCode,state.myOrdersErrorMessage);
                   }
                 },
               ),
@@ -507,24 +441,6 @@ String formatDate(String dateString) {
   }
 }
 
-Widget getLoadingWidget(UpdateOrderState state) {
-  if (state == UpdateOrderState.loading) {
-    return Lottie.asset(LottieManager.carLoading);
-  } else if (state == UpdateOrderState.error) {
-    return TextUtils(
-      text: 'حدثت مشكلة تواصل مع المدير',
-      color: ColorManager.background,
-      fontWeight: FontWeightManager.bold,
-    );
-  } else {
-    // initial or loaded
-    return TextUtils(
-      text: 'أنا في طريقي إليك',
-      color: ColorManager.background,
-      fontWeight: FontWeightManager.bold,
-    );
-  }
-}
 
 Widget buildButtonContent(UpdateOrderState state, String text) {
   return switch (state) {

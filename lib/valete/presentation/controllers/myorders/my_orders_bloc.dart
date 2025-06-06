@@ -49,12 +49,14 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
       final result = await myOrdersUseCase.myOrders(status);
       result.fold(
         (error) {
-          print("////////////////////////////////////////$error");
+          print(error.message);
+          print(error.statusCode);
 
           emit(
             state.copyWith(
               myOrdersState: RequestState.error,
               myOrdersErrorMessage: error.message,
+               myOrdersStatusCode: error.statusCode
             ),
           );
         },
@@ -81,23 +83,29 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
       for (int status in statusesToLoad) {
         final result = await myOrdersUseCase.myOrders(status);
 
+        bool hasError = false;
+
         result.fold(
               (error) {
+                print(error.message);
             emit(
               state.copyWith(
                 myOrdersState: RequestState.error,
                 myOrdersErrorMessage: error.message,
+                myOrdersStatusCode: error.statusCode,
               ),
             );
-            return;
+            hasError = true;
           },
               (data) {
             newOrdersByStatus[status] = List.from(data);
           },
         );
+
+        if (hasError) return; // 👈 نخرج من الحدث خالص لو فيه خطأ
       }
 
-      // دمج الجديد مع القديم
+      // لو مفيش error، نعمل emit للحالة المحملة
       final updatedMap = Map<int, List<MyOrders>>.from(state.ordersByStatus)
         ..addAll(newOrdersByStatus);
 
@@ -108,6 +116,7 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
         ),
       );
     });
+
     on<UpdateOrderStatusEvent>((event, emit) async {
       emit(state.copyWith(
         updateOrderStatusState: UpdateOrderState.loading,
