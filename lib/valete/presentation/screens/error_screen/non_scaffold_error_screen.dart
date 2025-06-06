@@ -9,7 +9,7 @@ import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
 import '../login/login.dart';
 
-Widget buildOrderErrorBody(BuildContext context, int? statusCode ,String? statusMessage) {
+Widget buildNonScaffoldErrorBody(BuildContext context, int? statusCode ,String? statusMessage) {
   switch (statusCode) {
     case 400:
       return  Scaffold(

@@ -79,10 +79,12 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         final result = await storeOrderUseCase.storeOrder(event.storeData);
         result.fold(
               (error) {
+                print(error.statusCode);
 
             emit(state.copyWith(
               storeOrderState: StoreOrderState.error,
               storeOrderError: error.message,
+              createOrderStatusCode: error.statusCode
             ));
           },
               (data) {

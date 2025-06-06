@@ -14,6 +14,7 @@ import '../../resources/colors_manager.dart';
 import '../../resources/font_manager.dart';
 import '../../resources/values_manager.dart';
 import '../../components/custom_app_bar.dart';
+import '../error_screen/non_scaffold_error_screen.dart';
 
 
 class GarageScreen extends StatelessWidget {
@@ -254,24 +255,9 @@ class GarageScreen extends StatelessWidget {
                     ),
                   );
                 case RequestState.error:
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(child: Lottie.asset(LottieManager.noCars)),
-                    TextUtils(
-                      text:
-                      "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
-                      color: ColorManager.white,
-                      fontSize: FontSize.s13,
-                      noOfLines: 2,
-                      overFlow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: AppSizeHeight.s30),
-                  ],
-                );
+                  return buildNonScaffoldErrorBody(context, state.getGaragesSpotStatusCode , state.getGaragesSpotErrorMessage);
               }
           } ,
-
         ),
       ),
     );

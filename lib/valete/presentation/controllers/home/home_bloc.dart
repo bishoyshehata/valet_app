@@ -27,10 +27,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
       garageSpots.fold(
         (error) {
+          print(error.statusCode);
           emit(
             state.copyWith(
               getGaragesSpotErrorMessage: error.message,
               getGaragesSpotState: RequestState.error,
+                getGaragesSpotStatusCode: error.statusCode
             ),
           );
         },

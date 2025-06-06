@@ -8,6 +8,7 @@ class HomeState {
   final RequestState getGaragesSpotState;
   final String myGaragesErrorMessage;
   final String getGaragesSpotErrorMessage;
+  final int getGaragesSpotStatusCode;
   final List<MyGarages>? data;
   final int? garagesStatusCode;
   final int currentIndex;
@@ -29,6 +30,7 @@ class HomeState {
     this.getGaragesSpotState = RequestState.loading,
     this.myGaragesErrorMessage = '',
     this.getGaragesSpotErrorMessage = '',
+    this.getGaragesSpotStatusCode = 0,
     this.updateOrderSpotErrorMessage = '',
     this.updateOrderSpotState = UpdateOrderSpotState.initial,
     this.updateResult,
@@ -53,6 +55,7 @@ class HomeState {
     RequestState? getGaragesSpotState,
     String? myGaragesErrorMessage,
     String? getGaragesSpotErrorMessage,
+    int? getGaragesSpotStatusCode,
     List<MyGarages>? data,
     GetGarageSpot? allSpots,
     List<Spot>? extraSpots,
@@ -86,6 +89,7 @@ class HomeState {
       spotName: spotName ?? this.spotName,
       garageId: garageId ?? this.garageId,
       getGaragesSpotErrorMessage: getGaragesSpotErrorMessage ?? this.getGaragesSpotErrorMessage,
+      getGaragesSpotStatusCode: getGaragesSpotStatusCode ?? this.getGaragesSpotStatusCode,
       updateResult: updateResult ?? this.updateResult,
       updateOrderSpotErrorMessage: updateOrderSpotErrorMessage ?? this.updateOrderSpotErrorMessage,
       updateOrderSpotState: updateOrderSpotState ?? this.updateOrderSpotState,

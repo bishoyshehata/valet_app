@@ -17,6 +17,7 @@ class OrderState {
   final String spotName;
   final StoreOrderState storeOrderState;
   final String storeOrderError;
+  final int storeOrderStatusCode;
   final bool? storeOrderData;
   final ImageProcessingStatus? imageStatus;
   final String? errorMessage;
@@ -33,6 +34,7 @@ class OrderState {
     this.spotName = 'رقم الباكية',
     this.storeOrderState = StoreOrderState.initial,
     this.storeOrderError = '',
+    this.storeOrderStatusCode = 0,
     this.createOrderStatusCode = 0,
     this.storeOrderData,
     this.errorMessage,
@@ -52,6 +54,7 @@ class OrderState {
     String? spotName,
     StoreOrderState? storeOrderState,
      String? storeOrderError,
+     int? storeOrderStatusCode,
     bool? storeOrderData,
     ImageProcessingStatus? imageStatus,
     String? errorMessage,
@@ -69,6 +72,7 @@ class OrderState {
       spotName: spotName ?? this.spotName,
       storeOrderState: storeOrderState ?? this.storeOrderState,
       storeOrderError: storeOrderError ?? this.storeOrderError,
+      storeOrderStatusCode: storeOrderStatusCode ?? this.storeOrderStatusCode,
       storeOrderData: storeOrderData ?? this.storeOrderData,
       imageStatus: imageStatus ?? this.imageStatus,
       errorMessage: errorMessage ?? this.errorMessage,

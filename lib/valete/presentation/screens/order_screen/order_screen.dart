@@ -31,11 +31,12 @@ import '../../controllers/orders/order_states.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../error_screen/main_error_screen.dart';
+import '../error_screen/store_order_error_widget.dart';
 import '../login/login.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../error_screen/order_error_screen.dart';
+import '../error_screen/non_scaffold_error_screen.dart';
 
 class OrderScreen extends StatelessWidget {
   final SocketService socketService = SocketService();
@@ -184,73 +185,74 @@ class OrderScreen extends StatelessWidget {
                             child: CustomButton(
                               onTap:
                                    () async {
-                                        if (state.selectedVehicleType != null &&
-                                            spotId != null &&
-                                            state.phoneNumber !=
-                                                'رقم هاتف العميل') {
-                                          File? carImage;
-                                          if (state.image != null) {
-                                            carImage = state.image;
-                                          }
+                                          if (state.selectedVehicleType != null &&
+                                              spotId != null &&
+                                              state.phoneNumber !=
+                                                  'رقم هاتف العميل') {
+                                            File? carImage;
+                                            if (state.image != null) {
+                                              carImage = state.image;
+                                            }
 
-                                          final model = StoreOrderModel(
-                                            carImageFile: carImage,
-                                            spotId: spotId,
-                                            carType:
-                                                state.selectedVehicleType.index,
-                                            ClientNumber: state.phoneNumber,
-                                            garageId: state.data!.garageId,
-                                          );
-
-                                          context.read<OrderBloc>().add(
-                                            StoreOrderEvent(model),
-                                          );
-
-                                          context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-                                          Future.delayed(Duration(seconds: 1)).then((_) {
-                                            context.read<HomeBloc>().add(ChangeTabEvent(1));
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => MainScreen(),
-                                              ),
+                                            final model = StoreOrderModel(
+                                              carImageFile: carImage,
+                                              spotId: spotId,
+                                              carType:
+                                              state.selectedVehicleType.index,
+                                              ClientNumber: state.phoneNumber,
+                                              garageId: state.data!.garageId,
                                             );
-                                          });
 
+                                            context.read<OrderBloc>().add(
+                                              StoreOrderEvent(model),
+                                            );
 
-
-                                        } else {
-                                          if (state.phoneNumber ==
-                                              'رقم هاتف العميل') {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: TextUtils(
-                                                  text:
-                                                      'برجاء الطلب من العميل عمل مسح للـ QR.',
-                                                  color: ColorManager.primary,
-                                                  fontSize: FontSize.s13,
-                                                  fontWeight: FontWeight.bold,
+                                            context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+                                            Future.delayed(Duration(seconds: 1)).then((_) {
+                                              context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => MainScreen(),
                                                 ),
-                                              ),
-                                            );
+                                              );
+                                            });
+
+
+
                                           } else {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: TextUtils(
-                                                  text:
-                                                      'نأسف و لكن يوجد خطأ بالبيانات.',
-                                                  color: ColorManager.primary,
-                                                  fontSize: FontSize.s13,
-                                                  fontWeight: FontWeight.bold,
+                                            if (state.phoneNumber ==
+                                                'رقم هاتف العميل') {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: TextUtils(
+                                                    text:
+                                                    'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                                    color: ColorManager.primary,
+                                                    fontSize: FontSize.s13,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
+                                              );
+                                            } else {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: TextUtils(
+                                                    text:
+                                                    'نأسف و لكن يوجد خطأ بالبيانات.',
+                                                    color: ColorManager.primary,
+                                                    fontSize: FontSize.s13,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              );
+                                            }
                                           }
-                                        }
+
                                       },
                               btnColor:
                               state.phoneNumber !=
@@ -281,12 +283,7 @@ class OrderScreen extends StatelessWidget {
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                StoreOrderState.error => TextUtils(
-                                  text: "تأكيد الطلب",
-                                  color: ColorManager.primary,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                StoreOrderState.error => buildStoreOrderErrorWidget(context , state.createOrderStatusCode,state.createOrderError)
                               },
                             ),
                           ),
@@ -297,7 +294,7 @@ class OrderScreen extends StatelessWidget {
                 ),
               );
             case RequestState.error:
-              return buildOrderErrorBody(context, state.createOrderStatusCode , state.createOrderError);
+              return buildNonScaffoldErrorBody(context, state.createOrderStatusCode , state.createOrderError);
               // Directionality(
               //   textDirection: TextDirection.rtl,
               //   child: Scaffold(

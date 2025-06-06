@@ -43,7 +43,7 @@ class AlertDialogService {
               style:GoogleFonts.cairo(
                 fontSize: FontSize.s14,
                 fontWeight: FontWeight.bold,
-                color: ColorManager.lightGrey,
+                color: ColorManager.white,
               ),
             ),
             actions: <Widget>[
