@@ -11,6 +11,26 @@ import '../login/login.dart';
 
 Widget buildStoreOrderErrorWidget(BuildContext context, int? statusCode ,String? statusMessage) {
   switch (statusCode) {
+    case 0 :return  Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppPadding.p20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(LottieManager.noCars),
+            SizedBox(height: AppSizeHeight.s20),
+            TextUtils(
+              text: statusMessage!,
+              color: ColorManager.white,
+              fontSize: FontSize.s13,
+              noOfLines: 2,
+              overFlow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+
     case 400:
       return TextUtils(
   text: statusMessage!,
@@ -19,6 +39,7 @@ Widget buildStoreOrderErrorWidget(BuildContext context, int? statusCode ,String?
   noOfLines: 2,
   overFlow: TextOverflow.ellipsis,
   );
+
     case 404:
       return  TextUtils(
         text: statusMessage!,

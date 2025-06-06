@@ -263,7 +263,7 @@ class OrderDetails extends StatelessWidget {
                                         AppSizeHeight.s10,
                                       ),
                                     ),
-                                    width: AppSizeWidth.s100,
+                                    width: AppSizeWidth.s135,
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton2<String>(
                                         isExpanded: true,
@@ -385,7 +385,7 @@ class OrderDetails extends StatelessWidget {
                                           color: ColorManager.primary,
                                           borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                                         ),
-                                        width: AppSizeWidth.s100,
+                                        width: AppSizeWidth.s135,
                                         child: DropdownButtonHideUnderline(
                                           child: DropdownButton2<String>(
                                             isExpanded: true,

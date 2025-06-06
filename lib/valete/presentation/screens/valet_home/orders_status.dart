@@ -360,8 +360,19 @@ Widget getStatusButton(
 ) {
   switch (status) {
     case 0:
-      return SizedBox();
-    case 1:
+      return CustomButton(
+        onTap: () {
+          context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 1));
+        },
+        btnColor: ColorManager.primary,
+        widget: buildButtonContent(
+          state.updatingOrderId == orderId
+              ? state.updateOrderStatusState
+              : UpdateOrderState.initial,
+          'طلب',
+        ),
+        height: AppSizeHeight.s35,
+      );    case 1:
       return CustomButton(
         onTap: () {
           context.read<MyOrdersBloc>().add(UpdateOrderStatusEvent(orderId, 2));
