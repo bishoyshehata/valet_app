@@ -234,7 +234,37 @@ class OrdersScreen extends StatelessWidget {
                         },
                       );
                     case RequestState.error:
-                      return buildErrorBody(context, state.garagesStatusCode,state.myGaragesErrorMessage);
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(child: Lottie.asset(LottieManager.noCars)),
+                          TextUtils(
+                            text:
+                                "عذراً بقد إنتهت الجلسة برجء تسجيل الدخول مرة أخرى",
+                            color: ColorManager.white,
+                            fontSize: FontSize.s13,
+                            noOfLines: 2,
+                            overFlow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: AppSizeHeight.s30),
+                          CustomButton(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginScreen(),
+                                ),
+                              );
+                            },
+                            btnColor: ColorManager.primary,
+                            widget: TextUtils(
+                              text: 'إعادة التسجيل',
+                              color: ColorManager.background,
+                              fontWeight: FontWeightManager.bold,
+                            ),
+                          ),
+                        ],
+                      );
                   }
                 },
               ),

@@ -55,7 +55,6 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
             state.copyWith(
               myOrdersState: RequestState.error,
               myOrdersErrorMessage: error.message,
-              myOrdersStatusCode: error.statusCode
             ),
           );
         },
@@ -88,8 +87,6 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
               state.copyWith(
                 myOrdersState: RequestState.error,
                 myOrdersErrorMessage: error.message,
-                myOrdersStatusCode: error.statusCode
-
               ),
             );
             return;
