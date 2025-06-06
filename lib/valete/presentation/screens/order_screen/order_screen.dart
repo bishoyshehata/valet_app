@@ -30,10 +30,12 @@ import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
-import '../error_screen/error_screen.dart';
+import '../error_screen/main_error_screen.dart';
 import '../login/login.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
+
+import '../error_screen/order_error_screen.dart';
 
 class OrderScreen extends StatelessWidget {
   final SocketService socketService = SocketService();
@@ -295,7 +297,7 @@ class OrderScreen extends StatelessWidget {
                 ),
               );
             case RequestState.error:
-              return buildErrorBody(context, state.createOrderStatusCode , state.createOrderError);
+              return buildOrderErrorBody(context, state.createOrderStatusCode , state.createOrderError);
               // Directionality(
               //   textDirection: TextDirection.rtl,
               //   child: Scaffold(

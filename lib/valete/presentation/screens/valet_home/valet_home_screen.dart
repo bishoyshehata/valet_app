@@ -18,7 +18,7 @@ import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import '../../components/custom_app_bar.dart';
 import '../../controllers/home/home_events.dart';
 import '../../resources/strings_manager.dart';
-import '../error_screen/error_screen.dart';
+import '../error_screen/main_error_screen.dart';
 import '../order_screen/order_screen.dart';
 
 class ValetHomeScreen extends StatelessWidget {
