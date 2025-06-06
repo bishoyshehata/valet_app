@@ -12,98 +12,112 @@ import '../login/login.dart';
 Widget buildErrorBody(BuildContext context, int? statusCode ,String? statusMessage) {
   switch (statusCode) {
     case 400:
-      return  Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppPadding.p20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(LottieManager.noCars),
-              SizedBox(height: AppSizeHeight.s20),
-              TextUtils(
-                text: statusMessage!,
-                color: ColorManager.white,
-                fontSize: FontSize.s13,
-                noOfLines: 2,
-                overFlow: TextOverflow.ellipsis,
-              ),
-            ],
+      return  Scaffold(
+        backgroundColor: ColorManager.background,
+
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppPadding.p20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Lottie.asset(LottieManager.noCars),
+                SizedBox(height: AppSizeHeight.s20),
+                TextUtils(
+                  text: statusMessage!,
+                  color: ColorManager.white,
+                  fontSize: FontSize.s13,
+                  noOfLines: 2,
+                  overFlow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       );
     case 404:
-      return  Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppPadding.p20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(LottieManager.noCars),
-              SizedBox(height: AppSizeHeight.s20),
-              TextUtils(
-                text: statusMessage!,
-                color: ColorManager.white,
-                fontSize: FontSize.s13,
-                noOfLines: 2,
-                overFlow: TextOverflow.ellipsis,
-              ),
-            ],
+      return  Scaffold(
+        backgroundColor: ColorManager.background,
+
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppPadding.p20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Lottie.asset(LottieManager.noCars),
+                SizedBox(height: AppSizeHeight.s20),
+                TextUtils(
+                  text: statusMessage!,
+                  color: ColorManager.white,
+                  fontSize: FontSize.s13,
+                  noOfLines: 2,
+                  overFlow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       );
     case 401:
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppPadding.p20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(LottieManager.noCars),
-              SizedBox(height: AppSizeHeight.s20),
-              TextUtils(
-                text: statusMessage!,
-                color: ColorManager.white,
-                fontSize: FontSize.s13,
-                noOfLines: 2,
-                overFlow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: AppSizeHeight.s30),
-              CustomButton(
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        (route) => false,
-                  );
-                },
-                btnColor: ColorManager.primary,
-                widget: TextUtils(
-                  text: 'إعادة التسجيل',
-                  color: ColorManager.background,
-                  fontWeight: FontWeightManager.bold,
+      return Scaffold(
+        backgroundColor: ColorManager.background,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppPadding.p20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Lottie.asset(LottieManager.noCars),
+                SizedBox(height: AppSizeHeight.s20),
+                TextUtils(
+                  text: statusMessage!,
+                  color: ColorManager.white,
+                  fontSize: FontSize.s13,
+                  noOfLines: 2,
+                  overFlow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+                SizedBox(height: AppSizeHeight.s30),
+                CustomButton(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          (route) => false,
+                    );
+                  },
+                  btnColor: ColorManager.primary,
+                  widget: TextUtils(
+                    text: 'إعادة التسجيل',
+                    color: ColorManager.background,
+                    fontWeight: FontWeightManager.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
     case 500:
-      return  Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppPadding.p20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(LottieManager.noCars),
-              SizedBox(height: AppSizeHeight.s20),
-              TextUtils(
-                text: statusMessage!,
-                color: ColorManager.white,
-                fontSize: FontSize.s13,
-                noOfLines: 2,
-                overFlow: TextOverflow.ellipsis,
-              ),
-            ],
+      return  Scaffold(
+        backgroundColor: ColorManager.background,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppPadding.p20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Lottie.asset(LottieManager.noCars),
+                SizedBox(height: AppSizeHeight.s20),
+                TextUtils(
+                  text: statusMessage!,
+                  color: ColorManager.white,
+                  fontSize: FontSize.s13,
+                  noOfLines: 2,
+                  overFlow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       );

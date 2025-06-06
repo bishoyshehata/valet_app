@@ -11,6 +11,7 @@ class OrderState {
   final bool isLoading;
   final RequestState defaultOrderState;
   final String createOrderError;
+  final int createOrderStatusCode;
   final CreateOrder? data;
   final String phoneNumber;
   final String spotName;
@@ -32,6 +33,7 @@ class OrderState {
     this.spotName = 'رقم الباكية',
     this.storeOrderState = StoreOrderState.initial,
     this.storeOrderError = '',
+    this.createOrderStatusCode = 0,
     this.storeOrderData,
     this.errorMessage,
     this.imageStatus,
@@ -44,6 +46,7 @@ class OrderState {
     bool? isLoading,
     RequestState? defaultOrderState,
     String? createOrderError,
+    int? createOrderStatusCode,
     CreateOrder? data,
     String? phoneNumber,
     String? spotName,
@@ -60,6 +63,7 @@ class OrderState {
       isLoading: isLoading ?? this.isLoading,
       defaultOrderState: defaultOrderState ?? this.defaultOrderState,
       createOrderError: createOrderError ?? this.createOrderError,
+      createOrderStatusCode: createOrderStatusCode ?? this.createOrderStatusCode,
       data: data ?? this.data,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       spotName: spotName ?? this.spotName,

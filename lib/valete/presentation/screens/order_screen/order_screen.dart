@@ -30,6 +30,7 @@ import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
+import '../error_screen/error_screen.dart';
 import '../login/login.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
@@ -294,80 +295,54 @@ class OrderScreen extends StatelessWidget {
                 ),
               );
             case RequestState.error:
-              return   state.data != null ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(child: Lottie.asset(LottieManager.noCars)),
-                  TextUtils(
-                    text: "عذراً لقد حدث خطب ما !",
-                    color: ColorManager.white,
-                    fontSize: FontSize.s13,
-                    noOfLines: 2,
-                    overFlow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: AppSizeHeight.s30),
-                  CustomButton(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
-                    },
-                    btnColor: ColorManager.primary,
-                    widget: TextUtils(
-                      text: 'إعادة التسجيل',
-                      color: ColorManager.background,
-                      fontWeight: FontWeightManager.bold,
-                    ),
-                  ),
-                ],
-              ) : Directionality(
-                textDirection: TextDirection.rtl,
-                child: Scaffold(
-                  backgroundColor: ColorManager.background,
-                  body: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(height: AppSizeHeight.s50,),
-                      Container(
-                        alignment: Alignment.center,
-                        width: AppSizeWidth.s50,
-                        height: AppSizeWidth.s50,
-                        margin: EdgeInsets.all(AppMargin.m4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            AppSizeHeight.s50,
-                          ),
-                          color: ColorManager.grey,
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            SocketService().closeSocket();
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: ColorManager.white,
-                          ),
-                        ),
-                      ),
-                      Center(child: Image.asset(AssetsManager.apology,height: AppSizeHeight.s200,)),
-                      Container(
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: TextUtils(
-                          text: "عذراً لقد إمتلأ الجراج٫٫",
-                          color: ColorManager.white,
-                          fontSize: FontSize.s13,
-                          noOfLines: 2,
-                          overFlow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ) ;
+              return buildErrorBody(context, state.createOrderStatusCode , state.createOrderError);
+              // Directionality(
+              //   textDirection: TextDirection.rtl,
+              //   child: Scaffold(
+              //     backgroundColor: ColorManager.background,
+              //     body: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       mainAxisAlignment: MainAxisAlignment.start,
+              //       children: [
+              //         SizedBox(height: AppSizeHeight.s50,),
+              //         Container(
+              //           alignment: Alignment.center,
+              //           width: AppSizeWidth.s50,
+              //           height: AppSizeWidth.s50,
+              //           margin: EdgeInsets.all(AppMargin.m4),
+              //           decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(
+              //               AppSizeHeight.s50,
+              //             ),
+              //             color: ColorManager.grey,
+              //           ),
+              //           child: IconButton(
+              //             onPressed: () {
+              //               SocketService().closeSocket();
+              //               Navigator.pop(context);
+              //             },
+              //             icon: Icon(
+              //               Icons.arrow_back,
+              //               color: ColorManager.white,
+              //             ),
+              //           ),
+              //         ),
+              //         Center(child: Image.asset(AssetsManager.apology,height: AppSizeHeight.s200,)),
+              //         Container(
+              //           width: double.infinity,
+              //           alignment: Alignment.center,
+              //           child: TextUtils(
+              //             text: "عذراً لقد إمتلأ الجراج٫٫",
+              //             color: ColorManager.white,
+              //             fontSize: FontSize.s13,
+              //             noOfLines: 2,
+              //             overFlow: TextOverflow.ellipsis,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ) ;
           }
         },
       ),

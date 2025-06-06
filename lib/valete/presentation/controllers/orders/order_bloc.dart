@@ -54,8 +54,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       emit(state.copyWith(defaultOrderState: RequestState.loading));
       final order = await createOrderUseCase.createOrder();
       order.fold((error) {
+        print(error.statusCode);
         emit(state.copyWith(defaultOrderState: RequestState.error,
-            createOrderError: error.message));
+            createOrderError: error.message ,createOrderStatusCode:  error.statusCode));
       }
           , (data) {
         emit(state.copyWith(defaultOrderState: RequestState.loaded,
