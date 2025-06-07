@@ -34,12 +34,15 @@ class UpdateSpotNameEvent extends OrderEvent {
 }
 class StoreOrderEvent extends OrderEvent {
   final StoreOrderModel storeData;
-
   StoreOrderEvent(this.storeData);
-
   @override
   List<Object?> get props => [storeData];
-
 }
+class CompletePhoneChanged extends OrderEvent {
+  final String phoneNumber;
+  final String countryCode;
+  CompletePhoneChanged({required this.phoneNumber, required this.countryCode});
 
-
+  @override
+  List<Object?> get props => [phoneNumber, countryCode];
+}

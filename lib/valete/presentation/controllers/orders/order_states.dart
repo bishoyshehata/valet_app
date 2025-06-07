@@ -21,6 +21,10 @@ class OrderState {
   final bool? storeOrderData;
   final ImageProcessingStatus? imageStatus;
   final String? errorMessage;
+  final bool hasInteractedWithPhone;
+  final String? completePhoneNumber;
+  final String? phoneErrorMessage;
+  final bool? isPhoneValid;
 
   OrderState({
     this.data,
@@ -39,6 +43,11 @@ class OrderState {
     this.storeOrderData,
     this.errorMessage,
     this.imageStatus,
+     this.hasInteractedWithPhone = false,
+     this.completePhoneNumber = '',
+     this.phoneErrorMessage =null,
+     this.isPhoneValid =false,
+
   });
 
   OrderState copyWith({
@@ -58,6 +67,10 @@ class OrderState {
     bool? storeOrderData,
     ImageProcessingStatus? imageStatus,
     String? errorMessage,
+     bool? hasInteractedWithPhone,
+     String? completePhoneNumber,
+     String? phoneErrorMessage,
+     bool? isPhoneValid,
   }) {
     return OrderState(
       selectedVehicleType: selectedVehicleType ?? this.selectedVehicleType,
@@ -76,6 +89,10 @@ class OrderState {
       storeOrderData: storeOrderData ?? this.storeOrderData,
       imageStatus: imageStatus ?? this.imageStatus,
       errorMessage: errorMessage ?? this.errorMessage,
+      hasInteractedWithPhone: hasInteractedWithPhone ?? this.hasInteractedWithPhone,
+      completePhoneNumber: completePhoneNumber ?? this.completePhoneNumber,
+      phoneErrorMessage: phoneErrorMessage ?? this.phoneErrorMessage,
+      isPhoneValid: isPhoneValid ?? this.isPhoneValid,
     );
   }
 }

@@ -52,19 +52,24 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
       emit(state.copyWith(logOutState: LogOutState.loaded)); // إرسال الحالة الجديدة
     });
     on<GetSettingsEvent>((event, emit) async {
-      final settings = await settingsUseCase.settings();
-      settings.fold((error){
+      final result = await settingsUseCase.settings();
+
+      result.fold((error) {
         print(error.statusCode);
         print(error);
         emit(state.copyWith(
-          settingErrorMessage: error.message,settingsState: RequestState.error,settingsStatusCode: error.statusCode
+          settingErrorMessage: error.message,
+          settingsState: RequestState.error,
+          settingsStatusCode: error.statusCode,
         ));
-      }, (settings){
-
+      }, (settings) async {
         emit(state.copyWith(
-            settingsData: settings,settingsState: RequestState.loaded
+          settingsData: settings,
+          settingsState: RequestState.loaded,
+            isWhatsAppWorking: settings.whatsappSettings.isWorking
         ));
       });
     });
+
   }
 }

@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
-import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/login/login_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
@@ -19,32 +19,32 @@ import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../data/models/store_order_model.dart';
 import '../../../domain/entities/spot.dart';
+import '../../components/login/custom_phone.dart';
 import '../../components/text/text_utils.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/custom_bottun.dart';
 import '../../controllers/home/home_bloc.dart';
 import '../../controllers/home/home_events.dart' show ChangeTabEvent;
-import '../../controllers/myorders/my_orders_events.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
-import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
-import '../error_screen/main_error_screen.dart';
-import '../error_screen/store_order_error_widget.dart';
-import '../login/login.dart';
+import '../../resources/strings_manager.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../error_screen/non_scaffold_error_screen.dart';
 
 class OrderScreen extends StatelessWidget {
   final SocketService socketService = SocketService();
-
   OrderScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
+    final profileBloc = BlocProvider.of<ProfileBloc>(context);
+    final loginBloc = BlocProvider.of<LoginBloc>(context);
+    final isWhatsAppWorking = profileBloc.state.isWhatsAppWorking;
+    final phoneNumber = loginBloc.state.completePhoneNumber.replaceFirst("+", '');
     return BlocProvider<OrderBloc>(
       create: (context) {
         final bloc = OrderBloc(
@@ -52,15 +52,21 @@ class OrderScreen extends StatelessWidget {
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
         SharedPreferences.getInstance().then((prefs) {
-          String? valetId = prefs.getString('valetId');
-          SocketService().closeSocket();
+          bool? isWhatsAppWorking = prefs.getBool('isWhatsAppWorking');
+          print('isWhatsAppWorking: $isWhatsAppWorking');
 
-          socketService.initSocket(
-            saiesId: valetId!,
-            onPhoneReceived: (phone) {
-              bloc.add(UpdatePhoneNumberEvent(phone));
-            },
-          );
+          if (isWhatsAppWorking = true) {
+            String? valetId = prefs.getString('valetId');
+            SocketService().closeSocket();
+            socketService.initSocket(
+              saiesId: valetId!,
+              onPhoneReceived: (phone) {
+                bloc.add(UpdatePhoneNumberEvent(phone));
+              },
+            );
+          } else {
+            print("WhatsApp is not working");
+          }
         });
 
         return bloc;
@@ -72,6 +78,7 @@ class OrderScreen extends StatelessWidget {
               previous.spotName != current.spotName;
         },
         builder: (context, state) {
+
           switch (state.defaultOrderState) {
             case RequestState.loading:
               return SizedBox(
@@ -160,10 +167,13 @@ class OrderScreen extends StatelessWidget {
                             context,
                             spotName,
                           ),
-
-                          state.phoneNumber == 'رقم هاتف العميل'
+                          isWhatsAppWorking != true
+                              ? (state.phoneNumber == 'رقم هاتف العميل'
                               ? _buildQrSection(context, state.data!.qr)
-                              : SizedBox(height: 0),
+                              : SizedBox.shrink())
+                              : _buildPhoneFieldSection(context,phoneNumber),
+
+
                           _buildImageCaptureSection(context),
                           _buildVehicleTypeSelector(context),
 
@@ -185,69 +195,70 @@ class OrderScreen extends StatelessWidget {
                             child: CustomButton(
                               onTap:
                                    () async {
-                                          if (state.selectedVehicleType != null &&
-                                              spotId != null &&
-                                              state.phoneNumber !=
-                                                  'رقم هاتف العميل') {
-                                            File? carImage;
-                                            if (state.image != null) {
-                                              carImage = state.image;
-                                            }
-
-                                            final model = StoreOrderModel(
-                                              carImageFile: carImage,
-                                              spotId: spotId,
-                                              carType:
-                                              state.selectedVehicleType.index,
-                                              ClientNumber: state.phoneNumber,
-                                              garageId: state.data!.garageId,
-                                            );
-
-                                              context.read<OrderBloc>().add( StoreOrderEvent(model),);
-                                            context.read<HomeBloc>().add(ChangeTabEvent(1));
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text("تم إنشاء الطلب بنجاح")),
-                                            );
-
-                                            Future.delayed(Duration(milliseconds: 100), () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(builder: (_) => MainScreen()),
-                                              );
-                                            });
-
-                                          } else {
-                                            if (state.phoneNumber ==
-                                                'رقم هاتف العميل') {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: TextUtils(
-                                                    text:
-                                                    'برجاء الطلب من العميل عمل مسح للـ QR.',
-                                                    color: ColorManager.primary,
-                                                    fontSize: FontSize.s13,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: TextUtils(
-                                                    text:
-                                                    'نأسف و لكن يوجد خطأ بالبيانات.',
-                                                    color: ColorManager.primary,
-                                                    fontSize: FontSize.s13,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          }
+                                print(state.completePhoneNumber?.replaceFirst("+", ''));
+                                          // if (state.selectedVehicleType != null &&
+                                          //     spotId != null &&
+                                          //     state.phoneNumber !=
+                                          //         'رقم هاتف العميل') {
+                                          //   File? carImage;
+                                          //   if (state.image != null) {
+                                          //     carImage = state.image;
+                                          //   }
+                                          //
+                                          //   final model = StoreOrderModel(
+                                          //     carImageFile: carImage,
+                                          //     spotId: spotId,
+                                          //     carType:
+                                          //     state.selectedVehicleType.index,
+                                          //     ClientNumber: state.phoneNumber,
+                                          //     garageId: state.data!.garageId,
+                                          //   );
+                                          //
+                                          //     context.read<OrderBloc>().add( StoreOrderEvent(model),);
+                                          //   context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                          //   ScaffoldMessenger.of(context).showSnackBar(
+                                          //     SnackBar(content: Text("تم إنشاء الطلب بنجاح")),
+                                          //   );
+                                          //
+                                          //   Future.delayed(Duration(milliseconds: 100), () {
+                                          //     Navigator.pushReplacement(
+                                          //       context,
+                                          //       MaterialPageRoute(builder: (_) => MainScreen()),
+                                          //     );
+                                          //   });
+                                          //
+                                          // } else {
+                                          //   if (state.phoneNumber ==
+                                          //       'رقم هاتف العميل') {
+                                          //     ScaffoldMessenger.of(
+                                          //       context,
+                                          //     ).showSnackBar(
+                                          //       SnackBar(
+                                          //         content: TextUtils(
+                                          //           text:
+                                          //           'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                          //           color: ColorManager.primary,
+                                          //           fontSize: FontSize.s13,
+                                          //           fontWeight: FontWeight.bold,
+                                          //         ),
+                                          //       ),
+                                          //     );
+                                          //   } else {
+                                          //     ScaffoldMessenger.of(
+                                          //       context,
+                                          //     ).showSnackBar(
+                                          //       SnackBar(
+                                          //         content: TextUtils(
+                                          //           text:
+                                          //           'نأسف و لكن يوجد خطأ بالبيانات.',
+                                          //           color: ColorManager.primary,
+                                          //           fontSize: FontSize.s13,
+                                          //           fontWeight: FontWeight.bold,
+                                          //         ),
+                                          //       ),
+                                          //     );
+                                          //   }
+                                          // }
 
                                       },
                               btnColor:
@@ -296,53 +307,6 @@ class OrderScreen extends StatelessWidget {
               );
             case RequestState.error:
               return buildNonScaffoldErrorBody(context, state.createOrderStatusCode , state.createOrderError);
-              // Directionality(
-              //   textDirection: TextDirection.rtl,
-              //   child: Scaffold(
-              //     backgroundColor: ColorManager.background,
-              //     body: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       mainAxisAlignment: MainAxisAlignment.start,
-              //       children: [
-              //         SizedBox(height: AppSizeHeight.s50,),
-              //         Container(
-              //           alignment: Alignment.center,
-              //           width: AppSizeWidth.s50,
-              //           height: AppSizeWidth.s50,
-              //           margin: EdgeInsets.all(AppMargin.m4),
-              //           decoration: BoxDecoration(
-              //             borderRadius: BorderRadius.circular(
-              //               AppSizeHeight.s50,
-              //             ),
-              //             color: ColorManager.grey,
-              //           ),
-              //           child: IconButton(
-              //             onPressed: () {
-              //               SocketService().closeSocket();
-              //               Navigator.pop(context);
-              //             },
-              //             icon: Icon(
-              //               Icons.arrow_back,
-              //               color: ColorManager.white,
-              //             ),
-              //           ),
-              //         ),
-              //         Center(child: Image.asset(AssetsManager.apology,height: AppSizeHeight.s200,)),
-              //         Container(
-              //           width: double.infinity,
-              //           alignment: Alignment.center,
-              //           child: TextUtils(
-              //             text: "عذراً لقد إمتلأ الجراج٫٫",
-              //             color: ColorManager.white,
-              //             fontSize: FontSize.s13,
-              //             noOfLines: 2,
-              //             overFlow: TextOverflow.ellipsis,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ) ;
           }
         },
       ),
@@ -503,7 +467,6 @@ class OrderScreen extends StatelessWidget {
     );
   }
 }
-
 Widget _buildVehicleTypeSelector(BuildContext context) {
   return Card(
     margin: EdgeInsets.symmetric(
@@ -580,6 +543,73 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
                         ),
                       );
                     }).toList(),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget _buildPhoneFieldSection(BuildContext context , String phoneNumber) {
+  return Card(
+    margin: EdgeInsets.symmetric(
+      horizontal: AppMargin.m16,
+      vertical: AppMargin.m10,
+    ),
+    color: ColorManager.grey,
+    elevation: 5,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+    ),
+    child: Column(
+      children: [
+        Container(
+          alignment: Alignment.centerRight,
+          margin: EdgeInsets.only(
+            bottom: AppMargin.m16,
+            top: AppMargin.m16,
+            right: AppMargin.m24,
+          ),
+          padding: EdgeInsets.only(right: AppPadding.p5),
+          decoration: BoxDecoration(
+            border: Border(
+              right: BorderSide(color: ColorManager.primary, width: 3),
+            ),
+          ),
+          child: TextUtils(
+            text: "قم بإضافة هاتف العميل",
+            color: ColorManager.white,
+            fontSize: FontSize.s17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: BlocBuilder<OrderBloc, OrderState>(
+            builder: (context, state) {
+              return  Directionality(
+                textDirection: TextDirection.ltr,
+                child:  CustomPhoneField(
+                  labelText: AppStrings.enterPhone,
+                  labelSize: 15,
+                  errorText:
+                  state.hasInteractedWithPhone
+                      ? state.phoneErrorMessage
+                      : null,
+
+                  onChanged: (phone) {
+                    context.read<OrderBloc>().add(
+                      CompletePhoneChanged(
+                        phoneNumber: phone.number, // ex: 1550637983
+                        countryCode: phone.countryCode.replaceFirst(
+                          '+',
+                          '',
+                        ), 
+                      ),
+                    );
+                  },
+                ),
               );
             },
           ),

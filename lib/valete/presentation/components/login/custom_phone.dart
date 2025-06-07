@@ -9,6 +9,7 @@ class CustomPhoneField extends StatelessWidget {
   final String? labelText;
   final double? labelSize;
   final Color? labelTextColor;
+  final Color? backgroundColor;
   final Function(PhoneNumber)? onChanged;
   final String? errorText;
   final String? hintText; // في الأعلى
@@ -21,27 +22,17 @@ class CustomPhoneField extends StatelessWidget {
     this.labelTextColor,
     this.onChanged,
     this.errorText,
-    this.hintText
+    this.hintText,
+    this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return IntlPhoneField(
       decoration: InputDecoration(
-        // labelText: labelText ?? 'رقم الهاتف',
-        // labelStyle: TextStyle(
-        //
-        //   color: labelTextColor ?? ColorManager.white,
-        //   fontSize: labelSize ?? 15,
-        // ),
-        // hintText: hintText,
-        // hintStyle: TextStyle(
-        //   color: ColorManager.white.withOpacity(0.6),
-        //   fontSize: 14,
-        //
-        // ),
+
         errorText: errorText, // إظهار رسالة الخطأ إذا كانت موجودة
-        fillColor: ColorManager.darkGrey,
+        fillColor: backgroundColor ??ColorManager.darkGrey,
         filled: true,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(25),

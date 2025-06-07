@@ -11,6 +11,7 @@ class ProfileState {
   final RequestState? settingsState;
   final Settings? settingsData;
   final String? settingErrorMessage;
+  final bool? isWhatsAppWorking;
 
 
   ProfileState({
@@ -21,6 +22,7 @@ class ProfileState {
     this.logOutState =LogOutState.initial,
     this.settingErrorMessage ='',
     this.settingsData,
+    this.isWhatsAppWorking,
     this.settingsState = RequestState.loading,
     this.settingsStatusCode=0,
   });
@@ -36,6 +38,8 @@ class ProfileState {
      RequestState? settingsState,
      Settings? settingsData,
      String? settingErrorMessage,
+     bool? isWhatsAppWorking,
+
   }) {
     return ProfileState(
       deletedata: deletedata ?? this.deletedata,
@@ -47,6 +51,7 @@ class ProfileState {
       settingsState: settingsState ?? this.settingsState,
       settingsData: settingsData ?? this.settingsData,
       settingErrorMessage: settingErrorMessage ?? this.settingErrorMessage,
+      isWhatsAppWorking: isWhatsAppWorking ?? this.isWhatsAppWorking,
     );
   }
 }

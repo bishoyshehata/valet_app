@@ -20,7 +20,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       : super(OrderState(selectedVehicleType: VehicleType.Car)) {
     on<SelectVehicleType>((event, emit) {
       emit(state.copyWith(selectedVehicleType: event.vehicleType));
-      // print(event.vehicleType.name);
     });
 
     on<PickImageEvent>((event, emit) async {
@@ -74,7 +73,16 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<UpdateSpotNameEvent>((event, emit) {
       emit(state.copyWith(spotName: event.spotName));
     });
+    on<CompletePhoneChanged>((event, emit) {
+      final isValid = validateOrderPhoneByCountry(event.countryCode, event.phoneNumber);
 
+      emit(state.copyWith(
+        completePhoneNumber: '+${event.countryCode}${event.phoneNumber}',
+        isPhoneValid: isValid,
+        hasInteractedWithPhone: true,
+        phoneErrorMessage : isValid ? null : 'رقم الهاتف غير صحيح بالنسبة للدولة المختارة',
+      ));
+    });
 
     on<StoreOrderEvent>((event, emit) async {
       emit(state.copyWith(storeOrderState: StoreOrderState.loading));
@@ -104,5 +112,20 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   }
 }
 
+bool validateOrderPhoneByCountry(String countryCode, String nationalNumber) {
 
+  switch (countryCode) {
+    case '+20':
+      final isValid = nationalNumber.startsWith(RegExp(r'^(10|11|12|15)'));
+      return isValid;
+    case '+966':
+      final isValid = nationalNumber.startsWith('5');
+      return isValid;
+    case '+971':
+      final isValid = nationalNumber.startsWith('5');
+      return isValid;
+    default:
+      return true;
+  }
+}
 
