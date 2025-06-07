@@ -24,7 +24,7 @@ class OrderState {
   final bool hasInteractedWithPhone;
   final String? completePhoneNumber;
   final String? phoneErrorMessage;
-  final bool? isPhoneValid;
+  final bool isPhoneValid;
 
   OrderState({
     this.data,
@@ -95,5 +95,5 @@ class OrderState {
       isPhoneValid: isPhoneValid ?? this.isPhoneValid,
     );
   }
-  bool? get isAllValid => isPhoneValid;
+  bool? get isAllValid => isPhoneValid && hasInteractedWithPhone;
 }

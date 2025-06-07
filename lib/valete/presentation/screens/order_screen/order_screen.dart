@@ -181,7 +181,31 @@ class OrderScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    bottomSheet: BlocBuilder<OrderBloc, OrderState>(
+                    bottomSheet: BlocListener<OrderBloc, OrderState>(
+                      listenWhen: (previous, current) =>
+                      previous.storeOrderState != current.storeOrderState,
+                      listener: (context, state) {
+                        if (state.storeOrderState == StoreOrderState.loaded) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("تم إنشاء الطلب بنجاح")),
+                          );
+                          context.read<HomeBloc>().add(ChangeTabEvent(1));
+
+                          Future.delayed(Duration(milliseconds: 500), () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => MainScreen()),
+                            );
+                          });
+                        }
+
+                        if (state.storeOrderState == StoreOrderState.error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("فشل في إنشاء الطلب: ${state.errorMessage}")),
+                          );
+                        }
+                      },
+                     child: BlocBuilder<OrderBloc, OrderState>(
                       builder: (context, state) {
                         return Material(
                           color: ColorManager.background,
@@ -212,20 +236,7 @@ class OrderScreen extends StatelessWidget {
                                               ClientNumber:isWhatsAppWorking != true ? state.phoneNumber: state.completePhoneNumber!.replaceFirst("+", '') ,
                                               garageId: state.data!.garageId,
                                             );
-
                                               context.read<OrderBloc>().add( StoreOrderEvent(model),);
-                                            context.read<HomeBloc>().add(ChangeTabEvent(1));
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text("تم إنشاء الطلب بنجاح")),
-                                            );
-
-                                            Future.delayed(Duration(milliseconds: 500), () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(builder: (_) => MainScreen()),
-                                              );
-                                            });
-
                                           } else {
                                             if (isWhatsAppWorking != true ?state.phoneNumber == 'رقم هاتف العميل':state.completePhoneNumber=='' ) {
                                               ScaffoldMessenger.of(
@@ -289,7 +300,7 @@ class OrderScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                                 StoreOrderState.error => TextUtils(
-                                  text: "عذرا حدث خطأ",
+                                  text:state.storeOrderError,
                                   color: ColorManager.primary,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
@@ -300,6 +311,7 @@ class OrderScreen extends StatelessWidget {
                         );
                       },
                     ),
+),
                   ),
                 ),
               );
