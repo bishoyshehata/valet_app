@@ -46,6 +46,7 @@ class MainScreen extends StatelessWidget {
             selectedItemColor: ColorManager.primary,
             unselectedItemColor: ColorManager.white,
             onTap: (index) {
+
               context.read<HomeBloc>().add(ChangeTabEvent(index));
             },
             unselectedLabelStyle:GoogleFonts.cairo(color: ColorManager.white) ,

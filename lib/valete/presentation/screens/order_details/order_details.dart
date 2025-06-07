@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:valet_app/core/network/api_constants.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
@@ -13,6 +14,7 @@ import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_bloc.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/home/home_states.dart';
+import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../garage_screen/garage_screen.dart';
 import 'order_full_screen.dart';
@@ -37,16 +39,16 @@ class OrderDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return BlocBuilder<HomeBloc,HomeState>(
 
       builder: (context, state) {
+
         switch (state.getGaragesSpotState){
           case RequestState.loading:
-          // TODO: Handle this case.
-            throw UnimplementedError();
+           return Lottie.asset(LottieManager.carLoading);
           case RequestState.loaded:
             final garages = state.data;
-
             final garageNamesList = garages?.map((garage) {
               return {
                 'id': garage.id.toString(),
@@ -113,6 +115,25 @@ class OrderDetails extends StatelessWidget {
                               icon: Icon(Icons.arrow_back, color: ColorManager.white),
                             ),
                           ),
+                          actions: [
+                            Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.all(AppMargin.m4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(AppSizeHeight.s50),
+                                color: ColorManager.grey,
+                              ),
+                              child:       IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.delete_forever,
+                                  color: ColorManager.white,
+                                ),
+
+                              )
+                            ),
+
+                          ],
                           title: spot!.code ,
                           centerTitle: true,
                           titleColor: ColorManager.white,
