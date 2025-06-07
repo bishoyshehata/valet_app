@@ -4,6 +4,7 @@ import 'package:valet_app/core/network/api_constants.dart';
 import 'package:valet_app/valete/data/models/get_garage_spot_model.dart';
 import 'package:valet_app/valete/data/models/my_garages_models.dart';
 import 'package:valet_app/valete/data/models/my_orders_model.dart';
+import 'package:valet_app/valete/data/models/settings_model.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
 import '../../../core/dio/dio_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +23,7 @@ abstract class IValetDataSource {
   Future<GetGarageSpotModel> getGarageSpot(int garageId);
   Future<bool> updateOrderSpot(int orderId , int spotId,int garageId);
   Future<bool> cancelOrder(int orderId);
+  Future<SettingsModel> settings();
 
 }
 
@@ -243,6 +245,21 @@ try {
     }
   }
 
+  @override
+  Future<SettingsModel> settings()async {
+      try {
+        final response = await DioHelper.post(
+          ApiConstants.settings,
+          requiresAuth: false,
+        );
 
-
-}
+        if (response.statusCode == 200) {
+          return response.data;
+        } else {
+          handleHttpError(response, null);
+        }
+      } on DioException catch (e) {
+        handleHttpError(e.response, e);
+      }
+    }
+  }

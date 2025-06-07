@@ -3,6 +3,7 @@ import 'package:valet_app/valete/data/models/get_garage_spot_model.dart';
 import 'package:valet_app/valete/domain/entities/default_order.dart';
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import 'package:valet_app/valete/domain/entities/my_orders.dart';
+import 'package:valet_app/valete/domain/entities/settings.dart';
 import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/entities/valet.dart';
 
@@ -21,5 +22,6 @@ abstract class IValetRepository{
   Future<Either<Failure , GetGarageSpot >> getGarageSpot(int garageId);
   Future<Either<Failure , bool >> updateOrderSpot(int orderId , int spotId ,int garageId);
   Future<Either<Failure , bool >> cancelOrder(int orderId);
+  Future<Either<Failure , Settings >> settings();
 
 }

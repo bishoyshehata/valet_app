@@ -10,6 +10,7 @@ import 'package:valet_app/valete/domain/entities/valet.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
 import '../../../core/error/exceptions.dart';
+import '../../domain/entities/settings.dart';
 
 
 class ValetRepository extends IValetRepository {
@@ -111,6 +112,14 @@ class ValetRepository extends IValetRepository {
   Future<Either<Failure, bool>> cancelOrder(int orderId)async {
     try {
       final result = await valetDataSource.cancelOrder(orderId);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message , failure.statusCode!));
+    }
+  }  @override
+  Future<Either<Failure, Settings>> settings()async {
+    try {
+      final result = await valetDataSource.settings();
       return Right(result);
     } on ServerFailure catch (failure) {
       return Left(ServerFailure(failure.message , failure.statusCode!));

@@ -16,6 +16,7 @@ import '../../controllers/home/home_bloc.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/home/home_states.dart';
 import '../../controllers/myorders/my_orders_bloc.dart';
+import '../../controllers/myorders/my_orders_events.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../garage_screen/garage_screen.dart';
@@ -137,6 +138,8 @@ class OrderDetails extends StatelessWidget {
                                       context.read<HomeBloc>().add(
                                         CancelHomeOrderEvent(spot!.order!.id),
                                       );
+                                      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+
                                       Navigator.pop(context);
                                     },
                                   );

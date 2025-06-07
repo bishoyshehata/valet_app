@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +9,6 @@ import 'package:valet_app/valete/presentation/components/alert_dialog.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
-import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/order_status/loading_page.dart';
 import '../../../../../core/network/api_constants.dart';
 import '../../../../domain/entities/my_orders.dart';
@@ -26,7 +23,6 @@ import '../../../resources/font_manager.dart';
 import '../../../resources/values_manager.dart';
 import '../../error_screen/main_error_screen.dart';
 import '../../garage_screen/garage_screen.dart';
-import '../../login/login.dart';
 
 class OrdersScreen extends StatelessWidget {
   final int initialSelectedStatus = 0;
