@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/domain/usecases/delete_account_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/settings_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import 'profile_events.dart';
 import 'profile_states.dart';
@@ -9,9 +10,12 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
   final RequestState termsState;
 
   final DeleteValedUseCase deleteValedUseCase;
+  final SettingsUseCase settingsUseCase;
 
   ProfileBloc(
-    this.deleteValedUseCase, {
+    this.deleteValedUseCase,
+      this.settingsUseCase,
+      {
     int initialSelectedStatus = 0,
     this.termsState = RequestState.loading,
   }) : super(ProfileState()) {
@@ -46,6 +50,21 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear(); // حذف كل البيانات المحفوظة
       emit(state.copyWith(logOutState: LogOutState.loaded)); // إرسال الحالة الجديدة
+    });
+    on<GetSettingsEvent>((event, emit) async {
+      final settings = await settingsUseCase.settings();
+      settings.fold((error){
+        print(error.statusCode);
+        print(error);
+        emit(state.copyWith(
+          settingErrorMessage: error.message,settingsState: RequestState.error,settingsStatusCode: error.statusCode
+        ));
+      }, (settings){
+
+        emit(state.copyWith(
+            settingsData: settings,settingsState: RequestState.loaded
+        ));
+      });
     });
   }
 }

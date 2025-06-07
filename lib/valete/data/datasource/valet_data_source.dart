@@ -248,13 +248,13 @@ try {
   @override
   Future<SettingsModel> settings()async {
       try {
-        final response = await DioHelper.post(
+        final response = await DioHelper.get(
           ApiConstants.settings,
           requiresAuth: false,
         );
 
         if (response.statusCode == 200) {
-          return response.data;
+          return SettingsModel.fromJson(response.data);
         } else {
           handleHttpError(response, null);
         }

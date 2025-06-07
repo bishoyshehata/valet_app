@@ -22,6 +22,10 @@ class LogoutEvent extends ProfileEvents {
   @override
   List<Object?> get props => [];
 }
+class GetSettingsEvent extends ProfileEvents {
+  @override
+  List<Object?> get props => [];
+}
 
 
 

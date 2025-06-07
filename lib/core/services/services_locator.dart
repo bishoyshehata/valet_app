@@ -12,6 +12,7 @@ import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.d
 import '../../valete/domain/usecases/get_garage_spot_use_case.dart';
 import '../../valete/domain/usecases/my_garages_use_case.dart';
 import '../../valete/domain/usecases/my_orders_use_case.dart';
+import '../../valete/domain/usecases/settings_use_case.dart';
 import '../../valete/domain/usecases/store_order_use_case.dart';
 import '../../valete/domain/usecases/update_order_spot_use_case.dart';
 import '../../valete/domain/usecases/update_order_status_use_case.dart';
@@ -52,7 +53,7 @@ class ServicesLocator {
 
     /// DeleteBloc
     sl.registerLazySingleton<ProfileBloc>(
-      () => ProfileBloc(sl<DeleteValedUseCase>()),
+      () => ProfileBloc(sl<DeleteValedUseCase>(),sl<SettingsUseCase>()),
     );
 
     /// DataSources
@@ -89,5 +90,7 @@ class ServicesLocator {
     sl.registerLazySingleton(() => UpdateOrderSpotUseCase(sl()));
     /// CancelOrderUseCase
     sl.registerLazySingleton(() => CancelOrderUseCase(sl()));
+    /// SettingsUseCase
+    sl.registerLazySingleton(() => SettingsUseCase(sl()));
   }
 }

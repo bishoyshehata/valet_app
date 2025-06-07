@@ -9,6 +9,7 @@ import 'package:valet_app/valete/presentation/controllers/login/login_bloc.dart'
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_events.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/profile/profile_events.dart';
 import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
 import 'core/notifications/firebase_notifications/firebase.dart';
 import 'core/services/services_locator.dart';
@@ -36,7 +37,7 @@ void main() async {
           sl<MyOrdersBloc>()
         ),BlocProvider<ProfileBloc>(
           create: (context) =>
-          sl<ProfileBloc>()
+          sl<ProfileBloc>()..add(GetSettingsEvent())
         ),BlocProvider<LoginBloc>(
           create: (context) =>
           sl<LoginBloc>()
@@ -63,6 +64,9 @@ class _MyAppState extends State<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NotificationService.init(context);
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileBloc>().add(GetSettingsEvent());
     });
 
   }
