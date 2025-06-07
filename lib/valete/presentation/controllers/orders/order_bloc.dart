@@ -93,8 +93,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
               (data) {
 
             emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
-            MyOrdersBloc(sl(),sl()).add(GetAllMyOrdersEvent());
-            MyOrdersBloc(sl(),sl()).add(GetMyOrdersEvent(0),);
+            MyOrdersBloc(sl(),sl(),sl()).add(GetAllMyOrdersEvent());
+            MyOrdersBloc(sl(),sl(),sl()).add(GetMyOrdersEvent(0),);
 
           },
         );

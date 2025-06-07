@@ -24,7 +24,9 @@ class HomeState {
   final bool? updateResult;
   final String updateOrderSpotErrorMessage;
   final UpdateOrderSpotState updateOrderSpotState;
-
+  final bool? cancelOrderResult;
+  final UpdateOrderState cancelOrderState;
+  final String cancelOrderErrorMessage;
   HomeState({
     this.myGaragesState = RequestState.loading,
     this.getGaragesSpotState = RequestState.loading,
@@ -46,7 +48,9 @@ class HomeState {
     this.garagesStatusCode ,
     this.spotName = 'رقم الباكية',
     this.garageId = 'رقم الباكية',
-
+    this.cancelOrderResult,
+    this.cancelOrderState= UpdateOrderState.initial,
+    this.cancelOrderErrorMessage ='',
   });
 
 
@@ -71,7 +75,9 @@ class HomeState {
     String? updateOrderSpotErrorMessage,
     UpdateOrderSpotState? updateOrderSpotState,
     int? garagesStatusCode,
-
+    bool? cancelOrderResult,
+    UpdateOrderState? cancelOrderState,
+    String ?cancelOrderErrorMessage,
   }) {
     return HomeState(
       myGaragesState: myGaragesState ?? this.myGaragesState,
@@ -94,7 +100,9 @@ class HomeState {
       updateOrderSpotErrorMessage: updateOrderSpotErrorMessage ?? this.updateOrderSpotErrorMessage,
       updateOrderSpotState: updateOrderSpotState ?? this.updateOrderSpotState,
       garagesStatusCode: garagesStatusCode ?? this.garagesStatusCode,
-
+      cancelOrderResult: cancelOrderResult ?? this.cancelOrderResult,
+      cancelOrderState: cancelOrderState ?? this.cancelOrderState,
+      cancelOrderErrorMessage: cancelOrderErrorMessage ?? this.cancelOrderErrorMessage,
     );
   }
 }

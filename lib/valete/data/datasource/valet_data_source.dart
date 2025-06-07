@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/core/network/api_constants.dart';
@@ -7,11 +5,8 @@ import 'package:valet_app/valete/data/models/get_garage_spot_model.dart';
 import 'package:valet_app/valete/data/models/my_garages_models.dart';
 import 'package:valet_app/valete/data/models/my_orders_model.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
-import 'package:valet_app/valete/domain/entities/get_garage_spot.dart';
 import '../../../core/dio/dio_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/error/exceptions.dart';
-import '../../../core/network/error_message_model.dart';
 import '../../../core/notifications/firebase_notifications/firebase.dart';
 import '../../domain/entities/store_order.dart';
 import '../models/create_order_model.dart';
@@ -26,6 +21,8 @@ abstract class IValetDataSource {
   Future<bool> deleteValet(int valetId);
   Future<GetGarageSpotModel> getGarageSpot(int garageId);
   Future<bool> updateOrderSpot(int orderId , int spotId,int garageId);
+  Future<bool> cancelOrder(int orderId);
+
 }
 
 
@@ -228,10 +225,24 @@ try {
       handleHttpError(e.response, e);
     }
   }
+  @override
+  Future<bool> cancelOrder(int orderId)async {
+    try {
+      final response = await DioHelper.delete(
+        ApiConstants.cancelOrderEndPoint(orderId),
+        requiresAuth: true,
+      );
 
-Future<void> markUnAuthorized() async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setBool('unAuthorized', true);
-  print("Marked as Unauthorized: ${prefs.getBool('unAuthorized')}");
-}
+      if (response.statusCode == 200) {
+        return response.data['succeeded'];
+      } else {
+        handleHttpError(response, null);
+      }
+    } on DioException catch (e) {
+      handleHttpError(e.response, e);
+    }
+  }
+
+
+
 }

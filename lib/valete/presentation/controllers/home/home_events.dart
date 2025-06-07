@@ -60,5 +60,12 @@ class ResetSpotNameEvent extends HomeEvent {
   @override
   List<Object?> get props =>[]  ;
 }
+class CancelHomeOrderEvent extends HomeEvent {
+  final int orderId;
+  CancelHomeOrderEvent(this.orderId);
+  @override
+  List<Object?> get props => [orderId];
+}
+
 
 

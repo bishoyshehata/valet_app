@@ -5,6 +5,7 @@ import 'package:valet_app/valete/domain/usecases/my_garages_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/update_order_spot_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/spot.dart';
+import '../../../domain/usecases/cancel_order_use_case.dart';
 import 'home_events.dart';
 import 'home_states.dart';
 
@@ -12,11 +13,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final MyGaragesUseCase myGaragesUseCase;
   final GetGarageSpotUseCase getGarageSpotUseCase;
   final UpdateOrderSpotUseCase updateOrderSpotUseCase;
+  final CancelOrderUseCase cancelOrderUseCase;
 
   HomeBloc(
     this.myGaragesUseCase,
     this.getGarageSpotUseCase,
     this.updateOrderSpotUseCase,
+    this.cancelOrderUseCase,
       {
     int initialSelectedStatus = 0,
   }) : super(HomeState(currentIndex: 0)) {
@@ -77,6 +80,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
     on<ResetSpotNameEvent>((event, emit) {
       emit(state.copyWith(spotName: 'رقم الباكية',garageId: 'رقم الباكية')); // أو '' حسب نوع spotName
+    });
+    on<CancelHomeOrderEvent>((event, emit) async{
+      emit(state.copyWith(cancelOrderState: UpdateOrderState.loading));
+      final result = await cancelOrderUseCase.cancelOrder(event.orderId);
+
+      result.fold((error){
+        print(error);
+
+        emit(state.copyWith(cancelOrderErrorMessage: error.message,cancelOrderState: UpdateOrderState.error));
+      }, (result){
+        print(result);
+        emit(state.copyWith(cancelOrderResult: result,cancelOrderState: UpdateOrderState.loaded));
+
+      });
     });
   }
 

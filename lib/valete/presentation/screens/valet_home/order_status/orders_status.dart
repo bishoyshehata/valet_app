@@ -7,25 +7,26 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:valet_app/core/utils/enums.dart';
+import 'package:valet_app/valete/presentation/components/alert_dialog.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
-import 'package:valet_app/valete/presentation/screens/valet_home/loading_page.dart';
-import '../../../../core/network/api_constants.dart';
-import '../../../domain/entities/my_orders.dart';
-import '../../components/custom_app_bar.dart';
-import '../../components/text/text_utils.dart';
-import '../../controllers/home/home_bloc.dart';
-import '../../controllers/myorders/my_orders_bloc.dart';
-import '../../controllers/myorders/my_orders_events.dart';
-import '../../controllers/myorders/my_orders_states.dart';
-import '../../resources/assets_manager.dart';
-import '../../resources/font_manager.dart';
-import '../../resources/values_manager.dart';
-import '../error_screen/main_error_screen.dart';
-import '../garage_screen/garage_screen.dart';
-import '../login/login.dart';
+import 'package:valet_app/valete/presentation/screens/valet_home/order_status/loading_page.dart';
+import '../../../../../core/network/api_constants.dart';
+import '../../../../domain/entities/my_orders.dart';
+import '../../../components/custom_app_bar.dart';
+import '../../../components/text/text_utils.dart';
+import '../../../controllers/home/home_bloc.dart';
+import '../../../controllers/myorders/my_orders_bloc.dart';
+import '../../../controllers/myorders/my_orders_events.dart';
+import '../../../controllers/myorders/my_orders_states.dart';
+import '../../../resources/assets_manager.dart';
+import '../../../resources/font_manager.dart';
+import '../../../resources/values_manager.dart';
+import '../../error_screen/main_error_screen.dart';
+import '../../garage_screen/garage_screen.dart';
+import '../../login/login.dart';
 
 class OrdersScreen extends StatelessWidget {
   final int initialSelectedStatus = 0;
@@ -70,13 +71,13 @@ class OrdersScreen extends StatelessWidget {
 
             switch (state.myOrdersState) {
               case RequestState.loading:
-
                 return SizedBox(
                   height: AppSizeHeight.sMaxInfinite,
                   child: ListView.separated(
                     shrinkWrap: true,
                     itemBuilder:
-                        (context, index) => Shimmer.fromColors(
+                        (context, index) =>
+                        Shimmer.fromColors(
                           baseColor: Colors.grey[850]!,
                           highlightColor: Colors.grey[800]!,
                           child: Container(
@@ -97,7 +98,6 @@ class OrdersScreen extends StatelessWidget {
                   ),
                 );
               case RequestState.loaded:
-
                 return Column(
                   children: [
                     SizedBox(
@@ -128,9 +128,9 @@ class OrdersScreen extends StatelessWidget {
                                   backgroundColor: ColorManager.grey,
                                   labelStyle: GoogleFonts.cairo(
                                     color:
-                                        isSelected
-                                            ? ColorManager.background
-                                            : ColorManager.white,
+                                    isSelected
+                                        ? ColorManager.background
+                                        : ColorManager.white,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -148,13 +148,13 @@ class OrdersScreen extends StatelessWidget {
                                     ),
                                     decoration: BoxDecoration(
                                       color:
-                                          option['id'] == 1 &&
-                                                  state
-                                                          .ordersByStatus[option['id']]!
-                                                          .length >
-                                                      0
-                                              ? ColorManager.warning
-                                              : ColorManager.background,
+                                      option['id'] == 1 &&
+                                          state
+                                              .ordersByStatus[option['id']]!
+                                              .length >
+                                              0
+                                          ? ColorManager.warning
+                                          : ColorManager.background,
                                       border: Border.all(
                                         color: ColorManager.white,
                                         width: 1,
@@ -166,7 +166,8 @@ class OrdersScreen extends StatelessWidget {
                                     child: Center(
                                       child: TextUtils(
                                         text:
-                                            '${state.ordersByStatus[option['id']]?.length ?? 0}',
+                                        '${state.ordersByStatus[option['id']]
+                                            ?.length ?? 0}',
                                         fontSize: FontSize.s10,
                                         color: ColorManager.white,
                                         fontWeight: FontWeightManager.bold,
@@ -182,45 +183,49 @@ class OrdersScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child:
-                          orders.isNotEmpty
-                              ? ListView.builder(
-                                itemCount: orders.length,
-                                itemBuilder: (context, index) {
-                                  final order = orders[index];
-                                  return InkWell(
-                                    onTap: () {
-                                        context.read<HomeBloc>().add(GetGarageSpotEvent(order.garageId));
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) => LoadingScreen(
-                                                spotId: order.spotId,
-                                                garageName: order.garage.name,
-                                              ),
-                                        ),
-                                      );
-                                    },
+                      orders.isNotEmpty
+                          ? ListView.builder(
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          final order = orders[index];
+                          return InkWell(
+                            onTap: () {
+                        if(order.status!=4){
+                          context.read<HomeBloc>().add(
+                              GetGarageSpotEvent(order.garageId));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                  LoadingScreen(
+                                    spotId: order.spotId,
+                                    garageName: order.garage.name,
+                                  ),
+                            ),
+                          );
+                        }else{}
+                            },
 
-                                    child: statusCard(order, context),
-                                  );
-                                },
-                              )
-                              : Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Lottie.asset(LottieManager.noCars),
-                                    const SizedBox(height: 12),
-                                    TextUtils(
-                                      text: "لا توجد طلبات",
-                                      color: ColorManager.white,
-                                      fontSize: FontSize.s14,
-                                      fontWeight: FontWeightManager.bold,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: statusCard(order, context),
+                          );
+                        },
+                      )
+                          : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(LottieManager.noCars),
+                            const SizedBox(height: 12),
+                            TextUtils(
+                              text: "لا توجد طلبات",
+                              color: ColorManager.white,
+                              fontSize: FontSize.s14,
+                              fontWeight: FontWeightManager.bold,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 );
@@ -242,9 +247,9 @@ Widget statusCard(MyOrders order, BuildContext context) {
   return BlocListener<MyOrdersBloc, MyOrdersState>(
     listenWhen:
         (prev, curr) =>
-            prev.updateOrderStatus != curr.updateOrderStatus &&
-            curr.updateOrderStatus == true &&
-            curr.updatingOrderId == order.id,
+    prev.updateOrderStatus != curr.updateOrderStatus &&
+        curr.updateOrderStatus == true &&
+        curr.updatingOrderId == order.id ||prev.cancelOrderState != curr.cancelOrderState,
     listener: (context, state) {
       context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
       context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
@@ -266,22 +271,22 @@ Widget statusCard(MyOrders order, BuildContext context) {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child:
-                    order.carImage != null
-                        ? FadeInImage.assetNetwork(
-                          placeholder: buildCarTypeImageForStatus(
-                            order.carType,
-                          ),
-                          // الصورة المؤقتة من الأصول
-                          image: Uri.encodeFull(
-                            "${ApiConstants.baseUrl}/${order.carImage!}",
-                          ),
-                          height: AppSizeHeight.s45,
-                          fit: BoxFit.cover,
-                          imageErrorBuilder: (context, error, stackTrace) {
-                            return buildCarTypeImage(order.carType);
-                          },
-                        )
-                        : buildCarTypeImage(order.carType),
+                order.carImage != null
+                    ? FadeInImage.assetNetwork(
+                  placeholder: buildCarTypeImageForStatus(
+                    order.carType,
+                  ),
+                  // الصورة المؤقتة من الأصول
+                  image: Uri.encodeFull(
+                    "${ApiConstants.baseUrl}/${order.carImage!}",
+                  ),
+                  height: AppSizeHeight.s45,
+                  fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) {
+                    return buildCarTypeImage(order.carType);
+                  },
+                )
+                    : buildCarTypeImage(order.carType),
               ),
             ),
 
@@ -367,7 +372,11 @@ Widget statusCard(MyOrders order, BuildContext context) {
                 ],
               ),
             ),
-            deleteButton(order.status, context, order.id),
+            BlocBuilder<MyOrdersBloc, MyOrdersState>(
+              builder: (context, state) {
+                return cancelButton(order.status, context, order.id);
+              },
+            ),
           ],
         ),
       ),
@@ -392,12 +401,10 @@ String getStatusText(int status) {
   }
 }
 
-Widget getStatusButton(
-  int status,
-  BuildContext context,
-  int orderId,
-  MyOrdersState state,
-) {
+Widget getStatusButton(int status,
+    BuildContext context,
+    int orderId,
+    MyOrdersState state,) {
   switch (status) {
     case 0:
       return CustomButton(
@@ -460,11 +467,19 @@ Widget getStatusButton(
   }
 }
 
-Widget deleteButton(int status, BuildContext context, int orderId) {
+Widget cancelButton(int status, BuildContext context, int orderId) {
   switch (status) {
     case 0:
       return IconButton(
-        onPressed: () {},
+        onPressed: () {
+          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
+            message: "هل انت متأكد من إلغاء الطلب ؟",
+            onPositiveButtonPressed: () {
+              context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
+            },
+
+          );
+        },
         icon: Icon(
           Icons.delete_forever,
           color: ColorManager.error,
@@ -475,11 +490,64 @@ Widget deleteButton(int status, BuildContext context, int orderId) {
         ),
       );
     case 1:
-      return SizedBox();
+      return IconButton(
+        onPressed: () {
+          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
+            message: "هل انت متأكد من إلغاء الطلب ؟",
+            onPositiveButtonPressed: () {
+              context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
+            },
+
+          );
+        },
+        icon: Icon(
+          Icons.delete_forever,
+          color: ColorManager.error,
+          size: AppSizeHeight.s15,
+        ),
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(Color(0xff63D8F2)),
+        ),
+      );;
     case 2:
-      return SizedBox();
+      return IconButton(
+        onPressed: () {
+          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
+            message: "هل انت متأكد من إلغاء الطلب ؟",
+            onPositiveButtonPressed: () {
+              context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
+            },
+
+          );
+        },
+        icon: Icon(
+          Icons.delete_forever,
+          color: ColorManager.error,
+          size: AppSizeHeight.s15,
+        ),
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(Color(0xff63D8F2)),
+        ),
+      );;
     case 3:
-      return SizedBox();
+      return IconButton(
+        onPressed: () {
+          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
+            message: "هل انت متأكد من إلغاء الطلب ؟",
+            onPositiveButtonPressed: () {
+              context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
+            },
+          );
+        },
+        icon: Icon(
+          Icons.delete_forever,
+          color: ColorManager.error,
+          size: AppSizeHeight.s15,
+        ),
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(Color(0xff63D8F2)),
+        ),
+      );
     default:
       return SizedBox();
   }
@@ -514,16 +582,18 @@ String formatDate(String dateString) {
 
 Widget buildButtonContent(UpdateOrderState state, String text) {
   return switch (state) {
-    UpdateOrderState.initial || UpdateOrderState.loaded => TextUtils(
-      text: text,
-      color: ColorManager.background,
-      fontWeight: FontWeightManager.bold,
-    ),
+    UpdateOrderState.initial || UpdateOrderState.loaded =>
+        TextUtils(
+          text: text,
+          color: ColorManager.background,
+          fontWeight: FontWeightManager.bold,
+        ),
     UpdateOrderState.loading => Lottie.asset(LottieManager.carLoading),
-    UpdateOrderState.error => TextUtils(
-      text: 'حدثت مشكلة تواصل مع المدير',
-      color: ColorManager.background,
-      fontWeight: FontWeightManager.bold,
-    ),
+    UpdateOrderState.error =>
+        TextUtils(
+          text: 'حدثت مشكلة تواصل مع المدير',
+          color: ColorManager.background,
+          fontWeight: FontWeightManager.bold,
+        ),
   };
 }

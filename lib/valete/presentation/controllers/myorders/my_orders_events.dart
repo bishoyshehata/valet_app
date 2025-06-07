@@ -31,6 +31,11 @@ class ResetOrderUpdateStatus extends MyOrdersEvent {
   @override
   List<Object?> get props => [];
 }
-
+class CancelMyOrderEvent extends MyOrdersEvent {
+  final int orderId;
+  CancelMyOrderEvent(this.orderId);
+  @override
+  List<Object?> get props => [orderId];
+}
 
 

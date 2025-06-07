@@ -28,9 +28,9 @@ class GarageScreen extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: BlocListener<HomeBloc, HomeState>(
         listenWhen: (prev, curr) =>
-        prev.updateOrderSpotState != curr.updateOrderSpotState,
+        prev.updateOrderSpotState != curr.updateOrderSpotState || prev.cancelOrderState !=curr.cancelOrderState,
         listener: (context, state) {
-          if (state.updateOrderSpotState == UpdateOrderSpotState.loaded) {
+          if (state.updateOrderSpotState == UpdateOrderSpotState.loaded ||state.cancelOrderState == UpdateOrderState.loaded) {
             context.read<HomeBloc>().add(GetGarageSpotEvent(garageId));
             print("✅ Spot updated, fetching new spots...");
           }

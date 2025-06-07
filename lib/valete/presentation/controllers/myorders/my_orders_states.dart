@@ -11,6 +11,9 @@ class MyOrdersState {
   final UpdateOrderState updateOrderStatusState;
   final String updateOrderStatusErrorMessage;
   final bool? updateOrderStatus;
+  final bool? cancelOrderResult;
+  final UpdateOrderState cancelOrderState;
+  final String cancelOrderErrorMessage;
   final int? updatingOrderId;
 
   MyOrdersState({
@@ -23,6 +26,9 @@ class MyOrdersState {
     this.ordersByStatus = const {},
     this.updateOrderStatus,
     this.updatingOrderId,
+    this.cancelOrderResult,
+    this.cancelOrderState= UpdateOrderState.initial,
+    this.cancelOrderErrorMessage ='',
     this.updateOrderStatusErrorMessage ='',
     this.updateOrderStatusState =UpdateOrderState.initial,
 
@@ -41,6 +47,9 @@ class MyOrdersState {
     String? updateOrderStatusErrorMessage,
     bool? updateOrderStatus,
     int? updatingOrderId,
+     bool? cancelOrderResult,
+     UpdateOrderState? cancelOrderState,
+     String ?cancelOrderErrorMessage,
 
   }) {
     return MyOrdersState(
@@ -54,6 +63,9 @@ class MyOrdersState {
       updateOrderStatusErrorMessage: updateOrderStatusErrorMessage ?? this.updateOrderStatusErrorMessage,
       updateOrderStatus: updateOrderStatus ?? this.updateOrderStatus,
       updatingOrderId: updatingOrderId ?? this.updatingOrderId,
+      cancelOrderResult: cancelOrderResult ?? this.cancelOrderResult,
+      cancelOrderState: cancelOrderState ?? this.cancelOrderState,
+      cancelOrderErrorMessage: cancelOrderErrorMessage ?? this.cancelOrderErrorMessage,
 
     );
   }

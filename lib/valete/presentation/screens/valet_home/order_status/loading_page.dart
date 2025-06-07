@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
-import '../../resources/assets_manager.dart';
-import '../../resources/colors_manager.dart';
-import '../onboarding/onboarding_screen.dart';
+import '../../../resources/assets_manager.dart';
+import '../../../resources/colors_manager.dart';
+import '../../onboarding/onboarding_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
 

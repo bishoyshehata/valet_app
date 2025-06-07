@@ -13,7 +13,7 @@ import 'package:valet_app/valete/presentation/screens/valet_home/profile/valet_p
 import '../../../../core/utils/enums.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/myorders/my_orders_events.dart';
-import 'orders_status.dart';
+import 'order_status/orders_status.dart';
 
 class MainScreen extends StatelessWidget {
   final List<Widget> screens = [

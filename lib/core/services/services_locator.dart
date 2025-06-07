@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/data/repository/repository.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
+import 'package:valet_app/valete/domain/usecases/cancel_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/delete_account_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/login_use_case.dart';
@@ -31,6 +32,7 @@ class ServicesLocator {
         sl<MyGaragesUseCase>(),
         sl<GetGarageSpotUseCase>(),
         sl<UpdateOrderSpotUseCase>(),
+        sl<CancelOrderUseCase>(),
         initialSelectedStatus: 0,
       ),
     );
@@ -45,7 +47,7 @@ class ServicesLocator {
 
     /// MyOrdersBloc
     sl.registerLazySingleton<MyOrdersBloc>(
-      () => MyOrdersBloc(sl<MyOrdersUseCase>(), sl<UpdateOrderStatusUseCase>()),
+      () => MyOrdersBloc(sl<MyOrdersUseCase>(), sl<UpdateOrderStatusUseCase>(),sl<CancelOrderUseCase>()),
     );
 
     /// DeleteBloc
@@ -85,5 +87,7 @@ class ServicesLocator {
 
     /// UpdateOrderSpotUseCase
     sl.registerLazySingleton(() => UpdateOrderSpotUseCase(sl()));
+    /// CancelOrderUseCase
+    sl.registerLazySingleton(() => CancelOrderUseCase(sl()));
   }
 }

@@ -106,4 +106,14 @@ class ValetRepository extends IValetRepository {
       return Left(ServerFailure(failure.message , failure.statusCode!));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> cancelOrder(int orderId)async {
+    try {
+      final result = await valetDataSource.cancelOrder(orderId);
+      return Right(result);
+    } on ServerFailure catch (failure) {
+      return Left(ServerFailure(failure.message , failure.statusCode!));
+    }
+  }
 }

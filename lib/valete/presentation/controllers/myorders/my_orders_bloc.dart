@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:valet_app/valete/domain/usecases/cancel_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_orders_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/update_order_status_use_case.dart';
 import '../../../../core/utils/enums.dart';
@@ -9,10 +10,12 @@ import 'my_orders_states.dart';
 class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
   final MyOrdersUseCase myOrdersUseCase;
   final UpdateOrderStatusUseCase updateOrderStatusUseCase;
+  final CancelOrderUseCase cancelOrderUseCase;
 
   MyOrdersBloc(
     this.myOrdersUseCase,
     this.updateOrderStatusUseCase,
+      this.cancelOrderUseCase,
       {
     int initialSelectedStatus = 0,
   }) : super(
@@ -155,6 +158,20 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
           updatingOrderId: null,
         ),
       );
+    });
+    on<CancelMyOrderEvent>((event, emit) async{
+      emit(state.copyWith(cancelOrderState: UpdateOrderState.loading));
+      final result = await cancelOrderUseCase.cancelOrder(event.orderId);
+
+      result.fold((error){
+        print(error);
+
+        emit(state.copyWith(cancelOrderErrorMessage: error.message,cancelOrderState: UpdateOrderState.error));
+      }, (result){
+        print(result);
+        emit(state.copyWith(cancelOrderResult: result,cancelOrderState: UpdateOrderState.loaded));
+
+      });
     });
   }
 }
