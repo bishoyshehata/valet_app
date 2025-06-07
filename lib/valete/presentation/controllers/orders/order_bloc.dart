@@ -86,7 +86,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
 
     on<StoreOrderEvent>((event, emit) async {
       emit(state.copyWith(storeOrderState: StoreOrderState.loading));
-
+        if(state.isAllValid!){
         final result = await storeOrderUseCase.storeOrder(event.storeData);
         result.fold(
               (error) {
@@ -105,7 +105,12 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             MyOrdersBloc(sl(),sl(),sl()).add(GetMyOrdersEvent(0),);
 
           },
-        );
+        );}else{
+          emit(state.copyWith(
+              storeOrderState: StoreOrderState.error,
+              storeOrderError :"أسف و لكن رقم الهاتف خطأ",
+          ));
+        }
     });
 
 

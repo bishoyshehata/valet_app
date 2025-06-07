@@ -95,4 +95,5 @@ class OrderState {
       isPhoneValid: isPhoneValid ?? this.isPhoneValid,
     );
   }
+  bool? get isAllValid => isPhoneValid;
 }

@@ -247,9 +247,10 @@ Widget statusCard(MyOrders order, BuildContext context) {
         curr.updateOrderStatus == true &&
         curr.updatingOrderId == order.id ||prev.cancelOrderState != curr.cancelOrderState,
     listener: (context, state) {
-      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
       context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
+      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
     },
+
     child: Card(
       color: ColorManager.grey,
       margin: const EdgeInsets.all(10),
@@ -587,6 +588,7 @@ Widget buildButtonContent(UpdateOrderState state, String text) {
     UpdateOrderState.loading => Lottie.asset(LottieManager.carLoading),
     UpdateOrderState.error =>
         TextUtils(
+          alignnment: TextAlign.center,
           text: 'حدثت مشكلة تواصل مع المدير',
           color: ColorManager.background,
           fontWeight: FontWeightManager.bold,

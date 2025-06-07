@@ -148,7 +148,15 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
            add(GetMyOrdersEvent(event.newStatus) );
 
         }
+
       );
+      // رجع الطلبات الجديدة
+
+      add(GetMyOrdersEvent(event.newStatus));
+      add(GetAllMyOrdersEvent());
+      
+      // ✳️ ثم نظف الحالة
+      add(ResetOrderUpdateStatus());
     });
     on<ResetOrderUpdateStatus>((event, emit) {
       emit(
