@@ -5,6 +5,7 @@ class ApiConstants {
   static const myGaragesEndPoint = '/api/Valet/MyGarages';
   static const storeOrderEndPoint = '/api/Valet/Store/Order';
   static const myOrdersEndPoint = '/api/Valet/myOrders';
+  static const updateValetEndPoint = '/api/Valet/Update';
   static const settings = '/api/Settings';
   static String updateOrderStatusEndPoint(int orderId , int newStatus)=> '$baseUrl/api/Valet/updateOrderStatus/$orderId/$newStatus';
   static String deleteValetEndPoint(int valetId)=> '$baseUrl/api/Valet/Delete/$valetId';

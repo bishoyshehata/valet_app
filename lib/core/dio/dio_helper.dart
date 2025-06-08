@@ -38,6 +38,23 @@ class DioHelper {
       ),
     );
   }
+  static Future<Response> put(
+      String url, {
+        Map<String, dynamic>? data,
+        bool requiresAuth = false,
+        bool isFormData = false,
+      }) async {
+    if (requiresAuth) await _setAuthHeader();
+
+    return await _dio.put(
+      url,
+      data: isFormData ? FormData.fromMap(data ?? {}) : data,
+      options: Options(
+        contentType: isFormData ? 'multipart/form-data' : 'application/json',
+      ),
+    );
+  }
+
 
   static Future<Response> get(
       String url, {

@@ -29,19 +29,19 @@ class ValetModel extends Valet {
     );
   }
 
-  // Map<String, dynamic> toJson() {
-  //   return {
-  //     "id": id,
-  //     "phone": phone,
-  //     "name": name,
-  //     "accessToken": accessToken,
-  //     "deviceToken": deviceToken,
-  //     "status": status,
-  //     "whatsapp": whatsapp,
-  //     "addedOn": addedOn,
-  //     "companyId": companyId,
-  //     "companyName": companyName,
-  //   };
-  // }
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "phone": phone,
+      "name": name,
+      "accessToken": accessToken,
+      "deviceToken": deviceToken,
+      "status": status,
+      "whatsapp": whatsapp,
+      "addedOn": addedOn,
+      "companyId": companyId,
+      "companyName": companyName,
+    };
+  }
 
 }

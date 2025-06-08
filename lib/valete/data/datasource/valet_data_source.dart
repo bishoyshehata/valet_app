@@ -5,12 +5,15 @@ import 'package:valet_app/valete/data/models/get_garage_spot_model.dart';
 import 'package:valet_app/valete/data/models/my_garages_models.dart';
 import 'package:valet_app/valete/data/models/my_orders_model.dart';
 import 'package:valet_app/valete/data/models/settings_model.dart';
+import 'package:valet_app/valete/data/models/update_valet_model.dart';
 import 'package:valet_app/valete/data/models/valet_model.dart';
 import '../../../core/dio/dio_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/notifications/firebase_notifications/firebase.dart';
 import '../../domain/entities/store_order.dart';
 import '../models/create_order_model.dart';
+import 'dart:convert';
+
 
 abstract class IValetDataSource {
   Future<ValetModel> login(String phone, String password);
@@ -24,6 +27,7 @@ abstract class IValetDataSource {
   Future<bool> updateOrderSpot(int orderId , int spotId,int garageId);
   Future<bool> cancelOrder(int orderId);
   Future<SettingsModel> settings();
+  Future<UpdateValetModel> updateValet(UpdateValetModel model);
 
 }
 
@@ -51,14 +55,10 @@ class ValetDataSource extends IValetDataSource {
 
       if (response.statusCode == 200) {
         final result = ValetModel.fromJson(response.data);
-        prefs.setString('accessToken', result.accessToken);
-        prefs.setInt('statusIndex', result.id);
-        prefs.setString('valetName', result.name.toString());
-        prefs.setString('companyName', result.companyName.toString());
-        prefs.setString('whatsapp', result.whatsapp.toString());
-        prefs.setString('valetPhone', result.phone.toString());
-        prefs.setInt('status', result.status);
-        print(prefs.getInt('statusIndex'));
+        final jsonString = jsonEncode(result.toJson());
+        await prefs.setString('valetModel', jsonString);
+
+        print(prefs.getInt('valetModel'));
         return result;
       }
       else {
@@ -264,4 +264,36 @@ try {
         handleHttpError(e.response, e);
       }
     }
+
+  @override
+  Future<UpdateValetModel> updateValet(UpdateValetModel model) async{
+    try {
+      prefs = await SharedPreferences.getInstance();
+
+      final response = await DioHelper.put(
+        ApiConstants.updateValetEndPoint,
+        data: {
+          "id": model.id,
+          "name": model.name,
+          "phone": model.phone,
+          "password":model.password,
+          "whatsapp": model.whatsapp,
+          "companyId": model.companyId,
+          "status": model.status
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final result = UpdateValetModel.fromJson(response.data['data']);
+        final jsonString = jsonEncode(result.toJson());
+        await prefs.setString('UpdatedValetModel', jsonString);
+        return result;
+      }
+      else {
+        handleHttpError(response, null);
+      }
+    } on DioException catch (e) {
+      handleHttpError(e.response, e);
+    }
+  }
   }

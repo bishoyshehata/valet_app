@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:valet_app/valete/data/models/get_garage_spot_model.dart';
+import 'package:valet_app/valete/data/models/update_valet_model.dart';
 import 'package:valet_app/valete/domain/entities/default_order.dart';
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import 'package:valet_app/valete/domain/entities/my_orders.dart';
@@ -23,5 +24,6 @@ abstract class IValetRepository{
   Future<Either<Failure , bool >> updateOrderSpot(int orderId , int spotId ,int garageId);
   Future<Either<Failure , bool >> cancelOrder(int orderId);
   Future<Either<Failure , Settings >> settings();
+  Future<Either<Failure , UpdateValetModel >> updateValet(UpdateValetModel);
 
 }

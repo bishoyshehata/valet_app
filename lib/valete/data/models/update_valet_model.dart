@@ -24,7 +24,28 @@ class UpdateValetModel extends Equatable {
     required this.companyId,
     required this.status,}
   );
-
+  factory UpdateValetModel.fromJson(Map<String, dynamic> json) {
+    return UpdateValetModel(
+      id: json['id'],
+      name: json['name'] ?? '',
+      phone: json['phone'] ?? '',
+      password: json['password'] ?? '',
+      whatsapp: json['whatsapp'] ?? '',
+      companyId: json['companyId'] ?? 0,
+      status: json['status'] ?? 0,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'phone': phone,
+      'password': password,
+      'whatsapp': whatsapp,
+      'companyId': companyId,
+      'status': status,
+    };
+  }
 
   @override
   List<Object?> get props => [id,name,phone,password,whatsapp,companyId,status];
