@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +17,7 @@ import '../../../resources/font_manager.dart';
 import '../../../resources/values_manager.dart';
 
 class ValetProfileScreen extends StatelessWidget {
-  const ValetProfileScreen({super.key});
+   ValetProfileScreen({super.key});
 
   Future<Map<String, String?>> loadPreferenceData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -27,6 +28,9 @@ class ValetProfileScreen extends StatelessWidget {
       'whatsapp': prefs.getString('whatsapp'),
     };
   }
+  List<Status> statusList = Status.values;
+   Status? selectedStatus;
+   Status? initialStatus = Status.Active;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,7 @@ class ValetProfileScreen extends StatelessWidget {
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Container(
-              padding: EdgeInsets.only(top: AppPadding.p100),
+              padding: EdgeInsets.only(top: AppPadding.p60),
               child: BlocListener<ProfileBloc, ProfileState>(
                 listener: (context, state) {
                   if (state.logOutState == LogOutState.loaded || state.deleteState == RequestState.loaded) {
@@ -105,6 +109,110 @@ class ValetProfileScreen extends StatelessWidget {
                     ),
 
                     SizedBox(height: AppSizeHeight.s30),
+                    BlocBuilder<ProfileBloc, ProfileState>(
+                      builder: (context, state) {
+                        return Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+
+                      children: [
+                        Padding(padding: EdgeInsets.only(right: AppSizeWidth.s15),child: Icon(Icons.edit ,color: ColorManager.white,),),
+                        SizedBox(width: AppSizeWidth.s8,),
+                        TextUtils(
+                          text: 'الحالة : ',
+                          color: ColorManager.white,
+                          fontSize: FontSize.s17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSizeWidth.s8,
+                          ),
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: ColorManager.primary,
+                            borderRadius: BorderRadius.circular(
+                              AppSizeHeight.s10,
+                            ),
+                          ),
+                          width: AppSizeWidth.s100,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<Status>(
+                              isExpanded: true,
+                              items: statusList.map((status) {
+                                return DropdownMenuItem<Status>(
+                                  value: status,
+                                  child: TextUtils(
+                                    text: status.displayName,
+                                    color: ColorManager.background,
+                                    fontSize: FontSize.s15,
+                                    fontWeight: FontWeightManager.bold,
+                                  ),
+                                );
+                              }).toList(),
+                              value: selectedStatus ?? initialStatus,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  context.read<ProfileBloc>().add(ChangeStatusEvent(value));
+                                }
+                              },
+                              hint: Text("اختر الحالة"),
+                              iconStyleData: IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_forward_ios_outlined,
+                                  color: ColorManager.background,
+                                ),
+                                iconSize: 14,
+                                iconEnabledColor: Colors.yellow,
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: AppSizeHeight.s250,
+                                width: AppSizeWidth.s120,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    14,
+                                  ),
+                                  color: ColorManager.primary,
+                                ),
+                                offset: const Offset(-20, 0),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness:
+                                  MaterialStateProperty.all<
+                                      double
+                                  >(6),
+                                  thumbVisibility:
+                                  MaterialStateProperty.all<bool>(
+                                    true,
+                                  ),
+                                ),
+                              ),
+                              menuItemStyleData: MenuItemStyleData(
+                                height: AppSizeHeight.s35,
+                                padding: EdgeInsets.only(
+                                  left: 14,
+                                  right: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (state.isChanged)
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<ProfileBloc>().add(SaveStatusEvent());
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("تم حفظ التغييرات")),
+                              );
+                            },
+                            child: Text("حفظ التغييرات"),
+                          ),
+                      ],
+                    );
+  },
+),
+
                     ListTile(
                       leading: Icon(
                         Icons.privacy_tip,
@@ -181,5 +289,17 @@ class ValetProfileScreen extends StatelessWidget {
         );
       },
     );
+  }
+}
+extension StatusExtension on Status {
+  String get displayName {
+    switch (this) {
+      case Status.Active:
+        return "نشط";
+      case Status.DisActive:
+        return "غير نشط";
+      case Status.Busy:
+        return "مشغول";
+    }
   }
 }

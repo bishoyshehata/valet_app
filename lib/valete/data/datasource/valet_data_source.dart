@@ -52,11 +52,13 @@ class ValetDataSource extends IValetDataSource {
       if (response.statusCode == 200) {
         final result = ValetModel.fromJson(response.data);
         prefs.setString('accessToken', result.accessToken);
-        prefs.setString('valetId', result.id.toString());
+        prefs.setInt('statusIndex', result.id);
         prefs.setString('valetName', result.name.toString());
         prefs.setString('companyName', result.companyName.toString());
         prefs.setString('whatsapp', result.whatsapp.toString());
         prefs.setString('valetPhone', result.phone.toString());
+        prefs.setInt('status', result.status);
+        print(prefs.getInt('statusIndex'));
         return result;
       }
       else {

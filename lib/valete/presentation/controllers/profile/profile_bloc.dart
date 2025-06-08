@@ -70,6 +70,12 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
         ));
       });
     });
+    on<ChangeStatusEvent>((event, emit) {
+      emit(state.copyWith(selectedStatus: event.selectedStatus));
+    });
 
+    on<SaveStatusEvent>((event, emit) {
+      emit(state.copyWith(initialStatus: state.selectedStatus));
+    });
   }
 }

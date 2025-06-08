@@ -51,7 +51,7 @@ class OrderScreen extends StatelessWidget {
           sl<CreateOrderUseCase>(),
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
-        isWhatsAppWorking !=true ?
+        isWhatsAppWorking ==true ?
         SharedPreferences.getInstance().then((prefs) {
           bool? isWhatsAppWorking = prefs.getBool('isWhatsAppWorking');
           print('isWhatsAppWorking: $isWhatsAppWorking');
@@ -131,7 +131,7 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-          isWhatsAppWorking != true ?
+          isWhatsAppWorking == true ?
           state.phoneNumber == 'رقم هاتف العميل'
                               ? 'رقم هاتف العميل'
                               : state.phoneNumber.length >= 8
@@ -169,7 +169,7 @@ class OrderScreen extends StatelessWidget {
                             context,
                             spotName,
                           ),
-                          isWhatsAppWorking != true
+                          isWhatsAppWorking == true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
                               ? _buildQrSection(context, state.data!.qr)
                               : SizedBox.shrink())
@@ -222,7 +222,7 @@ class OrderScreen extends StatelessWidget {
                                 print(state.completePhoneNumber?.replaceFirst("+", ''));
 
                                           if (state.selectedVehicleType != null &&spotId != null &&
-                                              isWhatsAppWorking != true?  state.phoneNumber !='رقم هاتف العميل':state.completePhoneNumber!='') {
+                                              isWhatsAppWorking == true?  state.phoneNumber !='رقم هاتف العميل':state.completePhoneNumber!='') {
                                             File? carImage;
                                             if (state.image != null) {
                                               carImage = state.image;
@@ -233,19 +233,19 @@ class OrderScreen extends StatelessWidget {
                                               spotId: spotId,
                                               carType:
                                               state.selectedVehicleType.index,
-                                              ClientNumber:isWhatsAppWorking != true ? state.phoneNumber: state.completePhoneNumber!.replaceFirst("+", '') ,
+                                              ClientNumber:isWhatsAppWorking == true ? state.phoneNumber: state.completePhoneNumber!.replaceFirst("+", '') ,
                                               garageId: state.data!.garageId,
                                             );
                                               context.read<OrderBloc>().add( StoreOrderEvent(model),);
                                           } else {
-                                            if (isWhatsAppWorking != true ?state.phoneNumber == 'رقم هاتف العميل':state.completePhoneNumber=='' ) {
+                                            if (isWhatsAppWorking == true ?state.phoneNumber == 'رقم هاتف العميل':state.completePhoneNumber=='' ) {
                                               ScaffoldMessenger.of(
                                                 context,
                                               ).showSnackBar(
                                                 SnackBar(
                                                   content: TextUtils(
                                                     text:
-                                                    isWhatsAppWorking != true?  'برجاء الطلب من العميل عمل مسح للـ QR.' :'برجاء إدخال رقم العميل.',
+                                                    isWhatsAppWorking == true?  'برجاء الطلب من العميل عمل مسح للـ QR.' :'برجاء إدخال رقم العميل.',
                                                     color: ColorManager.primary,
                                                     fontSize: FontSize.s13,
                                                     fontWeight: FontWeight.bold,

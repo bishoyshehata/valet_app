@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/utils/enums.dart';
+
 abstract class ProfileEvents extends Equatable {}
 
 class DeleteValetEvent extends ProfileEvents{
@@ -23,6 +25,19 @@ class LogoutEvent extends ProfileEvents {
   List<Object?> get props => [];
 }
 class GetSettingsEvent extends ProfileEvents {
+  @override
+  List<Object?> get props => [];
+}
+
+class ChangeStatusEvent extends ProfileEvents {
+  final Status selectedStatus;
+  ChangeStatusEvent(this.selectedStatus);
+
+  @override
+  List<Object?> get props => [selectedStatus];
+}
+
+class SaveStatusEvent extends ProfileEvents {
   @override
   List<Object?> get props => [];
 }

@@ -17,3 +17,8 @@ enum VehicleType { Car, Motorcycle, Truck, Bus }
 enum ImageProcessingStatus { idle, picking, converting, loaded, error }
 
 enum SpotStatus { Empty, Busy, OverFlowEmpty, OverFlowBusy, deleted }
+enum Status {
+  Active,
+  DisActive,
+  Busy,
+}
