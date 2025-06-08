@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:valet_app/valete/data/models/update_valet_model.dart';
 
 import '../../../../core/utils/enums.dart';
 
@@ -28,20 +29,26 @@ class GetSettingsEvent extends ProfileEvents {
   @override
   List<Object?> get props => [];
 }
+class UpdateValetEvent extends ProfileEvents {
+  final UpdateValetModel model;
+  UpdateValetEvent(this.model);
 
+  @override
+  List<Object?> get props => [model];
+}
 class ChangeStatusEvent extends ProfileEvents {
-  final Status selectedStatus;
-  ChangeStatusEvent(this.selectedStatus);
+  final Status status;
+  ChangeStatusEvent(this.status);
 
   @override
-  List<Object?> get props => [selectedStatus];
+  List<Object?> get props =>[status];
 }
 
-class SaveStatusEvent extends ProfileEvents {
+class InitProfileEvent extends ProfileEvents {
+  final UpdateValetModel model;
+  InitProfileEvent(this.model);
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props =>[model];
 }
-
-
-
 

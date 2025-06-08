@@ -1,3 +1,5 @@
+import 'package:valet_app/valete/data/models/update_valet_model.dart';
+
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/settings.dart';
 
@@ -12,13 +14,13 @@ class ProfileState {
   final Settings? settingsData;
   final String? settingErrorMessage;
   final bool? isWhatsAppWorking;
-  final Status? initialStatus;
+  final RequestState? updateValetState;
+  final UpdateValetModel? updateValetData;
+  final String? updateValetErrorMessage;
+  final int? updateValetStatusCode;
   final Status? selectedStatus;
-
-  bool get isChanged =>
-      initialStatus != null &&
-          selectedStatus != null &&
-          initialStatus != selectedStatus;
+  final bool isStatusChanged;
+  final UpdateValetModel? valetModel;
 
   ProfileState({
     this.deleteState =RequestState.loading,
@@ -31,8 +33,15 @@ class ProfileState {
     this.isWhatsAppWorking,
     this.settingsState = RequestState.loading,
     this.settingsStatusCode=0,
-    this.initialStatus,
+    this.updateValetState = RequestState.loading,
+    this.updateValetData,
+    this.updateValetErrorMessage = '',
+    this.updateValetStatusCode = 0,
+    this.valetModel,
     this.selectedStatus,
+    this.isStatusChanged = false,
+
+
   });
 
 
@@ -47,8 +56,13 @@ class ProfileState {
      Settings? settingsData,
      String? settingErrorMessage,
      bool? isWhatsAppWorking,
-    Status? initialStatus,
+    RequestState? updateValetState,
+    UpdateValetModel? updateValetData,
+    String? updateValetErrorMessage,
+    int? updateValetStatusCode,
+    UpdateValetModel? valetModel,
     Status? selectedStatus,
+    bool? isStatusChanged,
 
   }) {
     return ProfileState(
@@ -62,8 +76,14 @@ class ProfileState {
       settingsData: settingsData ?? this.settingsData,
       settingErrorMessage: settingErrorMessage ?? this.settingErrorMessage,
       isWhatsAppWorking: isWhatsAppWorking ?? this.isWhatsAppWorking,
-      initialStatus: initialStatus ?? this.initialStatus,
-      selectedStatus: selectedStatus ?? this.selectedStatus,
+      updateValetState: updateValetState ?? this.updateValetState,
+      updateValetData: updateValetData ?? this.updateValetData,
+      updateValetErrorMessage: updateValetErrorMessage ?? this.updateValetErrorMessage,
+      updateValetStatusCode: updateValetStatusCode ?? this.updateValetStatusCode,
+        selectedStatus: selectedStatus ?? this.selectedStatus,
+        isStatusChanged: isStatusChanged ?? this.isStatusChanged,
+      valetModel: valetModel ?? this.valetModel,
+
     );
   }
 }

@@ -51,7 +51,7 @@ class OrderScreen extends StatelessWidget {
           sl<CreateOrderUseCase>(),
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
-        isWhatsAppWorking ==true ?
+        isWhatsAppWorking == true ?
         SharedPreferences.getInstance().then((prefs) {
           bool? isWhatsAppWorking = prefs.getBool('isWhatsAppWorking');
           print('isWhatsAppWorking: $isWhatsAppWorking');
@@ -170,8 +170,7 @@ class OrderScreen extends StatelessWidget {
                             spotName,
                           ),
                           isWhatsAppWorking == true
-                              ? (state.phoneNumber == 'رقم هاتف العميل'
-                              ? _buildQrSection(context, state.data!.qr)
+                              ? (state.phoneNumber == 'رقم هاتف العميل'? _buildQrSection(context, state.data!.qr)
                               : SizedBox.shrink())
                               : _buildPhoneFieldSection(context,phoneNumber),
                           _buildImageCaptureSection(context),
@@ -271,11 +270,15 @@ class OrderScreen extends StatelessWidget {
 
                                       },
                               btnColor:
-                              state.phoneNumber !=
-                                  'رقم هاتف العميل'
-                                      ? ColorManager.primary
-                                      : ColorManager.lightGrey,
-                              width: MediaQuery.of(context).size.width,
+                              isWhatsAppWorking == true
+                                  ? (state.phoneNumber != 'رقم هاتف العميل'
+                                  ? ColorManager.primary
+                                  : ColorManager.lightGrey)
+                                  : (state.completePhoneNumber != ''
+                                  ? ColorManager.primary
+                                  : ColorManager.lightGrey),
+
+                                width: MediaQuery.of(context).size.width,
                               borderColor: ColorManager.white,
                               elevation: 5,
                               widget: switch (state.storeOrderState) {
@@ -295,13 +298,13 @@ class OrderScreen extends StatelessWidget {
                                   ),
                                 StoreOrderState.loaded => TextUtils(
                                   text: "تأكيد الطلب",
-                                  color: ColorManager.primary,
+                                  color: ColorManager.background,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 StoreOrderState.error => TextUtils(
                                   text:state.storeOrderError,
-                                  color: ColorManager.primary,
+                                  color: ColorManager.background,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
                                 ),

@@ -128,9 +128,9 @@ class ValetRepository extends IValetRepository {
   }
 
   @override
-  Future<Either<Failure, UpdateValetModel>> updateValet(UpdateValetModel)async {
+  Future<Either<Failure, UpdateValetModel>> updateValet(UpdateValetModel model)async {
     try {
-      final result = await valetDataSource.updateValet(UpdateValetModel);
+      final result = await valetDataSource.updateValet(model);
       return Right(result);
     } on ServerFailure catch (failure) {
       return Left(ServerFailure(failure.message , failure.statusCode!));

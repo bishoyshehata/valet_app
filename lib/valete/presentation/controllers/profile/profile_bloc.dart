@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/domain/usecases/delete_account_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/settings_use_case.dart';
+import 'package:valet_app/valete/domain/usecases/update_valet_use_case.dart';
 import '../../../../core/utils/enums.dart';
 import 'profile_events.dart';
 import 'profile_states.dart';
@@ -11,10 +12,11 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
 
   final DeleteValedUseCase deleteValedUseCase;
   final SettingsUseCase settingsUseCase;
-
+  final UpdateValetUseCase updateValetUseCase;
   ProfileBloc(
     this.deleteValedUseCase,
       this.settingsUseCase,
+    this.updateValetUseCase,
       {
     int initialSelectedStatus = 0,
     this.termsState = RequestState.loading,
@@ -63,6 +65,7 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
           settingsStatusCode: error.statusCode,
         ));
       }, (settings) async {
+        // print(settings.whatsappSettings.isWorking);
         emit(state.copyWith(
           settingsData: settings,
           settingsState: RequestState.loaded,
@@ -70,12 +73,34 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
         ));
       });
     });
-    on<ChangeStatusEvent>((event, emit) {
-      emit(state.copyWith(selectedStatus: event.selectedStatus));
+    on<UpdateValetEvent>((event, emit)async {
+      final result = await updateValetUseCase.updateValet(event.model);
+      result.fold(
+        (error) => emit(
+          state.copyWith(
+
+            updateValetErrorMessage: error.message,
+            updateValetState: RequestState.error,
+            updateValetStatusCode: error.statusCode,
+
+          ),
+        ),
+        (data) {
+          print(data);
+          emit(
+            state.copyWith(
+              updateValetData: data,
+              updateValetState: RequestState.loaded,
+              updateValetStatusCode: 200,
+            ),
+          );
+          final prefs = SharedPreferences.getInstance();
+          prefs.then((value) {
+            value.setString('UpdatedValetModel', data.toJson().toString());
+          });
+        }
+      );
     });
 
-    on<SaveStatusEvent>((event, emit) {
-      emit(state.copyWith(initialStatus: state.selectedStatus));
-    });
   }
 }

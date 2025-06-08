@@ -24,6 +24,6 @@ abstract class IValetRepository{
   Future<Either<Failure , bool >> updateOrderSpot(int orderId , int spotId ,int garageId);
   Future<Either<Failure , bool >> cancelOrder(int orderId);
   Future<Either<Failure , Settings >> settings();
-  Future<Either<Failure , UpdateValetModel >> updateValet(UpdateValetModel);
+  Future<Either<Failure , UpdateValetModel >> updateValet(UpdateValetModel model);
 
 }

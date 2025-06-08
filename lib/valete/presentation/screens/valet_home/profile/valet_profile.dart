@@ -198,16 +198,16 @@ class ValetProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (state.isChanged)
-                          ElevatedButton(
-                            onPressed: () {
-                              context.read<ProfileBloc>().add(SaveStatusEvent());
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("تم حفظ التغييرات")),
-                              );
-                            },
-                            child: Text("حفظ التغييرات"),
-                          ),
+                        // if (state.isChanged)
+                        //   ElevatedButton(
+                        //     onPressed: () {
+                        //       context.read<ProfileBloc>().add(SaveStatusEvent());
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         SnackBar(content: Text("تم حفظ التغييرات")),
+                        //       );
+                        //     },
+                        //     child: Text("حفظ التغييرات"),
+                        //   ),
                       ],
                     );
   },

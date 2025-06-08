@@ -279,7 +279,7 @@ try {
           "password":model.password,
           "whatsapp": model.whatsapp,
           "companyId": model.companyId,
-          "status": model.status
+          "status": model.status,
         },
       );
 

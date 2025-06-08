@@ -413,7 +413,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          'طلب',
+          'توصيل المركبة',
         ),
         height: AppSizeHeight.s35,
       );
