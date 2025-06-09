@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_states.dart';
 import 'package:valet_app/valete/presentation/controllers/login/login_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/login/login_states.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/profile/profile_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
+import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/profile/valet_profile.dart';
@@ -62,12 +66,102 @@ class MainScreen extends StatelessWidget {
                 label: 'الطلبات',
                  activeIcon: Icon(Icons.note_alt_rounded, color: ColorManager.primary,),
               ),
-               BottomNavigationBarItem(
-                icon: Icon(Icons.person_2_outlined, color: ColorManager.white,),
-                label: 'شخصي',
-                 activeIcon: Icon(Icons.person, color: ColorManager.primary,),backgroundColor: ColorManager.primary
+              BottomNavigationBarItem(
+                icon: BlocBuilder<ProfileBloc, ProfileState>(
+  builder: (context, state) {
+    return FutureBuilder<int?>(
+                  future: SharedPreferences.getInstance()
+                      .then((prefs) => prefs.getInt('status')), // تحميل الحالة من الشيرد
+                  builder: (context, snapshot) {
+                    final statusIndex = snapshot.data ?? 0; // 0 = Active بشكل افتراضي
+                    final status = Status.values[statusIndex];
 
+                    // اختار اللون حسب الحالة
+                    Color statusColor;
+                    switch (status) {
+                      case Status.Active:
+                        statusColor = Colors.green;
+                        break;
+                      case Status.Busy:
+                        statusColor = Colors.orange;
+                        break;
+                      case Status.DisActive:
+                        statusColor = Colors.red;
+                        break;
+                    }
+
+                    return Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Icon(Icons.person_2_outlined, color: ColorManager.white),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 1.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+  },
+),
+                activeIcon: BlocBuilder<ProfileBloc, ProfileState>(
+  builder: (context, state) {
+    return FutureBuilder<int?>(
+                  future: SharedPreferences.getInstance()
+                      .then((prefs) => prefs.getInt('status')),
+                  builder: (context, snapshot) {
+                    final statusIndex = snapshot.data ?? 0;
+                    final status = Status.values[statusIndex];
+
+                    Color statusColor;
+                    switch (status) {
+                      case Status.Active:
+                        statusColor = Colors.green;
+                        break;
+                      case Status.Busy:
+                        statusColor = Colors.orange;
+                        break;
+                      case Status.DisActive:
+                        statusColor = Colors.red;
+                        break;
+                    }
+
+                    return Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Icon(Icons.person, color: ColorManager.primary),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 1.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+  },
+),
+                label: 'شخصي',
+                backgroundColor: ColorManager.primary,
               ),
+
             ],
           ),
         ),

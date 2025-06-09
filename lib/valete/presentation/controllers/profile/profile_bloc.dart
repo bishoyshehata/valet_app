@@ -65,7 +65,7 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
           settingsStatusCode: error.statusCode,
         ));
       }, (settings) async {
-        // print(settings.whatsappSettings.isWorking);
+        print(settings.whatsappSettings.isWorking);
         emit(state.copyWith(
           settingsData: settings,
           settingsState: RequestState.loaded,
@@ -78,21 +78,6 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
         selectedStatus: event.status,
         isStatusChanged: true,
       ));
-    });
-    on<SaveStatusEvent>((event, emit) {
-      final selectedStatus = state.selectedStatus;
-      final currentData = state.updateValetData;
-
-      if (selectedStatus != null && currentData != null) {
-        final updatedModel = currentData.copyWith(status: selectedStatus.index);
-
-        // ابعت الحدث اللي بيعمل التحديث فعليًا
-      } else {
-        emit(state.copyWith(
-          updateValetErrorMessage: "يرجى اختيار حالة أولاً",
-          updateValetState: RequestStatess.error,
-        ));
-      }
     });
 
 

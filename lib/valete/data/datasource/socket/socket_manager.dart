@@ -13,9 +13,8 @@ class SocketService {
   void initSocket({
     required String saiesId,
     required Function(String phoneNumber) onPhoneReceived,
+    Function(String error)? onError,  // اضفت callback اختياري للتعامل مع الخطأ
   }) {
-
-
     socket.connect();
 
     socket.onConnect((_) {
@@ -30,15 +29,21 @@ class SocketService {
     });
 
     socket.onDisconnect((_) => print('❌ Disconnected'));
-    socket.onError((error) => print('🔥 Error: $error'));
+
+    socket.onError((error) {
+      print('🔥 Error: $error');
+      if (onError != null) {
+        onError(error.toString());
+      }
+    });
   }
+
   void closeSocket() {
     if (socket.connected) {
       socket.disconnect();
-      socket.dispose(); // لو مدعومة في مكتبتك
+      socket.dispose();
     } else {
       print('Socket already disconnected');
     }
   }
-
 }

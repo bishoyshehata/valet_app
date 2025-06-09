@@ -36,39 +36,44 @@ import '../error_screen/non_scaffold_error_screen.dart';
 
 class OrderScreen extends StatelessWidget {
   final SocketService socketService = SocketService();
-  OrderScreen({super.key});
 
+  OrderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
     final loginBloc = BlocProvider.of<LoginBloc>(context);
     final isWhatsAppWorking = profileBloc.state.isWhatsAppWorking;
-    final phoneNumber = loginBloc.state.completePhoneNumber.replaceFirst("+", '');
+    final phoneNumber = loginBloc.state.completePhoneNumber.replaceFirst(
+      "+",
+      '',
+    );
     return BlocProvider<OrderBloc>(
       create: (context) {
         final bloc = OrderBloc(
           sl<CreateOrderUseCase>(),
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
-        isWhatsAppWorking == true ?
         SharedPreferences.getInstance().then((prefs) {
-          bool? isWhatsAppWorking = prefs.getBool('isWhatsAppWorking');
-          print('isWhatsAppWorking: $isWhatsAppWorking');
-
-          if (isWhatsAppWorking = true) {
-            String? valetId = prefs.getString('valetId');
+          if (isWhatsAppWorking == true) {
+            int? valetId = prefs.getInt('valetId');
             SocketService().closeSocket();
             socketService.initSocket(
-              saiesId: valetId!,
+              saiesId: valetId.toString(),
               onPhoneReceived: (phone) {
                 bloc.add(UpdatePhoneNumberEvent(phone));
+              },
+              onError: (errorMessage) {
+                // لازم يكون عندك BuildContext هنا عشان تعرض SnackBar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('حدث خطأ في الاتصال: $errorMessage')),
+                );
               },
             );
           } else {
             print("WhatsApp is not working");
           }
-        }):print("Go Ahead WithOut Socket");
+        });
 
         return bloc;
       },
@@ -79,7 +84,6 @@ class OrderScreen extends StatelessWidget {
               previous.spotName != current.spotName;
         },
         builder: (context, state) {
-
           switch (state.defaultOrderState) {
             case RequestState.loading:
               return SizedBox(
@@ -131,12 +135,17 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-          isWhatsAppWorking == true ?
-          state.phoneNumber == 'رقم هاتف العميل'
-                              ? 'رقم هاتف العميل'
-                              : state.phoneNumber.length >= 8
-                              ? state.phoneNumber.replaceRange(0, 8, '########')
-                              : state.phoneNumber: "إنشاء طلب جديد",
+                          isWhatsAppWorking == true
+                              ? state.phoneNumber == 'رقم هاتف العميل'
+                                  ? 'رقم هاتف العميل'
+                                  : state.phoneNumber.length >= 8
+                                  ? state.phoneNumber.replaceRange(
+                                    0,
+                                    8,
+                                    '########',
+                                  )
+                                  : state.phoneNumber
+                              : "إنشاء طلب جديد",
                       centerTitle: true,
                       titleColor: ColorManager.white,
                       leading: Container(
@@ -170,9 +179,10 @@ class OrderScreen extends StatelessWidget {
                             spotName,
                           ),
                           isWhatsAppWorking == true
-                              ? (state.phoneNumber == 'رقم هاتف العميل'? _buildQrSection(context, state.data!.qr)
-                              : SizedBox.shrink())
-                              : _buildPhoneFieldSection(context,phoneNumber),
+                              ? (state.phoneNumber == 'رقم هاتف العميل'
+                                  ? _buildQrSection(context, state.data!.qr)
+                                  : SizedBox.shrink())
+                              : _buildPhoneFieldSection(context, phoneNumber),
                           _buildImageCaptureSection(context),
                           _buildVehicleTypeSelector(context),
 
@@ -181,12 +191,20 @@ class OrderScreen extends StatelessWidget {
                       ),
                     ),
                     bottomSheet: BlocListener<OrderBloc, OrderState>(
-                      listenWhen: (previous, current) =>
-                      previous.storeOrderState != current.storeOrderState,
+                      listenWhen:
+                          (previous, current) =>
+                              previous.storeOrderState !=
+                              current.storeOrderState,
                       listener: (context, state) {
                         if (state.storeOrderState == StoreOrderState.loaded) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("تم إنشاء الطلب بنجاح")),
+                            SnackBar(
+                              content: Text(
+                                isWhatsAppWorking!
+                                    ? "تم إنشاء الطلب بنجاح عبر WhatsApp"
+                                    : "تم إنشاء الطلب بنجاح",
+                              ),
+                            ),
                           );
                           context.read<HomeBloc>().add(ChangeTabEvent(1));
 
@@ -196,130 +214,185 @@ class OrderScreen extends StatelessWidget {
                               MaterialPageRoute(builder: (_) => MainScreen()),
                             );
                           });
-                        }
-
-                        if (state.storeOrderState == StoreOrderState.error) {
+                        } else if (state.storeOrderState ==
+                            StoreOrderState.error) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("فشل في إنشاء الطلب: ${state.errorMessage}")),
+                            SnackBar(
+                              content: Text(
+                                isWhatsAppWorking!
+                                    ? "فشل في إنشاء الطلب عبر WhatsApp: ${state.errorMessage}"
+                                    : "فشل في إنشاء الطلب: ${state.errorMessage}",
+                              ),
+                            ),
                           );
                         }
                       },
-                     child: BlocBuilder<OrderBloc, OrderState>(
-                      builder: (context, state) {
-                        return Material(
-                          color: ColorManager.background,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(25),
-                            topRight: Radius.circular(25),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: AppSizeHeight.s25),
+                      child: BlocBuilder<OrderBloc, OrderState>(
+                        builder: (context, state) {
+                          return Material(
+                            color: ColorManager.background,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(25),
+                              topRight: Radius.circular(25),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                bottom: AppSizeHeight.s25,
+                              ),
 
-                            child: CustomButton(
-                              onTap:
-                                   () async {
-                                print(state.completePhoneNumber?.replaceFirst("+", ''));
+                              child: CustomButton(
+                                onTap: () async {
+                                  bool isValid = false;
+                                  if (isWhatsAppWorking == true) {
+                                    // الحالة لما WhatsApp شغال
+                                    isValid =
+                                        state.selectedVehicleType != null &&
+                                        spotId != null &&
+                                        state.phoneNumber !=
+                                            'رقم هاتف العميل' &&
+                                        state.phoneNumber.isNotEmpty;
+                                  } else {
+                                    // الحالة لما WhatsApp مش شغال
+                                    isValid =
+                                        state.selectedVehicleType != null &&
+                                        spotId != null &&
+                                        state.completePhoneNumber != null &&
+                                        state.completePhoneNumber!
+                                            .replaceFirst("+", '')
+                                            .isNotEmpty;
+                                  }
 
-                                          if (state.selectedVehicleType != null &&spotId != null &&
-                                              isWhatsAppWorking == true?  state.phoneNumber !='رقم هاتف العميل':state.completePhoneNumber!='') {
-                                            File? carImage;
-                                            if (state.image != null) {
-                                              carImage = state.image;
-                                            }
+                                  if (isValid) {
+                                    File? carImage;
+                                    if (state.image != null) {
+                                      carImage = state.image;
+                                    }
 
-                                            final model = StoreOrderModel(
-                                              carImageFile: carImage,
-                                              spotId: spotId,
-                                              carType:
-                                              state.selectedVehicleType.index,
-                                              ClientNumber:isWhatsAppWorking == true ? state.phoneNumber: state.completePhoneNumber!.replaceFirst("+", '') ,
-                                              garageId: state.data!.garageId,
-                                            );
-                                              context.read<OrderBloc>().add( StoreOrderEvent(model),);
-                                          } else {
-                                            if (isWhatsAppWorking == true ?state.phoneNumber == 'رقم هاتف العميل':state.completePhoneNumber=='' ) {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: TextUtils(
-                                                    text:
-                                                    isWhatsAppWorking == true?  'برجاء الطلب من العميل عمل مسح للـ QR.' :'برجاء إدخال رقم العميل.',
-                                                    color: ColorManager.primary,
-                                                    fontSize: FontSize.s13,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: TextUtils(
-                                                    text:
-                                                    'نأسف و لكن يوجد خطأ بالبيانات.',
-                                                    color: ColorManager.primary,
-                                                    fontSize: FontSize.s13,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          }
+                                    final model = StoreOrderModel(
+                                      carImageFile: carImage,
+                                      spotId: spotId,
+                                      carType: state.selectedVehicleType.index,
+                                      ClientNumber:
+                                          isWhatsAppWorking == true
+                                              ? state.phoneNumber
+                                              : state.completePhoneNumber!
+                                                  .replaceFirst("+", ''),
+                                      garageId: state.data!.garageId,
+                                    );
 
-                                      },
-                              btnColor:
-                              isWhatsAppWorking == true
-                                  ? (state.phoneNumber != 'رقم هاتف العميل'
-                                  ? ColorManager.primary
-                                  : ColorManager.lightGrey)
-                                  : (state.completePhoneNumber != ''
-                                  ? ColorManager.primary
-                                  : ColorManager.lightGrey),
+                                    isWhatsAppWorking == true
+                                        ? context.read<OrderBloc>().add(
+                                          StoreOrderWithWhatsAppEvent(model),
+                                        )
+                                        : context.read<OrderBloc>().add(
+                                          StoreOrderNoWhatsAppEvent(model),
+                                        );
+                                  } else {
+                                    if (isWhatsAppWorking == true &&
+                                        (state.phoneNumber ==
+                                            'رقم هاتف العميل')) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: TextUtils(
+                                            text:
+                                                'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                            color: ColorManager.primary,
+                                            fontSize: FontSize.s13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    } else if (isWhatsAppWorking! &&
+                                        (state.completePhoneNumber == null ||
+                                            state
+                                                .completePhoneNumber!
+                                                .isEmpty)) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: TextUtils(
+                                            text: 'برجاء إدخال رقم العميل.',
+                                            color: ColorManager.primary,
+                                            fontSize: FontSize.s13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: TextUtils(
+                                            text:
+                                                'نأسف و لكن يوجد خطأ بالبيانات.',
+                                            color: ColorManager.primary,
+                                            fontSize: FontSize.s13,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                                btnColor:
+                                    isWhatsAppWorking == true
+                                        ? (state.phoneNumber !=
+                                                'رقم هاتف العميل'
+                                            ? ColorManager.primary
+                                            : ColorManager.lightGrey)
+                                        : (state.completePhoneNumber != ''
+                                            ? ColorManager.primary
+                                            : ColorManager.lightGrey),
 
                                 width: MediaQuery.of(context).size.width,
-                              borderColor: ColorManager.white,
-                              elevation: 5,
-                              widget: switch (state.storeOrderState) {
-                                StoreOrderState.initial => TextUtils(
-                                  text: "تأكيد الطلب",
-                                  color:
-                                  state.phoneNumber !=
-                                      'رقم هاتف العميل'
-                                          ? ColorManager.background
-                                          : ColorManager.white,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                StoreOrderState.loading =>
-                                  CircularProgressIndicator(
-                                    color: ColorManager.white,
+                                borderColor: ColorManager.white,
+                                elevation: 5,
+                                widget: switch (state.storeOrderState) {
+                                  StoreOrderState.initial => TextUtils(
+                                    text: "تأكيد الطلب",
+                                    color:
+                                        state.phoneNumber != 'رقم هاتف العميل'
+                                            ? ColorManager.background
+                                            : ColorManager.white,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                StoreOrderState.loaded => TextUtils(
-                                  text: "تأكيد الطلب",
-                                  color: ColorManager.background,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                StoreOrderState.error => TextUtils(
-                                  text:state.storeOrderError,
-                                  color: ColorManager.background,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              },
+                                  StoreOrderState.loading =>
+                                    CircularProgressIndicator(
+                                      color: ColorManager.white,
+                                    ),
+                                  StoreOrderState.loaded => TextUtils(
+                                    text: "تأكيد الطلب",
+                                    color: ColorManager.background,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  StoreOrderState.error => TextUtils(
+                                    text: state.storeOrderError,
+                                    color: ColorManager.background,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                },
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-),
                   ),
                 ),
               );
             case RequestState.error:
-              return buildNonScaffoldErrorBody(context, state.createOrderStatusCode , state.createOrderError);
+              return buildNonScaffoldErrorBody(
+                context,
+                state.createOrderStatusCode,
+                state.createOrderError,
+              );
           }
         },
       ),
@@ -480,6 +553,7 @@ class OrderScreen extends StatelessWidget {
     );
   }
 }
+
 Widget _buildVehicleTypeSelector(BuildContext context) {
   return Card(
     margin: EdgeInsets.symmetric(
@@ -564,7 +638,8 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
     ),
   );
 }
-Widget _buildPhoneFieldSection(BuildContext context , String phoneNumber) {
+
+Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
   return Card(
     margin: EdgeInsets.symmetric(
       horizontal: AppMargin.m16,
@@ -601,25 +676,22 @@ Widget _buildPhoneFieldSection(BuildContext context , String phoneNumber) {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: BlocBuilder<OrderBloc, OrderState>(
             builder: (context, state) {
-              return  Directionality(
+              return Directionality(
                 textDirection: TextDirection.ltr,
-                child:  CustomPhoneField(
+                child: CustomPhoneField(
                   labelText: AppStrings.enterPhone,
                   backgroundColor: ColorManager.background,
                   labelSize: 15,
                   errorText:
-                  state.hasInteractedWithPhone
-                      ? state.phoneErrorMessage
-                      : null,
+                      state.hasInteractedWithPhone
+                          ? state.phoneErrorMessage
+                          : null,
 
                   onChanged: (phone) {
                     context.read<OrderBloc>().add(
                       CompletePhoneChanged(
                         phoneNumber: phone.number, // ex: 1550637983
-                        countryCode: phone.countryCode.replaceFirst(
-                          '+',
-                          '',
-                        ),
+                        countryCode: phone.countryCode.replaceFirst('+', ''),
                       ),
                     );
                   },
@@ -782,7 +854,7 @@ Widget _buildImageCaptureSection(BuildContext context) {
                       height: AppSizeWidth.s40,
                       decoration: BoxDecoration(
                         color: ColorManager.lightGrey,
-                        borderRadius: BorderRadius.circular(AppSizeWidth.s50)
+                        borderRadius: BorderRadius.circular(AppSizeWidth.s50),
                       ),
                       child: Icon(
                         Icons.camera_alt,

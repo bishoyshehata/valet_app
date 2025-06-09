@@ -189,7 +189,7 @@ class ValetProfileScreen extends StatelessWidget {
                                           );
                                         }
                                       },
-                                      hint: Text(status.toString()),
+                                      hint:  TextUtils(text: '...',),
                                       iconStyleData: IconStyleData(
                                         icon: Icon(
                                           Icons.arrow_forward_ios_outlined,
@@ -258,7 +258,7 @@ class ValetProfileScreen extends StatelessWidget {
                                         );
                                       }
                                     },
-                                    hint: Text(status.toString()),
+                                    hint: TextUtils(text: '...',),
                                     iconStyleData: IconStyleData(
                                       icon: Icon(
                                         Icons.arrow_forward_ios_outlined,

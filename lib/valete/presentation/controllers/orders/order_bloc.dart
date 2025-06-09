@@ -84,7 +84,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       ));
     });
 
-    on<StoreOrderEvent>((event, emit) async {
+    on<StoreOrderNoWhatsAppEvent>((event, emit) async {
       emit(state.copyWith(storeOrderState: StoreOrderState.loading));
         if(state.isAllValid!){
         final result = await storeOrderUseCase.storeOrder(event.storeData);
@@ -99,7 +99,6 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
             ));
           },
               (data) {
-
             emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
             MyOrdersBloc(sl(),sl(),sl()).add(GetAllMyOrdersEvent());
             MyOrdersBloc(sl(),sl(),sl()).add(GetMyOrdersEvent(0),);
@@ -111,6 +110,26 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
               storeOrderError :"أسف و لكن رقم الهاتف خطأ",
           ));
         }
+    });
+    on<StoreOrderWithWhatsAppEvent>((event, emit) async {
+      emit(state.copyWith(storeOrderState: StoreOrderState.loading));
+        final result = await storeOrderUseCase.storeOrder(event.storeData);
+        result.fold(
+              (error) {
+                print(error.statusCode);
+            emit(state.copyWith(
+              storeOrderState: StoreOrderState.error,
+              storeOrderError: error.message,
+              createOrderStatusCode: error.statusCode
+            ));
+          },
+              (data) {
+            emit(state.copyWith(storeOrderState: StoreOrderState.loaded, storeOrderData: data));
+            MyOrdersBloc(sl(),sl(),sl()).add(GetAllMyOrdersEvent());
+            MyOrdersBloc(sl(),sl(),sl()).add(GetMyOrdersEvent(0),);
+
+          },
+        );
     });
 
 

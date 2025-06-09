@@ -32,9 +32,14 @@ class UpdateSpotNameEvent extends OrderEvent {
   @override
   List<Object?> get props => [spotName];
 }
-class StoreOrderEvent extends OrderEvent {
+class StoreOrderNoWhatsAppEvent extends OrderEvent {
   final StoreOrderModel storeData;
-  StoreOrderEvent(this.storeData);
+  StoreOrderNoWhatsAppEvent(this.storeData);
+  @override
+  List<Object?> get props => [storeData];
+}class StoreOrderWithWhatsAppEvent extends OrderEvent {
+  final StoreOrderModel storeData;
+  StoreOrderWithWhatsAppEvent(this.storeData);
   @override
   List<Object?> get props => [storeData];
 }

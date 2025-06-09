@@ -50,9 +50,3 @@ class ChangeStatusEvent extends ProfileEvents {
   @override
   List<Object?> get props => [status];
 }
-
-class SaveStatusEvent extends ProfileEvents {
-
-  @override
-  List<Object?> get props => [];
-}
