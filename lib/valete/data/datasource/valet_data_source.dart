@@ -55,10 +55,17 @@ class ValetDataSource extends IValetDataSource {
 
       if (response.statusCode == 200) {
         final result = ValetModel.fromJson(response.data);
-        final jsonString = jsonEncode(result.toJson());
-        await prefs.setString('valetModel', jsonString);
 
-        print(prefs.getInt('valetModel'));
+        prefs.setString('accessToken', result.accessToken);
+        prefs.setInt('valetId', result.id);
+        prefs.setString('valetName', result.name.toString());
+        prefs.setInt('companyId', result.companyId);
+        prefs.setString('companyName', result.companyName.toString());
+        // prefs.setString('password', result.companyName.toString());
+        prefs.setString('whatsapp', result.whatsapp.toString());
+        prefs.setString('valetPhone', result.phone.toString());
+        prefs.setInt('status', result.status);
+        print(prefs.getInt('statusIndex'));
         return result;
       }
       else {
@@ -285,8 +292,14 @@ try {
 
       if (response.statusCode == 200) {
         final result = UpdateValetModel.fromJson(response.data['data']);
-        final jsonString = jsonEncode(result.toJson());
-        await prefs.setString('UpdatedValetModel', jsonString);
+        prefs.setInt('valetId', result.id);
+        prefs.setString('valetName', result.name.toString());
+        prefs.setInt('companyId', result.companyId);
+        prefs.setString('whatsapp', result.whatsapp.toString());
+        prefs.setString('valetPhone', result.phone.toString());
+        prefs.setString('password', '123123123');
+        prefs.setInt('status', result.status);
+        print(prefs.getInt('statusIndex'));
         return result;
       }
       else {

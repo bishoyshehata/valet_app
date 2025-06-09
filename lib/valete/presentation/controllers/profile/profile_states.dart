@@ -14,7 +14,7 @@ class ProfileState {
   final Settings? settingsData;
   final String? settingErrorMessage;
   final bool? isWhatsAppWorking;
-  final RequestState? updateValetState;
+  final RequestStatess? updateValetState;
   final UpdateValetModel? updateValetData;
   final String? updateValetErrorMessage;
   final int? updateValetStatusCode;
@@ -33,12 +33,12 @@ class ProfileState {
     this.isWhatsAppWorking,
     this.settingsState = RequestState.loading,
     this.settingsStatusCode=0,
-    this.updateValetState = RequestState.loading,
+    this.updateValetState = RequestStatess.initial,
     this.updateValetData,
     this.updateValetErrorMessage = '',
     this.updateValetStatusCode = 0,
     this.valetModel,
-    this.selectedStatus,
+    this.selectedStatus = Status.Active,
     this.isStatusChanged = false,
 
 
@@ -56,7 +56,7 @@ class ProfileState {
      Settings? settingsData,
      String? settingErrorMessage,
      bool? isWhatsAppWorking,
-    RequestState? updateValetState,
+    RequestStatess? updateValetState,
     UpdateValetModel? updateValetData,
     String? updateValetErrorMessage,
     int? updateValetStatusCode,
@@ -78,9 +78,9 @@ class ProfileState {
       isWhatsAppWorking: isWhatsAppWorking ?? this.isWhatsAppWorking,
       updateValetState: updateValetState ?? this.updateValetState,
       updateValetData: updateValetData ?? this.updateValetData,
-      updateValetErrorMessage: updateValetErrorMessage ?? this.updateValetErrorMessage,
+      updateValetErrorMessage: updateValetErrorMessage,
       updateValetStatusCode: updateValetStatusCode ?? this.updateValetStatusCode,
-        selectedStatus: selectedStatus ?? this.selectedStatus,
+        selectedStatus: selectedStatus,
         isStatusChanged: isStatusChanged ?? this.isStatusChanged,
       valetModel: valetModel ?? this.valetModel,
 

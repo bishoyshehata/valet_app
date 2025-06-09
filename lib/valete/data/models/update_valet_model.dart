@@ -46,7 +46,24 @@ class UpdateValetModel extends Equatable {
       'status': status,
     };
   }
+  UpdateValetModel copyWith({
+    int? status,
+    String? name,
+    String? phone,
+    // ...
+  }) {
+    return UpdateValetModel(
+      status: status ?? this.status,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      id: id,
+      password: password,
+      whatsapp: whatsapp,
+      companyId: companyId,
 
+
+    );
+  }
   @override
   List<Object?> get props => [id,name,phone,password,whatsapp,companyId,status];
 }

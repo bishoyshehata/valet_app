@@ -22,3 +22,19 @@ enum Status {
   DisActive,
   Busy,
 }
+extension StatusExtension on Status {
+  String get displayName {
+    switch (this) {
+      case Status.Active:
+        return 'متاح';
+      case Status.DisActive:
+        return 'غير متاح';
+      case Status.Busy:
+        return 'مشغول';
+    }
+  }
+
+  int get value => index;
+
+  static Status fromInt(int val) => Status.values[val];
+}

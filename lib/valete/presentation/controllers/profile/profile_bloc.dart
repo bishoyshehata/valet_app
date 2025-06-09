@@ -73,34 +73,56 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
         ));
       });
     });
-    on<UpdateValetEvent>((event, emit)async {
+    on<ChangeStatusEvent>((event, emit) {
+      emit(state.copyWith(
+        selectedStatus: event.status,
+        isStatusChanged: true,
+      ));
+    });
+    on<SaveStatusEvent>((event, emit) {
+      final selectedStatus = state.selectedStatus;
+      final currentData = state.updateValetData;
+
+      if (selectedStatus != null && currentData != null) {
+        final updatedModel = currentData.copyWith(status: selectedStatus.index);
+
+        // ابعت الحدث اللي بيعمل التحديث فعليًا
+      } else {
+        emit(state.copyWith(
+          updateValetErrorMessage: "يرجى اختيار حالة أولاً",
+          updateValetState: RequestStatess.error,
+        ));
+      }
+    });
+
+
+    on<UpdateValetEvent>((event, emit) async {
+      emit(state.copyWith(updateValetState: RequestStatess.loading));
+
       final result = await updateValetUseCase.updateValet(event.model);
+
       result.fold(
-        (error) => emit(
-          state.copyWith(
-
+            (error) {
+          emit(state.copyWith(
             updateValetErrorMessage: error.message,
-            updateValetState: RequestState.error,
+            updateValetState: RequestStatess.error,
             updateValetStatusCode: error.statusCode,
-
-          ),
-        ),
-        (data) {
-          print(data);
-          emit(
-            state.copyWith(
-              updateValetData: data,
-              updateValetState: RequestState.loaded,
-              updateValetStatusCode: 200,
-            ),
-          );
-          final prefs = SharedPreferences.getInstance();
-          prefs.then((value) {
-            value.setString('UpdatedValetModel', data.toJson().toString());
-          });
-        }
+          ));
+        },
+            (data) async {
+          print(Status.values[data.status]);
+          emit(state.copyWith(
+            updateValetData: data,
+            updateValetState: RequestStatess.loaded,
+            updateValetStatusCode: 200,
+            isStatusChanged: false,
+            selectedStatus: Status.values[data.status],
+          ));
+        },
       );
     });
+
+
 
   }
 }

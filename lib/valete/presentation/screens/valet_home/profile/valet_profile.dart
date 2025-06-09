@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/core/utils/enums.dart';
+import 'package:valet_app/valete/data/models/update_valet_model.dart';
 import 'package:valet_app/valete/presentation/components/custom_app_bar.dart';
+import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_events.dart';
@@ -17,20 +19,23 @@ import '../../../resources/font_manager.dart';
 import '../../../resources/values_manager.dart';
 
 class ValetProfileScreen extends StatelessWidget {
-   ValetProfileScreen({super.key});
+  ValetProfileScreen({super.key});
 
-  Future<Map<String, String?>> loadPreferenceData() async {
+  Future<Map<String, dynamic>> loadPreferenceData() async {
     final prefs = await SharedPreferences.getInstance();
     return {
-      'valetId': prefs.getString('valetId'),
+      'valetId': prefs.getInt('valetId'),
       'valetName': prefs.getString('valetName'),
       'companyName': prefs.getString('companyName'),
       'whatsapp': prefs.getString('whatsapp'),
+      'valetPhone': prefs.getString('valetPhone'),
+      // 'password': prefs.getString('password'),
+      'status': prefs.getInt('status'),
+      'companyId': prefs.getInt('companyId'),
     };
   }
+
   List<Status> statusList = Status.values;
-   Status? selectedStatus;
-   Status? initialStatus = Status.Active;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,10 @@ class ValetProfileScreen extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return const Text('حدث خطأ');
+          return const Text(
+            'حدث خطأ',
+            style: TextStyle(color: Colors.red),
+          ); // error message
         }
 
         final data = snapshot.data!;
@@ -51,7 +59,11 @@ class ValetProfileScreen extends StatelessWidget {
         final valetName = data['valetName'] ?? '---';
         final companyName = data['companyName'] ?? '---';
         final whatsapp = data['whatsapp'] ?? '---';
-
+        final valetPhone = data['valetPhone'] ?? '---';
+        final status = data['status'] ?? 0;
+        final companyId = data['companyId'] ?? '---';
+        // final password = data['password'] ?? '---';
+        final initialStatus = Status.values[status];
         return Scaffold(
           backgroundColor: ColorManager.background,
           appBar: CustomAppBar(
@@ -75,11 +87,12 @@ class ValetProfileScreen extends StatelessWidget {
               padding: EdgeInsets.only(top: AppPadding.p60),
               child: BlocListener<ProfileBloc, ProfileState>(
                 listener: (context, state) {
-                  if (state.logOutState == LogOutState.loaded || state.deleteState == RequestState.loaded) {
+                  if (state.logOutState == LogOutState.loaded ||
+                      state.deleteState == RequestState.loaded) {
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (_) => SplashScreen()),
-                          (route) => false,
+                      (route) => false,
                     );
                   }
                 },
@@ -112,106 +125,217 @@ class ValetProfileScreen extends StatelessWidget {
                     BlocBuilder<ProfileBloc, ProfileState>(
                       builder: (context, state) {
                         return Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-
-                      children: [
-                        Padding(padding: EdgeInsets.only(right: AppSizeWidth.s15),child: Icon(Icons.edit ,color: ColorManager.white,),),
-                        SizedBox(width: AppSizeWidth.s8,),
-                        TextUtils(
-                          text: 'الحالة : ',
-                          color: ColorManager.white,
-                          fontSize: FontSize.s17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppSizeWidth.s8,
-                          ),
-                          alignment: Alignment.center,
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            color: ColorManager.primary,
-                            borderRadius: BorderRadius.circular(
-                              AppSizeHeight.s10,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: AppSizeWidth.s15),
+                              child: Icon(
+                                Icons.edit,
+                                color: ColorManager.white,
+                              ),
                             ),
-                          ),
-                          width: AppSizeWidth.s100,
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<Status>(
-                              isExpanded: true,
-                              items: statusList.map((status) {
-                                return DropdownMenuItem<Status>(
-                                  value: status,
-                                  child: TextUtils(
-                                    text: status.displayName,
-                                    color: ColorManager.background,
-                                    fontSize: FontSize.s15,
+                            SizedBox(width: AppSizeWidth.s8),
+                            TextUtils(
+                              text: 'الحالة : ',
+                              color: ColorManager.white,
+                              fontSize: FontSize.s17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppSizeWidth.s8,
+                              ),
+                              alignment: Alignment.center,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                color: ColorManager.primary,
+                                borderRadius: BorderRadius.circular(
+                                  AppSizeHeight.s10,
+                                ),
+                              ),
+                              width: AppSizeWidth.s100,
+                              child: DropdownButtonHideUnderline(
+                                child: switch (state.updateValetState) {
+                                  RequestStatess.loading => Container(
+                                    padding: EdgeInsets.all(AppPadding.p8) ,
+                                    width: AppSizeHeight.s35,
+                                    height: AppSizeHeight.s35,
+                                    child: CircularProgressIndicator(
+                                      color: ColorManager.white,
+                                    ),
+                                  ),
+                                  RequestStatess.loaded =>
+                                    DropdownButton2<Status>(
+                                      isExpanded: true,
+                                      items:
+                                          statusList.map((status) {
+                                            return DropdownMenuItem<Status>(
+                                              value: status,
+                                              child: TextUtils(
+                                                text: status.displayName,
+                                                color: ColorManager.background,
+                                                fontSize: FontSize.s15,
+                                                fontWeight:
+                                                    FontWeightManager.bold,
+                                              ),
+                                            );
+                                          }).toList(),
+                                      value:
+                                          state.selectedStatus ?? initialStatus,
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          context.read<ProfileBloc>().add(
+                                            ChangeStatusEvent(value),
+                                          );
+                                        }
+                                      },
+                                      hint: Text(status.toString()),
+                                      iconStyleData: IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_forward_ios_outlined,
+                                          color: ColorManager.background,
+                                        ),
+                                        iconSize: 14,
+                                        iconEnabledColor: Colors.yellow,
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: AppSizeHeight.s250,
+                                        width: AppSizeWidth.s120,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                          color: ColorManager.primary,
+                                        ),
+                                        offset: const Offset(-20, 0),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(40),
+                                          thickness:
+                                              MaterialStateProperty.all<double>(
+                                                6,
+                                              ),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all<bool>(
+                                                true,
+                                              ),
+                                        ),
+                                      ),
+                                      menuItemStyleData: MenuItemStyleData(
+                                        height: AppSizeHeight.s35,
+                                        padding: EdgeInsets.only(
+                                          left: 14,
+                                          right: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  RequestStatess.error => TextUtils(
+                                    text:
+                                        state.updateValetStatusCode.toString(),
+                                  ),
+                                  null => throw UnimplementedError(),
+                                  RequestStatess.initial => DropdownButton2<Status>(
+                                    isExpanded: true,
+                                    items:
+                                    statusList.map((status) {
+                                      return DropdownMenuItem<Status>(
+                                        value: status,
+                                        child: TextUtils(
+                                          text: status.displayName,
+                                          color: ColorManager.background,
+                                          fontSize: FontSize.s15,
+                                          fontWeight:
+                                          FontWeightManager.bold,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    value:
+                                    state.selectedStatus ?? initialStatus,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context.read<ProfileBloc>().add(
+                                          ChangeStatusEvent(value),
+                                        );
+                                      }
+                                    },
+                                    hint: Text(status.toString()),
+                                    iconStyleData: IconStyleData(
+                                      icon: Icon(
+                                        Icons.arrow_forward_ios_outlined,
+                                        color: ColorManager.background,
+                                      ),
+                                      iconSize: 14,
+                                      iconEnabledColor: Colors.yellow,
+                                      iconDisabledColor: Colors.grey,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: AppSizeHeight.s250,
+                                      width: AppSizeWidth.s120,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          14,
+                                        ),
+                                        color: ColorManager.primary,
+                                      ),
+                                      offset: const Offset(-20, 0),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(40),
+                                        thickness:
+                                        MaterialStateProperty.all<double>(
+                                          6,
+                                        ),
+                                        thumbVisibility:
+                                        MaterialStateProperty.all<bool>(
+                                          true,
+                                        ),
+                                      ),
+                                    ),
+                                    menuItemStyleData: MenuItemStyleData(
+                                      height: AppSizeHeight.s35,
+                                      padding: EdgeInsets.only(
+                                        left: 14,
+                                        right: 14,
+                                      ),
+                                    ),
+                                  ),
+                                },
+                              ),
+                            ),
+
+                            // **زر حفظ التغييرات يظهر فقط لو حصل تغيير**
+                            if (state.isStatusChanged)
+                              Padding(
+                                padding:  EdgeInsets.only(left: AppPadding.p20 , right: AppPadding.p20 ),
+                                child: CustomButton(
+                                  onTap: () async {
+                                    final newUser = UpdateValetModel(
+                                      id: valetId,
+                                      name: valetName,
+                                      phone: valetPhone,
+                                      password: '123123123',
+                                      whatsapp: whatsapp,
+                                      companyId: companyId,
+                                      status: state.selectedStatus?.index ?? 0,
+                                    );
+                                    context.read<ProfileBloc>().add(
+                                      UpdateValetEvent(newUser),
+                                    );
+                                  },
+                                  widget: TextUtils(
+                                    text: 'حفظ',
+                                    color: ColorManager.white,
                                     fontWeight: FontWeightManager.bold,
                                   ),
-                                );
-                              }).toList(),
-                              value: selectedStatus ?? initialStatus,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  context.read<ProfileBloc>().add(ChangeStatusEvent(value));
-                                }
-                              },
-                              hint: Text("اختر الحالة"),
-                              iconStyleData: IconStyleData(
-                                icon: Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  color: ColorManager.background,
-                                ),
-                                iconSize: 14,
-                                iconEnabledColor: Colors.yellow,
-                                iconDisabledColor: Colors.grey,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: AppSizeHeight.s250,
-                                width: AppSizeWidth.s120,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    14,
-                                  ),
-                                  color: ColorManager.primary,
-                                ),
-                                offset: const Offset(-20, 0),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness:
-                                  MaterialStateProperty.all<
-                                      double
-                                  >(6),
-                                  thumbVisibility:
-                                  MaterialStateProperty.all<bool>(
-                                    true,
-                                  ),
+                                  btnColor: ColorManager.success,
+                                  width: AppSizeWidth.s100,
+                                  height: AppSizeHeight.s35,
+                                  radius: AppSizeHeight.s10,
                                 ),
                               ),
-                              menuItemStyleData: MenuItemStyleData(
-                                height: AppSizeHeight.s35,
-                                padding: EdgeInsets.only(
-                                  left: 14,
-                                  right: 14,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        // if (state.isChanged)
-                        //   ElevatedButton(
-                        //     onPressed: () {
-                        //       context.read<ProfileBloc>().add(SaveStatusEvent());
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         SnackBar(content: Text("تم حفظ التغييرات")),
-                        //       );
-                        //     },
-                        //     child: Text("حفظ التغييرات"),
-                        //   ),
-                      ],
-                    );
-  },
-),
+                          ],
+                        );
+                      },
+                    ),
 
                     ListTile(
                       leading: Icon(
@@ -255,7 +379,6 @@ class ValetProfileScreen extends StatelessWidget {
                             context.read<ProfileBloc>().add(
                               DeleteValetEvent(int.parse(valetId)),
                             );
-
                           },
                         );
                       },
@@ -289,17 +412,5 @@ class ValetProfileScreen extends StatelessWidget {
         );
       },
     );
-  }
-}
-extension StatusExtension on Status {
-  String get displayName {
-    switch (this) {
-      case Status.Active:
-        return "نشط";
-      case Status.DisActive:
-        return "غير نشط";
-      case Status.Busy:
-        return "مشغول";
-    }
   }
 }

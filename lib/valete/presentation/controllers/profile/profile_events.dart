@@ -32,23 +32,27 @@ class GetSettingsEvent extends ProfileEvents {
 class UpdateValetEvent extends ProfileEvents {
   final UpdateValetModel model;
   UpdateValetEvent(this.model);
-
   @override
   List<Object?> get props => [model];
 }
+
+class LoadUserDataEvent extends ProfileEvents {
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+}
+
 class ChangeStatusEvent extends ProfileEvents {
   final Status status;
+
   ChangeStatusEvent(this.status);
 
   @override
-  List<Object?> get props =>[status];
+  List<Object?> get props => [status];
 }
 
-class InitProfileEvent extends ProfileEvents {
-  final UpdateValetModel model;
-  InitProfileEvent(this.model);
+class SaveStatusEvent extends ProfileEvents {
 
   @override
-  List<Object?> get props =>[model];
+  List<Object?> get props => [];
 }
-
