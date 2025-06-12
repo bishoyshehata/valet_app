@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:valet_app/core/network/api_constants.dart';
 import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
+import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import '../../../domain/entities/spot.dart';
@@ -20,6 +21,7 @@ import '../../controllers/myorders/my_orders_events.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../garage_screen/garage_screen.dart';
+import '../valet_home/order_status/orders_status.dart';
 import 'order_full_screen.dart';
 import 'package:collection/collection.dart';
 
@@ -138,7 +140,9 @@ class OrderDetails extends StatelessWidget {
                                       context.read<HomeBloc>().add(
                                         CancelHomeOrderEvent(spot!.order!.id),
                                       );
-                                      context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+                                      context.read<MyOrdersBloc>().add(
+                                        GetAllMyOrdersEvent(),
+                                      );
 
                                       Navigator.pop(context);
                                     },
@@ -559,53 +563,100 @@ class OrderDetails extends StatelessWidget {
                         color: ColorManager.background,
                         child: Padding(
                           padding: EdgeInsets.only(bottom: AppSizeHeight.s25),
-                          child: CustomButton(
-                            onTap: () {
-                              context.read<HomeBloc>().add(
-                                UpdateOrderSpotEvent(
-                                  spot!.order!.id,
-                                  (newSpot?.id) ?? spot.id,
-                                  int.parse(
-                                    selectedGarageId ??
-                                        garageNamesList!.firstWhere(
-                                          (garage) =>
-                                              garage['name'] == garageName,
-                                        )['id']!,
+                          child: SizedBox(
+                            height: AppSizeHeight.s120,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  BlocListener<MyOrdersBloc, MyOrdersState>(
+                                    listenWhen:
+                                        (previous, current) =>
+                                            current.updateOrderStatusState ==
+                                            UpdateOrderState.loaded,
+                                    listener: (context, state) {
+                                      Navigator.pop(context);
+                                    },
+                                    child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                                      builder: (context, state) {
+                                        return CustomButton(
+                                          onTap: () {
+                                            context.read<MyOrdersBloc>().add(
+                                              UpdateOrderStatusEvent(
+                                                spot.order!.id,
+                                                1,
+                                              ),
+                                            );
+                                          },
+                                          btnColor: ColorManager.primary,
+                                          widget: buildButtonContent(
+                                            state.updatingOrderId ==
+                                                    spot!.order!.id
+                                                ? state.updateOrderStatusState
+                                                : UpdateOrderState.initial,
+                                            'توصيل المركبة',
+                                          ),
+                                          height: AppSizeHeight.s35,
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              );
-                              context.read<HomeBloc>().add(
-                                ResetSpotNameEvent(),
-                              );
-                              context.read<HomeBloc>().add(GetMyGaragesEvent());
+                                  SizedBox(height: AppSizeHeight.s20),
+                                  CustomButton(
+                                    onTap: () {
+                                      context.read<HomeBloc>().add(
+                                        UpdateOrderSpotEvent(
+                                          spot!.order!.id,
+                                          (newSpot?.id) ?? spot.id,
+                                          int.parse(
+                                            selectedGarageId ??
+                                                garageNamesList!.firstWhere(
+                                                  (garage) =>
+                                                      garage['name'] ==
+                                                      garageName,
+                                                )['id']!,
+                                          ),
+                                        ),
+                                      );
+                                      context.read<HomeBloc>().add(
+                                        ResetSpotNameEvent(),
+                                      );
+                                      context.read<HomeBloc>().add(
+                                        GetMyGaragesEvent(),
+                                      );
 
-                              Navigator.pop(context);
-                              // print(spot!.order!.id);
-                              // print(spot.id);
-                              // print(  int.parse(selectedGarageId!) ?? garageNamesList!.firstWhere((garage) => garage['name'] == garageName)['id']);
-                            },
+                                      Navigator.pop(context);
+                                      // print(spot!.order!.id);
+                                      // print(spot.id);
+                                      // print(  int.parse(selectedGarageId!) ?? garageNamesList!.firstWhere((garage) => garage['name'] == garageName)['id']);
+                                    },
 
-                            btnColor:
-                                (newSpot?.id == null &&
-                                        selectedGarageId == null)
-                                    ? ColorManager.darkGrey
-                                    : ColorManager.primary,
-                            widget: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.edit,
-                                  size: AppSizeHeight.s20,
-                                  color: ColorManager.background,
-                                ),
-                                SizedBox(width: AppSizeWidth.s10),
-                                TextUtils(
-                                  text: 'تأكيد التعديل',
-                                  color: ColorManager.background,
-                                  fontSize: FontSize.s17,
-                                  fontWeight: FontWeightManager.bold,
-                                ),
-                              ],
+                                    btnColor:
+                                        (newSpot?.id == null &&
+                                                selectedGarageId == null)
+                                            ? ColorManager.darkGrey
+                                            : ColorManager.primary,
+                                    widget: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.edit,
+                                          size: AppSizeHeight.s20,
+                                          color: ColorManager.background,
+                                        ),
+                                        SizedBox(width: AppSizeWidth.s10),
+                                        TextUtils(
+                                          text: 'تأكيد التعديل',
+                                          color: ColorManager.background,
+                                          fontSize: FontSize.s17,
+                                          fontWeight: FontWeightManager.bold,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
