@@ -41,7 +41,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         overFlow: TextOverflow.ellipsis,
         noOfLines: 1,
         fontFamily: 'cairo',
-        fontSize: FontSize.s20,
+        fontSize: FontSize.s15,
       ),
     );
   }

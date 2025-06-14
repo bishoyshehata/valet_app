@@ -433,7 +433,7 @@ class OrderScreen extends StatelessWidget {
     return Card(
 
       margin: EdgeInsets.symmetric(
-        horizontal: AppMargin.m10,
+        horizontal: AppMargin.m16,
         vertical: AppMargin.m10,
       ),
       color: ColorManager.grey,
@@ -445,15 +445,17 @@ class OrderScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // جراج - Dropdown
-          SizedBox(
+          Container(
             width: MediaQuery.of(context).size.width * .9,
+            height:AppSizeHeight.s50 ,
+
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.center,
                   margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-                  padding: EdgeInsets.only(right: AppPadding.p5, bottom: AppPadding.p20),
+                  padding: EdgeInsets.only(right: AppPadding.p5),
                   decoration: BoxDecoration(
                     border: Border(
                       right: BorderSide(color: ColorManager.primary, width: 3),
@@ -470,7 +472,7 @@ class OrderScreen extends StatelessWidget {
 
                 ),
                 Container(
-                  margin: EdgeInsets.only( left: AppMargin.m24  ),
+                  margin: EdgeInsets.only(left: AppMargin.m24 ,top: AppMargin.m20,bottom: AppMargin.m2 ),
 
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
@@ -542,17 +544,18 @@ class OrderScreen extends StatelessWidget {
             ),
           ),
           // الباكية - Dropdown
-          SizedBox(
+          Container(
             width: MediaQuery.of(context).size.width * .9,
-
+            height:AppSizeHeight.s50 ,
+            alignment: Alignment.center,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
 
-                  alignment: Alignment.centerRight,
-                  margin: EdgeInsets.only(right: AppMargin.m24),
-                  padding: EdgeInsets.only(right: AppPadding.p5,bottom: AppPadding.p20),
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(right: AppMargin.m24,bottom: AppMargin.m20 ),
+                  padding: EdgeInsets.only(right: AppPadding.p5),
                   decoration: BoxDecoration(
                     border: Border(
                       right: BorderSide(color: ColorManager.primary, width: 3),
@@ -568,7 +571,7 @@ class OrderScreen extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only( left: AppMargin.m24 , bottom:AppMargin.m14 ),
+                  margin: EdgeInsets.only(left: AppMargin.m24 , bottom:AppMargin.m10,top: AppMargin.m10),
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,

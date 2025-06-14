@@ -164,7 +164,6 @@ class OrdersScreen extends StatelessWidget {
                                         text:
                                         '${state.ordersByStatus[option['id']]
                                             ?.length ?? 0}',
-                                        fontSize: FontSize.s10,
                                         color: ColorManager.white,
                                         fontWeight: FontWeightManager.bold,
                                       ),
