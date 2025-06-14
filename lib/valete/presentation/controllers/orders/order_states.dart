@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:valet_app/valete/domain/entities/default_order.dart';
+import 'package:valet_app/valete/domain/entities/create_order.dart';
 
 import '../../../../core/utils/enums.dart';
 
@@ -15,6 +15,7 @@ class OrderState {
   final CreateOrder? data;
   final String phoneNumber;
   final String spotName;
+  final String garageName;
   final StoreOrderState storeOrderState;
   final String storeOrderError;
   final int storeOrderStatusCode;
@@ -36,6 +37,7 @@ class OrderState {
     this.isLoading = false,
     this.phoneNumber = 'رقم هاتف العميل',
     this.spotName = 'رقم الباكية',
+    this.garageName = 'اسم الجراج',
     this.storeOrderState = StoreOrderState.initial,
     this.storeOrderError = '',
     this.storeOrderStatusCode = 0,
@@ -61,6 +63,7 @@ class OrderState {
     CreateOrder? data,
     String? phoneNumber,
     String? spotName,
+    String? garageName,
     StoreOrderState? storeOrderState,
      String? storeOrderError,
      int? storeOrderStatusCode,
@@ -83,6 +86,7 @@ class OrderState {
       data: data ?? this.data,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       spotName: spotName ?? this.spotName,
+      garageName: garageName ?? this.garageName,
       storeOrderState: storeOrderState ?? this.storeOrderState,
       storeOrderError: storeOrderError ?? this.storeOrderError,
       storeOrderStatusCode: storeOrderStatusCode ?? this.storeOrderStatusCode,

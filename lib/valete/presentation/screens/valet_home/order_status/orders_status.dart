@@ -333,7 +333,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text: 'تمت الإضافة: ${formatDate(order.garage.addedOn)}',
+                    text: 'تمت الإضافة: ${formatDate(order.garage.addedOn!)}',
                     color: ColorManager.lightGrey,
                   ),
                   const SizedBox(height: 6),

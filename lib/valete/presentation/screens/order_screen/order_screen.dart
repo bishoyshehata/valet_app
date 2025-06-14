@@ -8,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/data/datasource/socket/socket_manager.dart';
+import 'package:valet_app/valete/data/models/my_garages_models.dart';
+import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import 'package:valet_app/valete/domain/usecases/create_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/store_order_use_case.dart';
 import 'package:valet_app/valete/presentation/controllers/login/login_bloc.dart';
@@ -81,7 +83,7 @@ class OrderScreen extends StatelessWidget {
         buildWhen: (previous, current) {
           return previous.defaultOrderState != current.defaultOrderState ||
               previous.phoneNumber != current.phoneNumber ||
-              previous.spotName != current.spotName;
+              previous.spotName != current.spotName || previous.garageName != current.garageName;
         },
         builder: (context, state) {
           switch (state.defaultOrderState) {
@@ -113,16 +115,34 @@ class OrderScreen extends StatelessWidget {
               );
 
             case RequestState.loaded:
-              final spotName =
-                  state.spotName == 'رقم الباكية'
-                      ? state.data!.spotName
-                      : state.spotName;
-              final spotId =
-                  state.spotName == 'رقم الباكية'
-                      ? state.data!.spotId
-                      : state.data!.spots
-                          .firstWhere((spot) => spot.code == spotName)
-                          .id;
+              final garageName = state.garageName == 'اسم الجراج'
+                  ? state.data!.garageName
+                  : state.garageName;
+              final selectedGarageId = state.garageName == 'اسم الجراج'
+                  ? state.data!.garageId
+                  : state.data!.garages
+                  .firstWhere(
+                    (garage) => garage.name == garageName,
+                orElse: () => MyGaragesModel.empty()
+                , // 🔁 نوع صحيح
+              )
+                  .id;
+
+
+              final filteredSpots = state.data!.spots
+                  .where((spot) => spot.garageId == selectedGarageId)
+                  .toList();
+
+              final spotName = state.spotName == 'رقم الباكية'
+                  ? state.data!.spotName
+                  : state.spotName;
+
+              final spotId = filteredSpots.isNotEmpty
+                  ? filteredSpots
+                  .firstWhere(
+                    (spot) => spot.code == spotName,
+                orElse: () => filteredSpots.first, // تجنب الخطأ لو spotName غير موجود
+              ).id : null;
               return Directionality(
                 textDirection: TextDirection.rtl,
                 child: WillPopScope(
@@ -173,10 +193,12 @@ class OrderScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           _buildGarageInfoCard(
-                            state.data!.garageName,
-                            state.data!.spots,
+                            state.data!.garages,
+                              filteredSpots,
                             context,
                             spotName,
+                              garageName
+
                           ),
                           isWhatsAppWorking == true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
@@ -269,15 +291,16 @@ class OrderScreen extends StatelessWidget {
                                     }
 
                                     final model = StoreOrderModel(
+
                                       carImageFile: carImage,
-                                      spotId: spotId,
+                                      spotId: spotId!,
                                       carType: state.selectedVehicleType.index,
                                       ClientNumber:
                                           isWhatsAppWorking == true
                                               ? state.phoneNumber
                                               : state.completePhoneNumber!
                                                   .replaceFirst("+", ''),
-                                      garageId: state.data!.garageId,
+                                      garageId: selectedGarageId,
                                     );
 
                                     isWhatsAppWorking == true
@@ -401,14 +424,16 @@ class OrderScreen extends StatelessWidget {
 
   /// widgets
   Widget _buildGarageInfoCard(
-    String garage,
+    List<MyGarages> garage,
     List<Spot> spots,
     BuildContext context,
     String selectedSpotName,
+    String selectedGarageName,
   ) {
     return Card(
+
       margin: EdgeInsets.symmetric(
-        horizontal: AppMargin.m16,
+        horizontal: AppMargin.m10,
         vertical: AppMargin.m10,
       ),
       color: ColorManager.grey,
@@ -417,67 +442,36 @@ class OrderScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSizeHeight.s10),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // جراج
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-            padding: EdgeInsets.only(right: AppPadding.p5),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: ColorManager.primary, width: 3),
-              ),
-            ),
-            child: RichText(
-              textDirection: TextDirection.rtl,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'التوجه إلى جراج : ',
+          // جراج - Dropdown
+          SizedBox(
+            width: MediaQuery.of(context).size.width * .9,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  alignment: Alignment.centerRight,
+                  margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
+                  padding: EdgeInsets.only(right: AppPadding.p5, bottom: AppPadding.p20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(color: ColorManager.primary, width: 3),
+                    ),
+                  ),
+                  child:  Text(
+                    'التوجه إلى جراج : ',
                     style: GoogleFonts.cairo(
                       color: ColorManager.white,
                       fontSize: FontSize.s17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TextSpan(
-                    text: garage,
-                    style: GoogleFonts.cairo(
-                      color: ColorManager.primary,
-                      fontSize: FontSize.s17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
 
-          // الباكية - Dropdown
-          Container(
-            alignment: Alignment.centerRight,
-            margin: EdgeInsets.only(
-              bottom: AppMargin.m16,
-              right: AppMargin.m24,
-            ),
-            padding: EdgeInsets.only(right: AppPadding.p5),
-            decoration: BoxDecoration(
-              border: Border(
-                right: BorderSide(color: ColorManager.primary, width: 3),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'بالباكية : ',
-                  style: GoogleFonts.cairo(
-                    color: ColorManager.white,
-                    fontSize: FontSize.s17,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
                 Container(
+                  margin: EdgeInsets.only( left: AppMargin.m24  ),
+
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,
@@ -490,7 +484,104 @@ class OrderScreen extends StatelessWidget {
                     child: DropdownButton2<String>(
                       isExpanded: true,
                       items:
-                          spots.map((spot) {
+                      garage.map((garage) {
+                        return DropdownMenuItem<String>(
+                          value: garage.name,
+                          child: TextUtils(
+                            text: garage.name,
+                            color: ColorManager.background,
+                            fontSize: FontSize.s15,
+                            fontWeight: FontWeightManager.bold,
+                          ),
+                        );
+                      }).toList(),
+                      value: selectedGarageName,
+                      onChanged: (value) {
+                        context.read<OrderBloc>().add(UpdateGarageNameEvent(value!));
+                        context.read<OrderBloc>().add(UpdateSpotNameEvent('رقم الباكية'));
+                        print(value);
+                      },
+                      hint: TextUtils(
+                        text: "الجراج ممتلئ",
+                        color: ColorManager.background,
+                        fontSize: FontSize.s11,
+                        fontWeight: FontWeightManager.bold,
+                      ),
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          color: ColorManager.background,
+                        ),
+                        iconSize: 14,
+                        iconEnabledColor: Colors.yellow,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: AppSizeWidth.s120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: ColorManager.primary,
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(
+                            true,
+                          ),
+                        ),
+                      ),
+                      menuItemStyleData: MenuItemStyleData(
+                        height: AppSizeHeight.s35,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          // الباكية - Dropdown
+          SizedBox(
+            width: MediaQuery.of(context).size.width * .9,
+
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+
+                  alignment: Alignment.centerRight,
+                  margin: EdgeInsets.only(right: AppMargin.m24),
+                  padding: EdgeInsets.only(right: AppPadding.p5,bottom: AppPadding.p20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(color: ColorManager.primary, width: 3),
+                    ),
+                  ),
+                  child: Text(
+                    'بالباكية : ',
+                    style: GoogleFonts.cairo(
+                      color: ColorManager.white,
+                      fontSize: FontSize.s17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only( left: AppMargin.m24 , bottom:AppMargin.m14 ),
+                  padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: ColorManager.primary,
+                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                  ),
+                  width: AppSizeWidth.s100,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      items:
+                      spots.map((spot) {
                             return DropdownMenuItem<String>(
                               value: spot.code,
                               child: TextUtils(

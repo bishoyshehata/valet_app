@@ -135,9 +135,9 @@ class ValetHomeScreen extends StatelessWidget {
                               child: GarageCard(
                                 name: garage.name,
                                 address: garage.address?? 'غير محدد',
-                                capacity: garage.capacity,
-                                busySpots: garage.busySpotCount,
-                                emptySpots: garage.emptySpotCount,
+                                capacity: garage.capacity!,
+                                busySpots: garage.busySpotCount!,
+                                emptySpots: garage.emptySpotCount!,
                               ),
                             );
                           },

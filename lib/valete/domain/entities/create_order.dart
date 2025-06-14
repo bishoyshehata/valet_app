@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import 'package:valet_app/valete/domain/entities/spot.dart';
 
 class CreateOrder extends Equatable {
@@ -13,6 +14,7 @@ class CreateOrder extends Equatable {
   final int capacityFull;
   final int totalBusy;
   final List<Spot> spots ;
+  final List<MyGarages> garages ;
 
   const CreateOrder({
     required this.garageId,
@@ -26,6 +28,7 @@ class CreateOrder extends Equatable {
     required this.capacityFull,
     required this.totalBusy,
     required this.spots,
+    required this.garages,
   });
 
   @override

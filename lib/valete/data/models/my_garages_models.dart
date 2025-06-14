@@ -31,10 +31,27 @@ class MyGaragesModel extends MyGarages {
        emptySpotCount: json['emptySpotCount'],
        busySpotCount: json['busySpotCount'],
        companyName: json['companyName'],
+
        // spots:  (json['spots'] as List)
        //     .map((spot) => Spot.fromJson(spot))
        //     .toList(),
      );
+ factory MyGaragesModel.empty() {
+   return MyGaragesModel(
+     id: 0,
+     name: 'جراج افتراضي',
+     priority: 0,
+     description: 'افتراضي',
+     address: 'غير محدد',
+     addedOn:'',
+     capacityOverFlow: false,
+     capacity: 0,
+     companyId: 0,
+     emptySpotCount: 0,
+     busySpotCount: 0,
+     companyName: 'غير معروف',
+   );
+ }
 
 
 

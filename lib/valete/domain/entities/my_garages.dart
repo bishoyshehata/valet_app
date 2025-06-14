@@ -3,17 +3,17 @@ import 'package:valet_app/valete/domain/entities/spot.dart';
 
 abstract class MyGarages extends Equatable {
   final int id;
-  final int priority;
+  final int? priority;
   final String name;
   final String? description;
   final String? address;
-  final String addedOn;
+  final String? addedOn;
   final String? companyName;
-  final bool capacityOverFlow;
-  final int capacity;
-  final int companyId;
-  final int busySpotCount;
-  final int emptySpotCount;
+  final bool? capacityOverFlow;
+  final int? capacity;
+  final int? companyId;
+  final int? busySpotCount;
+  final int? emptySpotCount;
 
   const MyGarages({
     required this.id,
@@ -29,4 +29,5 @@ abstract class MyGarages extends Equatable {
     required this.emptySpotCount,
     required this.busySpotCount,
   });
+
 }

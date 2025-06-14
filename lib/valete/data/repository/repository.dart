@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/valete/data/datasource/valet_data_source.dart';
 import 'package:valet_app/valete/data/models/update_valet_model.dart';
-import 'package:valet_app/valete/domain/entities/default_order.dart';
+import 'package:valet_app/valete/domain/entities/create_order.dart';
 import 'package:valet_app/valete/domain/entities/get_garage_spot.dart';
 import 'package:valet_app/valete/domain/entities/my_garages.dart';
 import 'package:valet_app/valete/domain/entities/my_orders.dart';

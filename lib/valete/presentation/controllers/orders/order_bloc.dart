@@ -73,6 +73,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     on<UpdateSpotNameEvent>((event, emit) {
       emit(state.copyWith(spotName: event.spotName));
     });
+    on<UpdateGarageNameEvent>((event, emit) {
+      emit(state.copyWith(garageName: event.garageName));
+    });
     on<CompletePhoneChanged>((event, emit) {
       final isValid = validateOrderPhoneByCountry(event.countryCode, event.phoneNumber);
 

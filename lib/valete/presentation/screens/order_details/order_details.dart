@@ -276,219 +276,54 @@ class OrderDetails extends StatelessWidget {
                           ),
 
                           SizedBox(height: AppSizeHeight.s20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width*.6,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                            children: [
-                              TextUtils(
-                                text: 'الجراج : ',
-                                color: ColorManager.lightGrey,
-                                fontSize: FontSize.s17,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              BlocBuilder<HomeBloc, HomeState>(
-                                buildWhen: (previous, current) {
-                                  return previous.getGaragesSpotState !=
-                                          current.getGaragesSpotState ||
-                                      previous.garageId != current.garageId ||
-                                      previous.spotName != current.spotName;
-                                },
-                                builder: (context, state) {
-                                  return Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: AppSizeWidth.s8,
-                                    ),
-                                    alignment: Alignment.center,
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      color: ColorManager.primary,
-                                      borderRadius: BorderRadius.circular(
-                                        AppSizeHeight.s10,
-                                      ),
-                                    ),
-                                    width: AppSizeWidth.s135,
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton2<String>(
-                                        isExpanded: true,
-                                        items:
-                                            garageNamesList?.map<
-                                              DropdownMenuItem<String>
-                                            >((garage) {
-                                              final id =
-                                                  garage['id'].toString();
-                                              final name =
-                                                  garage['name'].toString();
-                                              return DropdownMenuItem<String>(
-                                                value: id,
-                                                child: TextUtils(
-                                                  text: name,
-                                                  color:
-                                                      ColorManager.background,
-                                                  fontSize: FontSize.s15,
-                                                  fontWeight:
-                                                      FontWeightManager.bold,
-                                                ),
-                                              );
-                                            }).toList(),
-                                        value: selectedGarageId,
-                                        onChanged: (value) {
-                                          if (value != null) {
-                                            print("onchange value $value");
-
-                                            context.read<HomeBloc>().add(
-                                              UpdateGarageNameEvent(value),
-                                            );
-                                            context.read<HomeBloc>().add(
-                                              GetGarageSpotEvent(
-                                                int.parse(value),
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        hint: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: TextUtils(
-                                            text: garageName,
-                                            color: ColorManager.background,
-                                            fontSize: FontSize.s15,
-                                            fontWeight: FontWeightManager.bold,
-                                          ),
-                                        ),
-                                        iconStyleData: IconStyleData(
-                                          icon: Icon(
-                                            Icons.arrow_forward_ios_outlined,
-                                            color: ColorManager.background,
-                                          ),
-                                          iconSize: 14,
-                                          iconEnabledColor: Colors.yellow,
-                                          iconDisabledColor: Colors.grey,
-                                        ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          maxHeight: AppSizeHeight.s250,
-                                          width: AppSizeWidth.s120,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              14,
-                                            ),
-                                            color: ColorManager.primary,
-                                          ),
-                                          offset: const Offset(-20, 0),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(40),
-                                            thickness:
-                                                MaterialStateProperty.all<
-                                                  double
-                                                >(6),
-                                            thumbVisibility:
-                                                MaterialStateProperty.all<bool>(
-                                                  true,
-                                                ),
-                                          ),
-                                        ),
-                                        menuItemStyleData: MenuItemStyleData(
-                                          height: AppSizeHeight.s35,
-                                          padding: EdgeInsets.only(
-                                            left: 14,
-                                            right: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: AppSizeHeight.s20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                'بالباكية : ',
-                                style: GoogleFonts.cairo(
-                                  color: ColorManager.white,
+                              children: [
+                                TextUtils(
+                                  text: 'الجراج : ',
+                                  color: ColorManager.lightGrey,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                              BlocBuilder<HomeBloc, HomeState>(
-                                buildWhen:
-                                    (previous, current) =>
-                                        previous.getGaragesSpotState !=
+                                BlocBuilder<HomeBloc, HomeState>(
+                                  buildWhen: (previous, current) {
+                                    return previous.getGaragesSpotState !=
                                             current.getGaragesSpotState ||
-                                        previous.spotName != current.spotName ||
-                                        previous.emptySpots !=
-                                            current.emptySpots,
-                                builder: (context, state) {
-                                  switch (state.getGaragesSpotState) {
-                                    case RequestState.loading:
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: ColorManager.white,
+                                        previous.garageId != current.garageId ||
+                                        previous.spotName != current.spotName;
+                                  },
+                                  builder: (context, state) {
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: AppSizeWidth.s8,
+                                      ),
+                                      alignment: Alignment.center,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        color: ColorManager.primary,
+                                        borderRadius: BorderRadius.circular(
+                                          AppSizeHeight.s10,
                                         ),
-                                      );
-
-                                    case RequestState.loaded:
-                                      return Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: AppSizeWidth.s8,
-                                        ),
-                                        alignment: Alignment.center,
-                                        clipBehavior: Clip.antiAlias,
-                                        decoration: BoxDecoration(
-                                          color: ColorManager.primary,
-                                          borderRadius: BorderRadius.circular(
-                                            AppSizeHeight.s10,
-                                          ),
-                                        ),
-                                        width: AppSizeWidth.s135,
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            items:
-                                                emptySpotCodes.map((code) {
-                                                  return DropdownMenuItem<
-                                                    String
-                                                  >(
-                                                    value: code,
-                                                    child: TextUtils(
-                                                      text: code,
-                                                      color:
-                                                          ColorManager
-                                                              .background,
-                                                      fontSize: FontSize.s15,
-                                                      fontWeight:
-                                                          FontWeightManager
-                                                              .bold,
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                            value: dropdownValue,
-                                            onChanged: (value) {
-                                              if (value != null) {
-                                                context.read<HomeBloc>().add(
-                                                  UpdateSpotNameEvent(value),
-                                                );
-                                              }
-                                            },
-                                            hint: BlocBuilder<
-                                              HomeBloc,
-                                              HomeState
-                                            >(
-                                              buildWhen: (prev, curr) => false,
-                                              builder: (context, state) {
-                                                final spot = findSpotById(
-                                                  state,
-                                                  spotId,
-                                                );
-
-                                                return Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
+                                      ),
+                                      width: AppSizeWidth.s135,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          items:
+                                              garageNamesList?.map<
+                                                DropdownMenuItem<String>
+                                              >((garage) {
+                                                final id =
+                                                    garage['id'].toString();
+                                                final name =
+                                                    garage['name'].toString();
+                                                return DropdownMenuItem<String>(
+                                                  value: id,
                                                   child: TextUtils(
-                                                    text:
-                                                        spot?.code ??
-                                                        'لا يوجد كود',
+                                                    text: name,
                                                     color:
                                                         ColorManager.background,
                                                     fontSize: FontSize.s15,
@@ -496,58 +331,230 @@ class OrderDetails extends StatelessWidget {
                                                         FontWeightManager.bold,
                                                   ),
                                                 );
-                                              },
-                                            ),
-                                            iconStyleData: IconStyleData(
-                                              icon: Icon(
-                                                Icons
-                                                    .arrow_forward_ios_outlined,
-                                                color: ColorManager.background,
-                                              ),
-                                              iconSize: 14,
-                                            ),
-                                            dropdownStyleData: DropdownStyleData(
-                                              maxHeight: AppSizeHeight.s250,
-                                              width: AppSizeWidth.s120,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                color: ColorManager.primary,
-                                              ),
-                                              offset: const Offset(-20, 0),
-                                              scrollbarTheme: ScrollbarThemeData(
-                                                radius: const Radius.circular(
-                                                  40,
+                                              }).toList(),
+                                          value: selectedGarageId,
+                                          onChanged: (value) {
+                                            if (value != null) {
+                                              print("onchange value $value");
+
+                                              context.read<HomeBloc>().add(
+                                                UpdateGarageNameEvent(value),
+                                              );
+                                              context.read<HomeBloc>().add(
+                                                GetGarageSpotEvent(
+                                                  int.parse(value),
                                                 ),
-                                                thickness:
-                                                    MaterialStateProperty.all<
-                                                      double
-                                                    >(6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all<
-                                                      bool
-                                                    >(true),
-                                              ),
+                                              );
+                                            }
+                                          },
+                                          hint: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: TextUtils(
+                                              text: garageName,
+                                              color: ColorManager.background,
+                                              fontSize: FontSize.s15,
+                                              fontWeight: FontWeightManager.bold,
                                             ),
-                                            menuItemStyleData:
-                                                MenuItemStyleData(
-                                                  height: AppSizeHeight.s35,
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 14,
+                                          ),
+                                          iconStyleData: IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_forward_ios_outlined,
+                                              color: ColorManager.background,
+                                            ),
+                                            iconSize: 14,
+                                            iconEnabledColor: Colors.yellow,
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: AppSizeHeight.s250,
+                                            width: AppSizeWidth.s120,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                14,
+                                              ),
+                                              color: ColorManager.primary,
+                                            ),
+                                            offset: const Offset(-20, 0),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(40),
+                                              thickness:
+                                                  MaterialStateProperty.all<
+                                                    double
+                                                  >(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all<bool>(
+                                                    true,
                                                   ),
-                                                ),
+                                            ),
+                                          ),
+                                          menuItemStyleData: MenuItemStyleData(
+                                            height: AppSizeHeight.s35,
+                                            padding: EdgeInsets.only(
+                                              left: 14,
+                                              right: 14,
+                                            ),
                                           ),
                                         ),
-                                      );
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: AppSizeHeight.s20),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width*.6,
 
-                                    case RequestState.error:
-                                      return Center(
-                                        child: TextUtils(text: "حدث خطأ"),
-                                      );
-                                  }
-                                },
-                              ),
-                            ],
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'بالباكية : ',
+                                  style: GoogleFonts.cairo(
+                                    color: ColorManager.white,
+                                    fontSize: FontSize.s17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                BlocBuilder<HomeBloc, HomeState>(
+                                  buildWhen:
+                                      (previous, current) =>
+                                          previous.getGaragesSpotState !=
+                                              current.getGaragesSpotState ||
+                                          previous.spotName != current.spotName ||
+                                          previous.emptySpots !=
+                                              current.emptySpots,
+                                  builder: (context, state) {
+                                    switch (state.getGaragesSpotState) {
+                                      case RequestState.loading:
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            color: ColorManager.white,
+                                          ),
+                                        );
+
+                                      case RequestState.loaded:
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: AppSizeWidth.s8,
+                                          ),
+                                          alignment: Alignment.center,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                            color: ColorManager.primary,
+                                            borderRadius: BorderRadius.circular(
+                                              AppSizeHeight.s10,
+                                            ),
+                                          ),
+                                          width: AppSizeWidth.s135,
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items:
+                                                  emptySpotCodes.map((code) {
+                                                    return DropdownMenuItem<
+                                                      String
+                                                    >(
+                                                      value: code,
+                                                      child: TextUtils(
+                                                        text: code,
+                                                        color:
+                                                            ColorManager
+                                                                .background,
+                                                        fontSize: FontSize.s15,
+                                                        fontWeight:
+                                                            FontWeightManager
+                                                                .bold,
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                              value: dropdownValue,
+                                              onChanged: (value) {
+                                                if (value != null) {
+                                                  context.read<HomeBloc>().add(
+                                                    UpdateSpotNameEvent(value),
+                                                  );
+                                                }
+                                              },
+                                              hint: BlocBuilder<
+                                                HomeBloc,
+                                                HomeState
+                                              >(
+                                                buildWhen: (prev, curr) => false,
+                                                builder: (context, state) {
+                                                  final spot = findSpotById(
+                                                    state,
+                                                    spotId,
+                                                  );
+
+                                                  return Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: TextUtils(
+                                                      text:
+                                                          spot?.code ??
+                                                          'لا يوجد كود',
+                                                      color:
+                                                          ColorManager.background,
+                                                      fontSize: FontSize.s15,
+                                                      fontWeight:
+                                                          FontWeightManager.bold,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              iconStyleData: IconStyleData(
+                                                icon: Icon(
+                                                  Icons
+                                                      .arrow_forward_ios_outlined,
+                                                  color: ColorManager.background,
+                                                ),
+                                                iconSize: 14,
+                                              ),
+                                              dropdownStyleData: DropdownStyleData(
+                                                maxHeight: AppSizeHeight.s250,
+                                                width: AppSizeWidth.s120,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                  color: ColorManager.primary,
+                                                ),
+                                                offset: const Offset(-20, 0),
+                                                scrollbarTheme: ScrollbarThemeData(
+                                                  radius: const Radius.circular(
+                                                    40,
+                                                  ),
+                                                  thickness:
+                                                      MaterialStateProperty.all<
+                                                        double
+                                                      >(6),
+                                                  thumbVisibility:
+                                                      MaterialStateProperty.all<
+                                                        bool
+                                                      >(true),
+                                                ),
+                                              ),
+                                              menuItemStyleData:
+                                                  MenuItemStyleData(
+                                                    height: AppSizeHeight.s35,
+                                                    padding: EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                    ),
+                                                  ),
+                                            ),
+                                          ),
+                                        );
+
+                                      case RequestState.error:
+                                        return Center(
+                                          child: TextUtils(text: "حدث خطأ"),
+                                        );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -569,39 +576,39 @@ class OrderDetails extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  BlocListener<MyOrdersBloc, MyOrdersState>(
-                                    listenWhen:
-                                        (previous, current) =>
-                                            current.updateOrderStatusState ==
-                                            UpdateOrderState.loaded,
-                                    listener: (context, state) {
-                                      Navigator.pop(context);
-                                    },
-                                    child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
-                                      builder: (context, state) {
-                                        return CustomButton(
-                                          onTap: () {
-                                            context.read<MyOrdersBloc>().add(
-                                              UpdateOrderStatusEvent(
-                                                spot.order!.id,
-                                                1,
-                                              ),
-                                            );
-                                          },
-                                          btnColor: ColorManager.primary,
-                                          widget: buildButtonContent(
-                                            state.updatingOrderId ==
-                                                    spot!.order!.id
-                                                ? state.updateOrderStatusState
-                                                : UpdateOrderState.initial,
-                                            'توصيل المركبة',
-                                          ),
-                                          height: AppSizeHeight.s35,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(height: AppSizeHeight.s20),
+                                  // BlocListener<MyOrdersBloc, MyOrdersState>(
+                                  //   listenWhen:
+                                  //       (previous, current) =>
+                                  //           current.updateOrderStatusState ==
+                                  //           UpdateOrderState.loaded,
+                                  //   listener: (context, state) {
+                                  //     Navigator.pop(context);
+                                  //   },
+                                  //   child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+                                  //     builder: (context, state) {
+                                  //       return CustomButton(
+                                  //         onTap: () {
+                                  //           context.read<MyOrdersBloc>().add(
+                                  //             UpdateOrderStatusEvent(
+                                  //               spot.order!.id,
+                                  //               1,
+                                  //             ),
+                                  //           );
+                                  //         },
+                                  //         btnColor: ColorManager.primary,
+                                  //         widget: buildButtonContent(
+                                  //           state.updatingOrderId ==
+                                  //                   spot!.order!.id
+                                  //               ? state.updateOrderStatusState
+                                  //               : UpdateOrderState.initial,
+                                  //           'توصيل المركبة',
+                                  //         ),
+                                  //         height: AppSizeHeight.s35,
+                                  //       );
+                                  //     },
+                                  //   ),
+                                  // ),
+                                  // SizedBox(height: AppSizeHeight.s20),
                                   CustomButton(
                                     onTap: () {
                                       context.read<HomeBloc>().add(
