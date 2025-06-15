@@ -332,7 +332,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text: 'تمت الإضافة: ${formatDate(order.garage.addedOn!)}',
+                    text: 'منذ : ${formatDate(order.addedOn)}',
                     color: ColorManager.lightGrey,
                   ),
                   const SizedBox(height: 6),
@@ -569,7 +569,7 @@ Color getStatusColor(int status) {
 String formatDate(String dateString) {
   try {
     final date = DateTime.parse(dateString);
-    final formatter = DateFormat('dd/MM/yyyy - hh:mm a');
+    final formatter = DateFormat('dd-MM-yyyy - hh:mm a');
     return formatter.format(date);
   } catch (_) {
     return 'تاريخ غير صالح';

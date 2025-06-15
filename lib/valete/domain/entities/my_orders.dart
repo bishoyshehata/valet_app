@@ -7,6 +7,7 @@ class MyOrders extends Equatable {
   final String? carImage;
   final int status;
   final int carType;
+  final String addedOn;
   final int clientId;
   final String whatsapp;
   final int spotId;
@@ -19,6 +20,7 @@ class MyOrders extends Equatable {
     required this.id,
     required this.carImage,
     required this.status,
+    required this.addedOn,
     required this.carType,
     required this.clientId,
     required this.whatsapp,
@@ -34,6 +36,7 @@ class MyOrders extends Equatable {
     id,
     carImage,
     status,
+    addedOn,
     carType,
     clientId,
     whatsapp,

@@ -22,6 +22,7 @@ import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
 import '../garage_screen/garage_screen.dart';
 import '../valet_home/order_status/orders_status.dart';
+import '../valet_home/valet_main.dart';
 import 'order_full_screen.dart';
 import 'package:collection/collection.dart';
 
@@ -576,44 +577,63 @@ class OrderDetails extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  // BlocListener<MyOrdersBloc, MyOrdersState>(
-                                  //   listenWhen:
-                                  //       (previous, current) =>
-                                  //           current.updateOrderStatusState ==
-                                  //           UpdateOrderState.loaded,
-                                  //   listener: (context, state) {
-                                  //     Navigator.pop(context);
-                                  //   },
-                                  //   child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
-                                  //     builder: (context, state) {
-                                  //       return CustomButton(
-                                  //         onTap: () {
-                                  //           context.read<MyOrdersBloc>().add(
-                                  //             UpdateOrderStatusEvent(
-                                  //               spot.order!.id,
-                                  //               1,
-                                  //             ),
-                                  //           );
-                                  //         },
-                                  //         btnColor: ColorManager.primary,
-                                  //         widget: buildButtonContent(
-                                  //           state.updatingOrderId ==
-                                  //                   spot!.order!.id
-                                  //               ? state.updateOrderStatusState
-                                  //               : UpdateOrderState.initial,
-                                  //           'توصيل المركبة',
-                                  //         ),
-                                  //         height: AppSizeHeight.s35,
-                                  //       );
-                                  //     },
-                                  //   ),
-                                  // ),
-                                  // SizedBox(height: AppSizeHeight.s20),
+                                  spot!.order?.status == 0
+                                      ? BlocListener<
+                                        MyOrdersBloc,
+                                        MyOrdersState
+                                      >(
+                                        listenWhen:
+                                            (previous, current) =>
+                                  previous.updateOrderStatusState !=
+                                  current.updateOrderStatusState,
+                                        listener: (context, state) {
+                                          context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                          Future.delayed(Duration(milliseconds: 1000), () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (_) => MainScreen()),
+                                            );
+                                          });
+
+                                        },
+                                        child: BlocBuilder<
+                                          MyOrdersBloc,
+                                          MyOrdersState
+                                        >(
+                                          builder: (context, state) {
+                                            return CustomButton(
+                                              onTap: () {
+                                                context
+                                                    .read<MyOrdersBloc>()
+                                                    .add(
+                                                      UpdateOrderStatusEvent(
+                                                        spot.order!.id,
+                                                        1,
+                                                      ),
+                                                    );
+                                              },
+                                              btnColor: ColorManager.primary,
+                                              widget: buildButtonContent(
+                                                state.updatingOrderId ==
+                                                        spot.order!.id
+                                                    ? state.updateOrderStatusState
+                                                    : UpdateOrderState.initial,
+                                                'توصيل المركبة',
+                                              ),
+                                              height: AppSizeHeight.s35,
+                                            );
+                                          },
+                                        ),
+                                      )
+                                      : SizedBox(height: 0),
+                                  spot.order?.status == 0
+                                      ? SizedBox(height: AppSizeHeight.s20)
+                                      : SizedBox(height: 0),
                                   CustomButton(
                                     onTap: () {
                                       context.read<HomeBloc>().add(
                                         UpdateOrderSpotEvent(
-                                          spot!.order!.id,
+                                          spot.order!.id,
                                           (newSpot?.id) ?? spot.id,
                                           int.parse(
                                             selectedGarageId ??
@@ -631,10 +651,9 @@ class OrderDetails extends StatelessWidget {
                                       context.read<HomeBloc>().add(
                                         GetMyGaragesEvent(),
                                       );
-
                                       Navigator.pop(context);
                                       // print(spot!.order!.id);
-                                      // print(spot.id);
+                                      // print(spot.order,);
                                       // print(  int.parse(selectedGarageId!) ?? garageNamesList!.firstWhere((garage) => garage['name'] == garageName)['id']);
                                     },
 

@@ -129,13 +129,22 @@ class OrderScreen extends StatelessWidget {
                   .id;
 
 
-              final filteredSpots = state.data!.spots
+              final filteredSpots = state.data?.spots ?? <Spot>[]
                   .where((spot) => spot.garageId == selectedGarageId)
                   .toList();
+            print(filteredSpots);
+              String spotName;
+              if (state.spotName == 'رقم الباكية') {
+                if (filteredSpots.isNotEmpty) {
+                  spotName = filteredSpots[0].code ?? 'رقم الباكية';
+                } else {
+                  spotName = 'رقم الباكية';
+                }
+              } else {
+                spotName = state.spotName;
+              }
 
-              final spotName = state.spotName == 'رقم الباكية'
-                  ? state.data!.spotName
-                  : state.spotName;
+
 
               final spotId = filteredSpots.isNotEmpty
                   ? filteredSpots
@@ -229,7 +238,6 @@ class OrderScreen extends StatelessWidget {
                             ),
                           );
                           context.read<HomeBloc>().add(ChangeTabEvent(1));
-
                           Future.delayed(Duration(milliseconds: 500), () {
                             Navigator.pushReplacement(
                               context,
@@ -570,7 +578,23 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
+               spots.isEmpty? Container(
+                 margin: EdgeInsets.only(left: AppMargin.m24 , bottom:AppMargin.m10,top: AppMargin.m10),
+                 padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
+                 alignment: Alignment.center,
+                 clipBehavior: Clip.antiAlias,
+                 decoration: BoxDecoration(
+                   color: ColorManager.primary,
+                   borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                 ),
+                 width: AppSizeWidth.s100,
+                 child: TextUtils(
+                   text: "الجراج ممتلئ",
+                   color: ColorManager.background,
+                   fontSize: FontSize.s12,
+                   fontWeight: FontWeightManager.bold,
+                 ),
+               ): Container(
                   margin: EdgeInsets.only(left: AppMargin.m24 , bottom:AppMargin.m10,top: AppMargin.m10),
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
@@ -586,7 +610,7 @@ class OrderScreen extends StatelessWidget {
                       items:
                       spots.map((spot) {
                             return DropdownMenuItem<String>(
-                              value: spot.code,
+                              value: spot.code.toString(),
                               child: TextUtils(
                                 text: spot.code,
                                 color: ColorManager.background,

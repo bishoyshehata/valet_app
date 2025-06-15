@@ -16,6 +16,7 @@ class MyOrdersModel extends MyOrders {
     required super.garageId,
     required super.garage,
     required super.valetId,
+    required super.addedOn,
   });
 
   factory MyOrdersModel.fromJson(Map<String, dynamic> json) =>
@@ -24,6 +25,7 @@ class MyOrdersModel extends MyOrders {
           carImage: json['carImage'],
           status: json['status'],
           carType: json['carType'],
+          addedOn: json['addedOn'],
           clientId: json['client']['id'],
           whatsapp: json['client']['whatsapp'],
           spotId: json['spotId'],

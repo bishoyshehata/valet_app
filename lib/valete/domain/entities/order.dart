@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
   final String clientNumber;
   final String? carImage;
   final int carType;
+  final int? status;
 
   const Order({
     required this.id,
@@ -14,6 +15,7 @@ import 'package:equatable/equatable.dart';
     required this.carType,
     required this.spotCode,
     required this.clientNumber,
+    required this.status,
      this.carImage,
   });
 
@@ -25,8 +27,9 @@ import 'package:equatable/equatable.dart';
     spotCode: json['spotCode'],
     clientNumber: json['clientNumber'],
     carImage: json['carImage'],
+status: json['status'],
   );
 
   @override
-  List<Object?> get props => [carType, garageName,id,spotCode ,clientNumber, carImage];
+  List<Object?> get props => [carType, garageName,id,spotCode ,clientNumber, carImage,status];
 }
