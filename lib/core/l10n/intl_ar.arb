@@ -85,5 +85,9 @@
   "mainGarage": "الجراج الرئيسي",
   "noCarsInGarage": "عذراً لا يوجد سيارات بهذا الجراج",
   "reRegister": "إعادة التسجيل",
-  "unexpectedErrorOccurred": "حدث خطأ غير متوقع"
+  "unexpectedErrorOccurred": "حدث خطأ غير متوقع",
+  "changeLanguage": "اللغة",
+  "active": "متاح",
+  "disActive": "غير متاح",
+  "busy": "مشغول"
 }

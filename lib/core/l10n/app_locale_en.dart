@@ -272,4 +272,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unexpectedErrorOccurred => 'An unexpected error occurred';
+
+  @override
+  String get changeLanguage => 'Language';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get disActive => 'DisActive';
+
+  @override
+  String get busy => 'Busy';
 }

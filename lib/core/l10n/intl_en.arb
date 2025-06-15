@@ -85,5 +85,9 @@
   "mainGarage": "Main garage",
   "noCarsInGarage": "Sorry, no cars in this garage",
   "reRegister": "Re-register",
-  "unexpectedErrorOccurred": "An unexpected error occurred"
+  "unexpectedErrorOccurred": "An unexpected error occurred",
+  "changeLanguage": "Language",
+  "active": "Active",
+  "disActive": "DisActive",
+  "busy": "Busy"
 }

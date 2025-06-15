@@ -613,6 +613,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'حدث خطأ غير متوقع'**
   String get unexpectedErrorOccurred;
+
+  /// No description provided for @changeLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللغة'**
+  String get changeLanguage;
+
+  /// No description provided for @active.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح'**
+  String get active;
+
+  /// No description provided for @disActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير متاح'**
+  String get disActive;
+
+  /// No description provided for @busy.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشغول'**
+  String get busy;
 }
 
 class _AppLocalizationsDelegate

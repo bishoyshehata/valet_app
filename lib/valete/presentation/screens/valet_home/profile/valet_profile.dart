@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,6 +71,9 @@ class ValetProfileScreen extends StatelessWidget {
         final companyId = data['companyId'] ?? '---';
         // final password = data['password'] ?? '---';
         final initialStatus = Status.values[status];
+
+        final locale = Localizations.localeOf(context);
+
         return Scaffold(
           backgroundColor: ColorManager.background,
           appBar: CustomAppBar(
@@ -133,8 +137,14 @@ class ValetProfileScreen extends StatelessWidget {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+
                             Padding(
-                              padding: EdgeInsets.only(right: AppSizeWidth.s15),
+                              padding: EdgeInsets.only(
+                                  right: locale.languageCode == 'ar'
+                                      ? AppSizeWidth.s15
+                                      : 0, left: locale.languageCode == 'ar'
+                                  ? 0
+                                  : AppSizeWidth.s15),
                               child: Icon(
                                 Icons.edit,
                                 color: ColorManager.white,
@@ -178,7 +188,7 @@ class ValetProfileScreen extends StatelessWidget {
                                             return DropdownMenuItem<Status>(
                                               value: status,
                                               child: TextUtils(
-                                                text: status.displayName,
+                                                text: status.displayName(context),
                                                 color: ColorManager.background,
                                                 fontSize: FontSize.s15,
                                                 fontWeight:
@@ -247,7 +257,7 @@ class ValetProfileScreen extends StatelessWidget {
                                       return DropdownMenuItem<Status>(
                                         value: status,
                                         child: TextUtils(
-                                          text: status.displayName,
+                                          text: status.displayName(context),
                                           color: ColorManager.background,
                                           fontSize: FontSize.s15,
                                           fontWeight:
@@ -412,34 +422,50 @@ class ValetProfileScreen extends StatelessWidget {
                     ),    BlocBuilder<LanguageBloc, LanguageState>(
   builder: (context, state) {
     return ListTile(
-                      leading: CustomButton(
-                          width: 100,
+      leading: Icon(Icons.language, color: ColorManager.white),
+      title: TextUtils(
+        text: AppLocalizations.of(context)!.changeLanguage,
+        fontSize: FontSize.s17,
+        fontWeight: FontWeight.bold,
+        color: ColorManager.white,
+      ),
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          backgroundColor: ColorManager.white,
+          builder: (context) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Text("🇺🇸", style: TextStyle(fontSize: 20)),
+                  title: Text("English"),
+                  onTap: () async {
+                    context.read<LanguageBloc>().add(ChangeLanguage(Locale('en')));
+                    await PreferencesService().setLanguage(Locale('en'));
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Text("🇸🇦", style: TextStyle(fontSize: 20)),
+                  title: Text("العربية"),
+                  onTap: () async {
+                    context.read<LanguageBloc>().add(ChangeLanguage(Locale('ar')));
+                    await PreferencesService().setLanguage(Locale('ar'));
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
 
-                          onTap: () async {
-                            final newLocale = Locale('en'); // أو 'ar'
-                            context.read<LanguageBloc>().add(ChangeLanguage(newLocale));
-                            await PreferencesService().setLanguage(newLocale); // احفظها
-                          },
-                          btnColor: ColorManager.white, widget: TextUtils(text: "en")),
-                      title: TextUtils(
-                        text: AppLocalizations.of(context)!.logOut,
-                        fontSize: FontSize.s17,
-                        fontWeight: FontWeight.bold,
-                        color: ColorManager.white,
-                      ),
-                      onTap: () async {
-                        await AlertDialogService().showAlertDialog(
-                          context,
-                          title: AppLocalizations.of(context)!.warning,
-                          message: AppLocalizations.of(context)!.areYouSureYouWantToLogOut,
-                          positiveButtonText: AppLocalizations.of(context)!.yes,
-                          negativeButtonText: AppLocalizations.of(context)!.no,
-                          onPositiveButtonPressed: () {
-                            context.read<ProfileBloc>().add(LogoutEvent());
-                          },
-                        );
-                      },
-                    );
+
   },
 ),
                   ],

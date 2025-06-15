@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+import '../l10n/app_locale.dart';
+
 enum RequestState { loading, loaded, error }
 enum RequestStatess {initial, loading, loaded, error }
 
@@ -23,14 +27,14 @@ enum Status {
   Busy,
 }
 extension StatusExtension on Status {
-  String get displayName {
+  String displayName(BuildContext context) {
     switch (this) {
       case Status.Active:
-        return 'متاح';
+        return AppLocalizations.of(context)!.active;
       case Status.DisActive:
-        return 'غير متاح';
+        return AppLocalizations.of(context)!.disActive;
       case Status.Busy:
-        return 'مشغول';
+        return AppLocalizations.of(context)!.busy;
     }
   }
 

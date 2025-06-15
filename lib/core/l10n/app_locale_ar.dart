@@ -270,4 +270,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unexpectedErrorOccurred => 'حدث خطأ غير متوقع';
+
+  @override
+  String get changeLanguage => 'اللغة';
+
+  @override
+  String get active => 'متاح';
+
+  @override
+  String get disActive => 'غير متاح';
+
+  @override
+  String get busy => 'مشغول';
 }
