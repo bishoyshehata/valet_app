@@ -278,7 +278,7 @@ class OrderDetails extends StatelessWidget {
 
                           SizedBox(height: AppSizeHeight.s20),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width*.6,
+                            width: MediaQuery.of(context).size.width * .6,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
@@ -354,7 +354,8 @@ class OrderDetails extends StatelessWidget {
                                               text: garageName,
                                               color: ColorManager.background,
                                               fontSize: FontSize.s15,
-                                              fontWeight: FontWeightManager.bold,
+                                              fontWeight:
+                                                  FontWeightManager.bold,
                                             ),
                                           ),
                                           iconStyleData: IconStyleData(
@@ -370,9 +371,8 @@ class OrderDetails extends StatelessWidget {
                                             maxHeight: AppSizeHeight.s250,
                                             width: AppSizeWidth.s120,
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(
-                                                14,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
                                               color: ColorManager.primary,
                                             ),
                                             offset: const Offset(-20, 0),
@@ -383,9 +383,9 @@ class OrderDetails extends StatelessWidget {
                                                     double
                                                   >(6),
                                               thumbVisibility:
-                                                  MaterialStateProperty.all<bool>(
-                                                    true,
-                                                  ),
+                                                  MaterialStateProperty.all<
+                                                    bool
+                                                  >(true),
                                             ),
                                           ),
                                           menuItemStyleData: MenuItemStyleData(
@@ -405,7 +405,7 @@ class OrderDetails extends StatelessWidget {
                           ),
                           SizedBox(height: AppSizeHeight.s20),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width*.6,
+                            width: MediaQuery.of(context).size.width * .6,
 
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -423,7 +423,8 @@ class OrderDetails extends StatelessWidget {
                                       (previous, current) =>
                                           previous.getGaragesSpotState !=
                                               current.getGaragesSpotState ||
-                                          previous.spotName != current.spotName ||
+                                          previous.spotName !=
+                                              current.spotName ||
                                           previous.emptySpots !=
                                               current.emptySpots,
                                   builder: (context, state) {
@@ -482,7 +483,8 @@ class OrderDetails extends StatelessWidget {
                                                 HomeBloc,
                                                 HomeState
                                               >(
-                                                buildWhen: (prev, curr) => false,
+                                                buildWhen:
+                                                    (prev, curr) => false,
                                                 builder: (context, state) {
                                                   final spot = findSpotById(
                                                     state,
@@ -497,10 +499,12 @@ class OrderDetails extends StatelessWidget {
                                                           spot?.code ??
                                                           'لا يوجد كود',
                                                       color:
-                                                          ColorManager.background,
+                                                          ColorManager
+                                                              .background,
                                                       fontSize: FontSize.s15,
                                                       fontWeight:
-                                                          FontWeightManager.bold,
+                                                          FontWeightManager
+                                                              .bold,
                                                     ),
                                                   );
                                                 },
@@ -509,7 +513,8 @@ class OrderDetails extends StatelessWidget {
                                                 icon: Icon(
                                                   Icons
                                                       .arrow_forward_ios_outlined,
-                                                  color: ColorManager.background,
+                                                  color:
+                                                      ColorManager.background,
                                                 ),
                                                 iconSize: 14,
                                               ),
@@ -539,9 +544,10 @@ class OrderDetails extends StatelessWidget {
                                               menuItemStyleData:
                                                   MenuItemStyleData(
                                                     height: AppSizeHeight.s35,
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 14,
+                                                        ),
                                                   ),
                                             ),
                                           ),
@@ -584,17 +590,26 @@ class OrderDetails extends StatelessWidget {
                                       >(
                                         listenWhen:
                                             (previous, current) =>
-                                  previous.updateOrderStatusState !=
-                                  current.updateOrderStatusState,
+                                                previous.updateOrderStatusState !=
+                                                    current
+                                                        .updateOrderStatusState &&
+                                                previous.updateOrderStatus !=
+                                                    current.updateOrderStatus,
                                         listener: (context, state) {
-                                          context.read<HomeBloc>().add(ChangeTabEvent(1));
-                                          Future.delayed(Duration(milliseconds: 1000), () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (_) => MainScreen()),
-                                            );
-                                          });
-
+                                          context.read<HomeBloc>().add(
+                                            ChangeTabEvent(1),
+                                          );
+                                          Future.delayed(
+                                            Duration(milliseconds: 1000),
+                                            () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) => MainScreen(),
+                                                ),
+                                              );
+                                            },
+                                          );
                                         },
                                         child: BlocBuilder<
                                           MyOrdersBloc,
@@ -616,7 +631,8 @@ class OrderDetails extends StatelessWidget {
                                               widget: buildButtonContent(
                                                 state.updatingOrderId ==
                                                         spot.order!.id
-                                                    ? state.updateOrderStatusState
+                                                    ? state
+                                                        .updateOrderStatusState
                                                     : UpdateOrderState.initial,
                                                 'توصيل المركبة',
                                               ),

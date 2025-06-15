@@ -125,14 +125,15 @@ class OrderScreen extends StatelessWidget {
                     (garage) => garage.name == garageName,
                 orElse: () => MyGaragesModel.empty()
                 , // 🔁 نوع صحيح
-              )
-                  .id;
+              ).id;
 
 
-              final filteredSpots = state.data?.spots ?? <Spot>[]
+              final allSpots = state.data?.spots ?? [];
+              final filteredSpots = allSpots
                   .where((spot) => spot.garageId == selectedGarageId)
                   .toList();
-            print(filteredSpots);
+
+              print(filteredSpots);
               String spotName;
               if (state.spotName == 'رقم الباكية') {
                 if (filteredSpots.isNotEmpty) {
@@ -143,9 +144,6 @@ class OrderScreen extends StatelessWidget {
               } else {
                 spotName = state.spotName;
               }
-
-
-
               final spotId = filteredSpots.isNotEmpty
                   ? filteredSpots
                   .firstWhere(
