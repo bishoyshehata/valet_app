@@ -52,7 +52,7 @@ class CustomPhoneField extends StatelessWidget {
         Country(
           name: "مصر",
           nameTranslations: {
-            "en": "مصر",
+            "en": "Egypt",
             "ar": "مصر",
           },
           flag: "🇪🇬",
@@ -64,7 +64,7 @@ class CustomPhoneField extends StatelessWidget {
         Country(
           name: "السعودية",
           nameTranslations: {
-            "en": "السعودية",
+            "en": "Saudi Arabia",
             "ar": "السعودية",
           },
           flag: "🇸🇦",
@@ -76,7 +76,7 @@ class CustomPhoneField extends StatelessWidget {
         Country(
           name: "الإمارات العربية",
           nameTranslations: {
-            "en": "الإمارات",
+            "en": "United Arab Emirates",
             "ar": "الإمارات العربية المتحدة",
           },
           flag: "🇦🇪",

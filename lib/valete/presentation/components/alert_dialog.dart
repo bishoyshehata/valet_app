@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../resources/colors_manager.dart';
 import '../resources/font_manager.dart';
+import '../resources/strings_manager.dart';
 
 class AlertDialogService {
   // Singleton instance
@@ -15,12 +16,15 @@ class AlertDialogService {
       BuildContext context, {
         required String title,
         required String message,
-        String positiveButtonText = 'نعم',
-        String negativeButtonText = 'لا',
+        String? positiveButtonText,
+        String? negativeButtonText,
         VoidCallback? onPositiveButtonPressed,
         VoidCallback? onNegativeButtonPressed,
         bool? dismissible,
       }) async {
+    final String positiveText = positiveButtonText ?? AppStrings.yes;
+    final String negativeText = negativeButtonText ?? AppStrings.no;
+
     return await showDialog<bool>(
       context: context,
       barrierDismissible: dismissible ?? false,
@@ -53,7 +57,7 @@ class AlertDialogService {
                   Navigator.of(context).pop(false);
                 },
                 child: Text(
-                  negativeButtonText,
+                  negativeButtonText!,
                   style:GoogleFonts.cairo(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeight.bold,
@@ -67,7 +71,7 @@ class AlertDialogService {
                   Navigator.of(context).pop(true);
                 },
                 child: Text(
-                  positiveButtonText,
+                  positiveButtonText!,
                   style:GoogleFonts.cairo(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeight.bold,
