@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:valet_app/valete/presentation/resources/strings_manager.dart';
 
 import '../../components/custom_bottun.dart';
 import '../../components/text/text_utils.dart';
@@ -65,9 +66,9 @@ Widget buildStoreOrderErrorWidget(BuildContext context, int? statusCode ,String?
         overFlow: TextOverflow.ellipsis,
       );
     default:
-      return const Center(
+      return  Center(
         child: Text(
-          "حدث خطأ غير متوقع",
+          AppStrings.unexpectedErrorOccurred,
           style: TextStyle(color: Colors.red, fontSize: 18),
           textAlign: TextAlign.center,
         ),

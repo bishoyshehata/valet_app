@@ -16,6 +16,7 @@ import '../../../components/alert_dialog.dart';
 import '../../../resources/assets_manager.dart';
 import '../../../resources/colors_manager.dart';
 import '../../../resources/font_manager.dart';
+import '../../../resources/strings_manager.dart';
 import '../../../resources/values_manager.dart';
 
 class ValetProfileScreen extends StatelessWidget {
@@ -48,8 +49,8 @@ class ValetProfileScreen extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return const Text(
-            'حدث خطأ',
+          return  Text(
+            AppStrings.errorHappened,
             style: TextStyle(color: Colors.red),
           ); // error message
         }
@@ -67,7 +68,7 @@ class ValetProfileScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: ColorManager.background,
           appBar: CustomAppBar(
-            title: 'الملف الشخصي',
+            title: AppStrings.theProfile,
             centerTitle: false,
             titleColor: ColorManager.white,
             leading: Container(
@@ -136,7 +137,7 @@ class ValetProfileScreen extends StatelessWidget {
                             ),
                             SizedBox(width: AppSizeWidth.s8),
                             TextUtils(
-                              text: 'الحالة : ',
+                              text: AppStrings.status,
                               color: ColorManager.white,
                               fontSize: FontSize.s17,
                               fontWeight: FontWeight.bold,
@@ -322,7 +323,7 @@ class ValetProfileScreen extends StatelessWidget {
                                     );
                                   },
                                   widget: TextUtils(
-                                    text: 'حفظ',
+                                    text:AppStrings.save ,
                                     color: ColorManager.white,
                                     fontWeight: FontWeightManager.bold,
                                   ),
@@ -343,7 +344,7 @@ class ValetProfileScreen extends StatelessWidget {
                         color: ColorManager.white,
                       ),
                       title: TextUtils(
-                        text: "الشروط و الأحكام",
+                        text: AppStrings.termsAndConditions,
                         fontSize: FontSize.s17,
                         fontWeight: FontWeight.bold,
                         color: ColorManager.white,
@@ -363,7 +364,7 @@ class ValetProfileScreen extends StatelessWidget {
                         color: ColorManager.error,
                       ),
                       title: TextUtils(
-                        text: "حذف الحساب",
+                        text: AppStrings.deleteAccount,
                         fontSize: FontSize.s17,
                         fontWeight: FontWeight.bold,
                         color: ColorManager.white,
@@ -371,10 +372,10 @@ class ValetProfileScreen extends StatelessWidget {
                       onTap: () async {
                         await AlertDialogService().showAlertDialog(
                           context,
-                          title: 'تنبيه',
-                          message: 'هل أنت متأكد من حذف حسابك ؟',
-                          positiveButtonText: 'نعم',
-                          negativeButtonText: 'لا',
+                          title: AppStrings.warning,
+                          message: AppStrings.areyouSureYouWantToDeleteYourAccount,
+                          positiveButtonText: AppStrings.yes,
+                          negativeButtonText: AppStrings.no,
                           onPositiveButtonPressed: () {
                             context.read<ProfileBloc>().add(
                               DeleteValetEvent(int.parse(valetId)),
@@ -386,7 +387,7 @@ class ValetProfileScreen extends StatelessWidget {
                     ListTile(
                       leading: Icon(Icons.logout, color: ColorManager.white),
                       title: TextUtils(
-                        text: "تسجيل الخروج",
+                        text: AppStrings.logOut,
                         fontSize: FontSize.s17,
                         fontWeight: FontWeight.bold,
                         color: ColorManager.white,
@@ -394,10 +395,10 @@ class ValetProfileScreen extends StatelessWidget {
                       onTap: () async {
                         await AlertDialogService().showAlertDialog(
                           context,
-                          title: 'تنبيه !',
-                          message: 'هل أنت متأكد من تسجيل الخروج ؟',
-                          positiveButtonText: 'نعم',
-                          negativeButtonText: 'لا',
+                          title: AppStrings.warning,
+                          message: AppStrings.areYouSureYouWantToLogOut,
+                          positiveButtonText: AppStrings.yes,
+                          negativeButtonText: AppStrings.no,
                           onPositiveButtonPressed: () {
                             context.read<ProfileBloc>().add(LogoutEvent());
                           },

@@ -6,6 +6,7 @@ import 'package:valet_app/core/utils/enums.dart';
 import 'package:valet_app/valete/domain/entities/spot.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
+import 'package:valet_app/valete/presentation/resources/strings_manager.dart';
 import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
 import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_events.dart';
@@ -103,7 +104,7 @@ class GarageScreen extends StatelessWidget {
                             if (state.mainSpots!.isEmpty) {
                               return Center(
                                 child: TextUtils(
-                                  text: 'بيانات الجراج غير متاحة',
+                                  text: AppStrings.garageDataUnavailable,
                                   color: ColorManager.white,
                                 ),
                               );
@@ -124,8 +125,8 @@ class GarageScreen extends StatelessWidget {
                                           TextUtils(
                                             text:
                                             state.showExtraSlots
-                                                ? 'إخفاء الأماكن الإضافية'
-                                                : 'عرض الأماكن الإضافية',
+                                                ? AppStrings.hideAdditionalSpots
+                                                : AppStrings.showAdditionalSpots,
                                             color: ColorManager.white,
                                             fontSize: FontSize.s17,
                                             fontWeight: FontWeight.bold,
@@ -180,7 +181,7 @@ class GarageScreen extends StatelessWidget {
                                       vertical: 10,
                                     ),
                                     child: TextUtils(
-                                      text: "الجراج الرئيسي",
+                                      text: AppStrings.mainGarage,
                                       color: ColorManager.white,
                                       fontSize: FontSize.s17,
                                       fontWeight: FontWeight.bold,
@@ -225,7 +226,7 @@ class GarageScreen extends StatelessWidget {
                                     children: [
                                       Center(child: Lottie.asset(LottieManager.noCars)),
                                       TextUtils(
-                                        text: "عذراً لا يوجد سيارات بهذا الجراج",
+                                        text: AppStrings.noCarsInGarage,
                                         color: ColorManager.white,
                                         fontSize: FontSize.s13,
                                         noOfLines: 2,
@@ -242,7 +243,7 @@ class GarageScreen extends StatelessWidget {
                               children: [
                                 Center(child: Lottie.asset(LottieManager.noCars)),
                                 TextUtils(
-                                  text: "يوجد خطب ما بالجراج وجارى إصلاحه",
+                                  text: state.getGaragesSpotErrorMessage,
                                   color: ColorManager.white,
                                   fontSize: FontSize.s13,
                                   noOfLines: 2,

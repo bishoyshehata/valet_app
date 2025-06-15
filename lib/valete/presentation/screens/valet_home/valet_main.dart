@@ -17,6 +17,7 @@ import 'package:valet_app/valete/presentation/screens/valet_home/profile/valet_p
 import '../../../../core/utils/enums.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/myorders/my_orders_events.dart';
+import '../../resources/strings_manager.dart';
 import 'order_status/orders_status.dart';
 
 class MainScreen extends StatelessWidget {
@@ -27,9 +28,9 @@ class MainScreen extends StatelessWidget {
   ];
 
   final List<String> titles = [
-    'الجراجات',
-    'الطلبات',
-    'شخصي',
+    AppStrings.garages,
+    AppStrings.orders,
+    AppStrings.profile,
   ];
 
    MainScreen({super.key});
@@ -58,12 +59,12 @@ class MainScreen extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_work_outlined, color: ColorManager.white,),
-                label: 'الجراج',
+                label: AppStrings.theGarage,
                 activeIcon: Icon(Icons.home_work_rounded, color: ColorManager.primary,),
               ),
                BottomNavigationBarItem(
                 icon: Icon(Icons.note_alt_outlined, color: ColorManager.white,),
-                label: 'الطلبات',
+                label: AppStrings.orders,
                  activeIcon: Icon(Icons.note_alt_rounded, color: ColorManager.primary,),
               ),
               BottomNavigationBarItem(
@@ -158,7 +159,7 @@ class MainScreen extends StatelessWidget {
                 );
   },
 ),
-                label: 'شخصي',
+                label: AppStrings.profile,
                 backgroundColor: ColorManager.primary,
               ),
 

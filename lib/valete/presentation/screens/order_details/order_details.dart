@@ -20,6 +20,7 @@ import '../../controllers/myorders/my_orders_bloc.dart';
 import '../../controllers/myorders/my_orders_events.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/font_manager.dart';
+import '../../resources/strings_manager.dart';
 import '../garage_screen/garage_screen.dart';
 import '../valet_home/order_status/orders_status.dart';
 import '../valet_home/valet_main.dart';
@@ -135,8 +136,8 @@ class OrderDetails extends StatelessWidget {
                                 onPressed: () {
                                   AlertDialogService().showAlertDialog(
                                     context,
-                                    title: "تنبيه !",
-                                    message: "هل انت متأكد من إلغاء الطلب ؟",
+                                    title: AppStrings.warning,
+                                    message: AppStrings.areYouSureYouWantToCancelOrder,
                                     onPositiveButtonPressed: () {
                                       context.read<HomeBloc>().add(
                                         CancelHomeOrderEvent(spot!.order!.id),
@@ -245,7 +246,7 @@ class OrderDetails extends StatelessWidget {
 
                               return Text.rich(
                                 TextSpan(
-                                  text: 'هاتف العميل : ',
+                                  text: AppStrings.customerPhone,
                                   style: GoogleFonts.cairo(
                                     fontSize: FontSize.s17,
                                     fontWeight: FontWeight.normal,
@@ -262,7 +263,7 @@ class OrderDetails extends StatelessWidget {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: '########',
+                                      text: AppStrings.hiddenData,
                                       style: GoogleFonts.archivo(
                                         fontSize: FontSize.s17,
                                         fontWeight: FontWeight.normal,
@@ -284,7 +285,7 @@ class OrderDetails extends StatelessWidget {
 
                               children: [
                                 TextUtils(
-                                  text: 'الجراج : ',
+                                  text: AppStrings.garageLabel,
                                   color: ColorManager.lightGrey,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
@@ -411,7 +412,7 @@ class OrderDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'بالباكية : ',
+                                  AppStrings.spotLabel,
                                   style: GoogleFonts.cairo(
                                     color: ColorManager.white,
                                     fontSize: FontSize.s17,
@@ -497,7 +498,7 @@ class OrderDetails extends StatelessWidget {
                                                     child: TextUtils(
                                                       text:
                                                           spot?.code ??
-                                                          'لا يوجد كود',
+                                                              AppStrings.noCode,
                                                       color:
                                                           ColorManager
                                                               .background,
@@ -555,7 +556,7 @@ class OrderDetails extends StatelessWidget {
 
                                       case RequestState.error:
                                         return Center(
-                                          child: TextUtils(text: "حدث خطأ"),
+                                          child: TextUtils(text: AppStrings.errorOccurred),
                                         );
                                     }
                                   },
@@ -634,7 +635,7 @@ class OrderDetails extends StatelessWidget {
                                                     ? state
                                                         .updateOrderStatusState
                                                     : UpdateOrderState.initial,
-                                                'توصيل المركبة',
+                                                AppStrings.deliverVehicle,
                                               ),
                                               height: AppSizeHeight.s35,
                                             );
@@ -689,7 +690,7 @@ class OrderDetails extends StatelessWidget {
                                         ),
                                         SizedBox(width: AppSizeWidth.s10),
                                         TextUtils(
-                                          text: 'تأكيد التعديل',
+                                          text: AppStrings.confirmEdit,
                                           color: ColorManager.background,
                                           fontSize: FontSize.s17,
                                           fontWeight: FontWeightManager.bold,
@@ -709,8 +710,19 @@ class OrderDetails extends StatelessWidget {
               ),
             );
           case RequestState.error:
-            // TODO: Handle this case.
-            throw UnimplementedError();
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: Lottie.asset(LottieManager.noCars)),
+            TextUtils(
+              text: state.getGaragesSpotErrorMessage,
+              color: ColorManager.white,
+              fontSize: FontSize.s13,
+              noOfLines: 2,
+              overFlow: TextOverflow.ellipsis,
+            ),
+          ],
+        );
         }
       },
     );

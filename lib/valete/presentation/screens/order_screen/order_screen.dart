@@ -68,7 +68,7 @@ class OrderScreen extends StatelessWidget {
               onError: (errorMessage) {
                 // لازم يكون عندك BuildContext هنا عشان تعرض SnackBar
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('حدث خطأ في الاتصال: $errorMessage')),
+                  SnackBar(content: Text(AppStrings.connectionError +'$errorMessage')),
                 );
               },
             );
@@ -169,10 +169,10 @@ class OrderScreen extends StatelessWidget {
                                   ? state.phoneNumber.replaceRange(
                                     0,
                                     8,
-                                    '########',
+                            AppStrings.hiddenData,
                                   )
                                   : state.phoneNumber
-                              : "إنشاء طلب جديد",
+                              : AppStrings.createNewOrder,
                       centerTitle: true,
                       titleColor: ColorManager.white,
                       leading: Container(
@@ -230,8 +230,8 @@ class OrderScreen extends StatelessWidget {
                             SnackBar(
                               content: Text(
                                 isWhatsAppWorking!
-                                    ? "تم إنشاء الطلب بنجاح عبر WhatsApp"
-                                    : "تم إنشاء الطلب بنجاح",
+                                    ? AppStrings.orderCreatedSuccessfullyViaWhatsApp
+                                    : AppStrings.orderCreatedSuccessfully,
                               ),
                             ),
                           );
@@ -248,8 +248,8 @@ class OrderScreen extends StatelessWidget {
                             SnackBar(
                               content: Text(
                                 isWhatsAppWorking!
-                                    ? "فشل في إنشاء الطلب عبر WhatsApp: ${state.errorMessage}"
-                                    : "فشل في إنشاء الطلب: ${state.errorMessage}",
+                                    ? AppStrings.failedToCreateOrderViaWhatsApp+"${state.errorMessage}"
+                                    :AppStrings.failedToCreateOrder+ "${state.errorMessage}",
                               ),
                             ),
                           );
@@ -326,7 +326,7 @@ class OrderScreen extends StatelessWidget {
                                         SnackBar(
                                           content: TextUtils(
                                             text:
-                                                'برجاء الطلب من العميل عمل مسح للـ QR.',
+                                            AppStrings.pleaseAskCustomerToScanQR,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -343,7 +343,7 @@ class OrderScreen extends StatelessWidget {
                                       ).showSnackBar(
                                         SnackBar(
                                           content: TextUtils(
-                                            text: 'برجاء إدخال رقم العميل.',
+                                            text: AppStrings.pleaseEnterCustomerNumber,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -357,7 +357,7 @@ class OrderScreen extends StatelessWidget {
                                         SnackBar(
                                           content: TextUtils(
                                             text:
-                                                'نأسف و لكن يوجد خطأ بالبيانات.',
+                                            AppStrings.sorryInvalidData,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -382,7 +382,7 @@ class OrderScreen extends StatelessWidget {
                                 elevation: 5,
                                 widget: switch (state.storeOrderState) {
                                   StoreOrderState.initial => TextUtils(
-                                    text: "تأكيد الطلب",
+                                    text: AppStrings.confirmOrder,
                                     color:
                                         state.phoneNumber != 'رقم هاتف العميل'
                                             ? ColorManager.background
@@ -395,7 +395,7 @@ class OrderScreen extends StatelessWidget {
                                       color: ColorManager.white,
                                     ),
                                   StoreOrderState.loaded => TextUtils(
-                                    text: "تأكيد الطلب",
+                                    text: AppStrings.confirmOrder,
                                     color: ColorManager.background,
                                     fontSize: FontSize.s17,
                                     fontWeight: FontWeight.bold,
@@ -468,7 +468,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                   child:  Text(
-                    'التوجه إلى جراج : ',
+                      AppStrings.goToGarage,
                     style: GoogleFonts.cairo(
                       color: ColorManager.white,
                       fontSize: FontSize.s17,
@@ -510,7 +510,7 @@ class OrderScreen extends StatelessWidget {
                         print(value);
                       },
                       hint: TextUtils(
-                        text: "الجراج ممتلئ",
+                        text: AppStrings.garageFull,
                         color: ColorManager.background,
                         fontSize: FontSize.s11,
                         fontWeight: FontWeightManager.bold,
@@ -568,7 +568,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'بالباكية : ',
+                    AppStrings.spotLabel,
                     style: GoogleFonts.cairo(
                       color: ColorManager.white,
                       fontSize: FontSize.s17,
@@ -587,7 +587,7 @@ class OrderScreen extends StatelessWidget {
                  ),
                  width: AppSizeWidth.s100,
                  child: TextUtils(
-                   text: "الجراج ممتلئ",
+                   text: AppStrings.garageFull,
                    color: ColorManager.background,
                    fontSize: FontSize.s12,
                    fontWeight: FontWeightManager.bold,
@@ -625,7 +625,7 @@ class OrderScreen extends StatelessWidget {
                         print(value);
                       },
                       hint: TextUtils(
-                        text: "الجراج ممتلئ",
+                        text: AppStrings.garageFull,
                         color: ColorManager.background,
                         fontSize: FontSize.s11,
                         fontWeight: FontWeightManager.bold,
@@ -697,7 +697,7 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
             ),
           ),
           child: TextUtils(
-            text: "قم بإختيار نوع المركبة",
+            text: AppStrings.selectVehicleType,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,
@@ -782,7 +782,7 @@ Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
             ),
           ),
           child: TextUtils(
-            text: "قم بإضافة هاتف العميل",
+            text: AppStrings.addCustomerPhone,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,
@@ -847,7 +847,7 @@ Widget _buildQrSection(BuildContext context, String qr) {
             ),
           ),
           child: TextUtils(
-            text: "قم بمسح ال QR",
+            text: AppStrings.scanQR,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,
@@ -902,7 +902,7 @@ Widget _buildImageCaptureSection(BuildContext context) {
             ),
           ),
           child: TextUtils(
-            text: "قم بإلتقاط صورة للمركبة",
+            text: AppStrings.captureVehicleImage,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,

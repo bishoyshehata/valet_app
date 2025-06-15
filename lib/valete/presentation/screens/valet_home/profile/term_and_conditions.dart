@@ -6,6 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../controllers/profile/profile_bloc.dart';
 import '../../../controllers/profile/profile_events.dart';
+import '../../../resources/strings_manager.dart';
 
 class TermAndConditions extends StatelessWidget {
   const TermAndConditions({super.key});
@@ -25,7 +26,7 @@ class TermAndConditions extends StatelessWidget {
       ..loadRequest(Uri.parse('https://valet.vps.kirellos.com/terms'));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('الشروط والأحكام')),
+      appBar: AppBar(title:  Text(AppStrings.termsAndConditions)),
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           switch (state.termsState) {
@@ -34,7 +35,7 @@ class TermAndConditions extends StatelessWidget {
             case RequestState.loaded:
               return WebViewWidget(controller: controller);
             case RequestState.error:
-              return const Center(child: Text('حدث خطأ أثناء تحميل الشروط والأحكام'));
+              return  Center(child: Text(AppStrings.errorLoadingTermsAndConditions));
             default:
               return const SizedBox.shrink();
           }

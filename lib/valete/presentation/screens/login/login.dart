@@ -81,7 +81,7 @@ class LoginScreen extends StatelessWidget {
                         // Phone field
                         Container(
                           padding: EdgeInsets.fromLTRB(0, 0, AppPadding.p12, AppPadding.p5),
-                          child: TextUtils(text: "إدخل رقم الهاتف"),
+                          child: TextUtils(text:AppStrings.enterPhoneNumber),
                           alignment: AlignmentDirectional.centerEnd,
 
                         ),
@@ -110,7 +110,7 @@ class LoginScreen extends StatelessWidget {
                         // Password field
                         Container(
                           padding: EdgeInsets.fromLTRB(0, 0, AppPadding.p12, AppPadding.p5),
-                          child: TextUtils(text: "كلمة المرور"),
+                          child: TextUtils(text: AppStrings.password),
                           alignment: AlignmentDirectional.centerEnd,
                         ),
                         CustomTextFormField(
@@ -123,7 +123,7 @@ class LoginScreen extends StatelessWidget {
                           errorText:
                               state.hasInteractedWithPassword &&
                                       !state.isPasswordValid
-                                  ? 'كلمة السر قصيرة'
+                                  ? AppStrings.shortPassword
                                   : null,
                           icon: Icon(
                             Icons.lock_outline,

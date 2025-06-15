@@ -9,6 +9,7 @@ import 'package:valet_app/valete/presentation/components/alert_dialog.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
+import 'package:valet_app/valete/presentation/resources/strings_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/order_status/loading_page.dart';
 import '../../../../../core/network/api_constants.dart';
 import '../../../../domain/entities/my_orders.dart';
@@ -26,15 +27,15 @@ import '../../garage_screen/garage_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
   final int initialSelectedStatus = 0;
-  final List<Map<String, dynamic>> statusOptions = const [
-    {'id': 0, 'label': 'في الإنتظار'},
-    {'id': 1, 'label': 'مطلوب'},
-    {'id': 2, 'label': 'في الطريق'},
-    {'id': 3, 'label': 'وصل'},
-    {'id': 4, 'label': 'تم التسليم'},
+  final List<Map<String, dynamic>> statusOptions =  [
+    {'id': 0, 'label':AppStrings.statusWaiting},
+    {'id': 1, 'label': AppStrings.statusRequested},
+    {'id': 2, 'label': AppStrings.statusOnTheWay},
+    {'id': 3, 'label': AppStrings.statusArrived},
+    {'id': 4, 'label': AppStrings.statusDelivered},
   ];
 
-  const OrdersScreen({super.key});
+   OrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class OrdersScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: ColorManager.background,
       appBar: CustomAppBar(
-        title: 'إدارة الطلبات',
+        title: AppStrings.ordersManagement,
         centerTitle: false,
         titleColor: ColorManager.white,
         leading: Container(
@@ -213,7 +214,7 @@ class OrdersScreen extends StatelessWidget {
                             Lottie.asset(LottieManager.noCars),
                             const SizedBox(height: 12),
                             TextUtils(
-                              text: "لا توجد طلبات",
+                                text: AppStrings.noOrders,
                               color: ColorManager.white,
                               fontSize: FontSize.s14,
                               fontWeight: FontWeightManager.bold,
@@ -294,7 +295,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                 children: [
                   Text.rich(
                     TextSpan(
-                      text: 'هاتف العميل : ',
+                      text: AppStrings.customerPhone,
                       style: GoogleFonts.cairo(
                         fontSize: FontSize.s13,
                         fontWeight: FontWeight.normal,
@@ -310,7 +311,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                           ),
                         ),
                         TextSpan(
-                          text: '########',
+                          text: AppStrings.hiddenData,
                           style: GoogleFonts.archivo(
                             fontSize: FontSize.s13,
                             fontWeight: FontWeight.normal,
@@ -324,15 +325,15 @@ Widget statusCard(MyOrders order, BuildContext context) {
 
                   const SizedBox(height: 4),
                   TextUtils(
-                    text: 'الجراج : ${order.garage.name}',
+                    text: AppStrings.garageLabel +'${order.garage.name}',
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text: 'الباكية : ${order.spot.code}',
+                    text: AppStrings.spotLabel +'${order.spot.code}',
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text: 'منذ : ${formatDate(order.addedOn)}',
+                    text:  AppStrings.spotLabel +'${formatDate(order.addedOn)}',
                     color: ColorManager.lightGrey,
                   ),
                   const SizedBox(height: 6),
@@ -383,17 +384,17 @@ Widget statusCard(MyOrders order, BuildContext context) {
 String getStatusText(int status) {
   switch (status) {
     case 0:
-      return 'منتظر';
+      return AppStrings.pending;
     case 1:
-      return 'مطلوب الأن';
+      return AppStrings.requested;
     case 2:
-      return 'في الطريق';
+      return AppStrings.onTheWay;
     case 3:
-      return 'وصل';
+      return AppStrings.arrived;
     case 4:
-      return 'تم التسليم';
+      return AppStrings.delivered;
     default:
-      return 'غير معروف';
+      return AppStrings.unknown;
   }
 }
 
@@ -412,7 +413,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          'توصيل المركبة',
+          AppStrings.deliverTheVehicle,
         ),
         height: AppSizeHeight.s35,
       );
@@ -426,7 +427,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          'أنا في طريقي',
+          AppStrings.iAmOnMyWay,
         ),
         height: AppSizeHeight.s35,
       );
@@ -440,7 +441,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          'لقد وصلت',
+          AppStrings.iHaveArrived,
         ),
         height: AppSizeHeight.s35,
       );
@@ -454,7 +455,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          'تم التسليم',
+          AppStrings.delivered,
         ),
         height: AppSizeHeight.s35,
       );
@@ -468,8 +469,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 0:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
-            message: "هل انت متأكد من إلغاء الطلب ؟",
+          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
+            message: AppStrings.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -488,8 +489,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 1:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
-            message: "هل انت متأكد من إلغاء الطلب ؟",
+          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
+            message: AppStrings.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -508,8 +509,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 2:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
-            message: "هل انت متأكد من إلغاء الطلب ؟",
+          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
+            message: AppStrings.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -528,8 +529,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 3:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title: "تنبيه !",
-            message: "هل انت متأكد من إلغاء الطلب ؟",
+          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
+            message: AppStrings.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -572,7 +573,7 @@ String formatDate(String dateString) {
     final formatter = DateFormat('dd-MM-yyyy - hh:mm a');
     return formatter.format(date);
   } catch (_) {
-    return 'تاريخ غير صالح';
+    return AppStrings.invalidDate;
   }
 }
 
@@ -588,7 +589,7 @@ Widget buildButtonContent(UpdateOrderState state, String text) {
     UpdateOrderState.error =>
         TextUtils(
           alignnment: TextAlign.center,
-          text: 'حدثت مشكلة تواصل مع المدير',
+            text: AppStrings.contactAdminError,
           color: ColorManager.background,
           fontWeight: FontWeightManager.bold,
         ),

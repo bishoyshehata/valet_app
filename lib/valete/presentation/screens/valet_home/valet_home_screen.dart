@@ -80,7 +80,7 @@ class ValetHomeScreen extends StatelessWidget {
                     elevation: 5,
                     btnColor: ColorManager.primary,
                     widget: TextUtils(
-                      text: 'إضافة طلب',
+                      text: AppStrings.addOrder,
                       fontSize: FontSize.s20,
                       color: ColorManager.background,
                       fontWeight: FontWeightManager.bold,
@@ -134,7 +134,7 @@ class ValetHomeScreen extends StatelessWidget {
                               },
                               child: GarageCard(
                                 name: garage.name,
-                                address: garage.address?? 'غير محدد',
+                                address: garage.address?? AppStrings.unDefined,
                                 capacity: garage.capacity!,
                                 busySpots: garage.busySpotCount!,
                                 emptySpots: garage.emptySpotCount!,
@@ -237,17 +237,17 @@ class GarageCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextUtils(
-                      text: "الإجمالي: $totalSpots",
+                      text: AppStrings.total+totalSpots.toString(),
                       color: ColorManager.white,
                       fontWeight: FontWeightManager.bold,
                     ),
                     TextUtils(
-                      text: "المشغول: $occupiedSpots",
+                      text: AppStrings.theBusy+ occupiedSpots.toString(),
                       color: ColorManager.white,
                       fontWeight: FontWeightManager.bold,
                     ),
                     TextUtils(
-                      text: "المتاح: $availableSpots",
+                      text: AppStrings.theAvailable + availableSpots.toString(),
                       color: ColorManager.white,
                       fontWeight: FontWeightManager.bold,
                     ),
