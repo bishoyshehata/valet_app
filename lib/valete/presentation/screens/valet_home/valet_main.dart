@@ -14,6 +14,7 @@ import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/login/login.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_home_screen.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/profile/valet_profile.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../../../core/utils/enums.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/myorders/my_orders_events.dart';
@@ -27,11 +28,6 @@ class MainScreen extends StatelessWidget {
     ValetProfileScreen(),
   ];
 
-  final List<String> titles = [
-    AppStrings.garages,
-    AppStrings.orders,
-    AppStrings.profile,
-  ];
 
    MainScreen({super.key});
 
@@ -40,8 +36,18 @@ class MainScreen extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
 
     builder: (context, state) {
+      final List<String> titles = [
+      AppLocalizations.of(context)!.garages,
+      AppLocalizations.of(context)!.orders,
+      AppLocalizations.of(context)!.profile,
+    ];
+
+    final locale = Localizations.localeOf(context);
       return Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: locale.languageCode == 'ar'
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+
         child: Scaffold(
           backgroundColor: ColorManager.background,
           body: screens[state.currentIndex],
@@ -59,12 +65,12 @@ class MainScreen extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_work_outlined, color: ColorManager.white,),
-                label: AppStrings.theGarage,
+                label: AppLocalizations.of(context)!.theGarage,
                 activeIcon: Icon(Icons.home_work_rounded, color: ColorManager.primary,),
               ),
                BottomNavigationBarItem(
                 icon: Icon(Icons.note_alt_outlined, color: ColorManager.white,),
-                label: AppStrings.orders,
+                label: AppLocalizations.of(context)!.orders,
                  activeIcon: Icon(Icons.note_alt_rounded, color: ColorManager.primary,),
               ),
               BottomNavigationBarItem(
@@ -159,7 +165,7 @@ class MainScreen extends StatelessWidget {
                 );
   },
 ),
-                label: AppStrings.profile,
+                label: AppLocalizations.of(context)!.profile,
                 backgroundColor: ColorManager.primary,
               ),
 

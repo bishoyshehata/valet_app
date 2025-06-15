@@ -12,8 +12,11 @@ class FullScreenNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: locale.languageCode == 'ar'
+          ? TextDirection.rtl
+          : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: CustomAppBar(

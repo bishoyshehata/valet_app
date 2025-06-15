@@ -8,6 +8,7 @@ import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/resources/strings_manager.dart';
 import 'package:valet_app/valete/presentation/screens/order_details/order_details.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../components/text/text_utils.dart';
 import '../../controllers/home/home_events.dart';
 import '../../controllers/home/home_states.dart';
@@ -25,8 +26,11 @@ class GarageScreen extends StatelessWidget {
   GarageScreen({super.key, required this.garageId, required this.garageName});
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: locale.languageCode == 'ar'
+          ? TextDirection.rtl
+          : TextDirection.ltr,
       child: BlocListener<HomeBloc, HomeState>(
         listenWhen: (prev, curr) =>
         prev.updateOrderSpotState != curr.updateOrderSpotState || prev.cancelOrderState !=curr.cancelOrderState,
@@ -104,7 +108,7 @@ class GarageScreen extends StatelessWidget {
                             if (state.mainSpots!.isEmpty) {
                               return Center(
                                 child: TextUtils(
-                                  text: AppStrings.garageDataUnavailable,
+                                  text: AppLocalizations.of(context)!.garageDataUnavailable,
                                   color: ColorManager.white,
                                 ),
                               );
@@ -125,8 +129,8 @@ class GarageScreen extends StatelessWidget {
                                           TextUtils(
                                             text:
                                             state.showExtraSlots
-                                                ? AppStrings.hideAdditionalSpots
-                                                : AppStrings.showAdditionalSpots,
+                                                ? AppLocalizations.of(context)!.hideAdditionalSpots
+                                                : AppLocalizations.of(context)!.showAdditionalSpots,
                                             color: ColorManager.white,
                                             fontSize: FontSize.s17,
                                             fontWeight: FontWeight.bold,
@@ -181,7 +185,7 @@ class GarageScreen extends StatelessWidget {
                                       vertical: 10,
                                     ),
                                     child: TextUtils(
-                                      text: AppStrings.mainGarage,
+                                      text: AppLocalizations.of(context)!.mainGarage,
                                       color: ColorManager.white,
                                       fontSize: FontSize.s17,
                                       fontWeight: FontWeight.bold,
@@ -226,7 +230,7 @@ class GarageScreen extends StatelessWidget {
                                     children: [
                                       Center(child: Lottie.asset(LottieManager.noCars)),
                                       TextUtils(
-                                        text: AppStrings.noCarsInGarage,
+                                        text: AppLocalizations.of(context)!.noCarsInGarage,
                                         color: ColorManager.white,
                                         fontSize: FontSize.s13,
                                         noOfLines: 2,

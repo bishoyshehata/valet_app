@@ -17,6 +17,7 @@ import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.d
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../../../core/utils/enums.dart';
 import '../../../data/models/store_order_model.dart';
@@ -68,7 +69,7 @@ class OrderScreen extends StatelessWidget {
               onError: (errorMessage) {
                 // لازم يكون عندك BuildContext هنا عشان تعرض SnackBar
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppStrings.connectionError +'$errorMessage')),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.connectionError +'$errorMessage')),
                 );
               },
             );
@@ -150,8 +151,11 @@ class OrderScreen extends StatelessWidget {
                     (spot) => spot.code == spotName,
                 orElse: () => filteredSpots.first, // تجنب الخطأ لو spotName غير موجود
               ).id : null;
+              final locale = Localizations.localeOf(context);
               return Directionality(
-                textDirection: TextDirection.rtl,
+                textDirection: locale.languageCode == 'ar'
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
                 child: WillPopScope(
                   onWillPop: () async {
                     SocketService().closeSocket();
@@ -169,10 +173,10 @@ class OrderScreen extends StatelessWidget {
                                   ? state.phoneNumber.replaceRange(
                                     0,
                                     8,
-                            AppStrings.hiddenData,
+                            AppLocalizations.of(context)!.hiddenData,
                                   )
                                   : state.phoneNumber
-                              : AppStrings.createNewOrder,
+                              : AppLocalizations.of(context)!.createNewOrder,
                       centerTitle: true,
                       titleColor: ColorManager.white,
                       leading: Container(
@@ -230,8 +234,8 @@ class OrderScreen extends StatelessWidget {
                             SnackBar(
                               content: Text(
                                 isWhatsAppWorking!
-                                    ? AppStrings.orderCreatedSuccessfullyViaWhatsApp
-                                    : AppStrings.orderCreatedSuccessfully,
+                                    ? AppLocalizations.of(context)!.orderCreatedSuccessfullyViaWhatsApp
+                                    : AppLocalizations.of(context)!.orderCreatedSuccessfully,
                               ),
                             ),
                           );
@@ -248,8 +252,8 @@ class OrderScreen extends StatelessWidget {
                             SnackBar(
                               content: Text(
                                 isWhatsAppWorking!
-                                    ? AppStrings.failedToCreateOrderViaWhatsApp+"${state.errorMessage}"
-                                    :AppStrings.failedToCreateOrder+ "${state.errorMessage}",
+                                    ? AppLocalizations.of(context)!.failedToCreateOrderViaWhatsApp+"${state.errorMessage}"
+                                    :AppLocalizations.of(context)!.failedToCreateOrder+ "${state.errorMessage}",
                               ),
                             ),
                           );
@@ -326,7 +330,7 @@ class OrderScreen extends StatelessWidget {
                                         SnackBar(
                                           content: TextUtils(
                                             text:
-                                            AppStrings.pleaseAskCustomerToScanQR,
+                                            AppLocalizations.of(context)!.pleaseAskCustomerToScanQR,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -343,7 +347,7 @@ class OrderScreen extends StatelessWidget {
                                       ).showSnackBar(
                                         SnackBar(
                                           content: TextUtils(
-                                            text: AppStrings.pleaseEnterCustomerNumber,
+                                            text: AppLocalizations.of(context)!.pleaseEnterCustomerNumber,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -357,7 +361,7 @@ class OrderScreen extends StatelessWidget {
                                         SnackBar(
                                           content: TextUtils(
                                             text:
-                                            AppStrings.sorryInvalidData,
+                                            AppLocalizations.of(context)!.sorryInvalidData,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -382,7 +386,7 @@ class OrderScreen extends StatelessWidget {
                                 elevation: 5,
                                 widget: switch (state.storeOrderState) {
                                   StoreOrderState.initial => TextUtils(
-                                    text: AppStrings.confirmOrder,
+                                    text: AppLocalizations.of(context)!.confirmOrder,
                                     color:
                                         state.phoneNumber != 'رقم هاتف العميل'
                                             ? ColorManager.background
@@ -395,7 +399,7 @@ class OrderScreen extends StatelessWidget {
                                       color: ColorManager.white,
                                     ),
                                   StoreOrderState.loaded => TextUtils(
-                                    text: AppStrings.confirmOrder,
+                                    text: AppLocalizations.of(context)!.confirmOrder,
                                     color: ColorManager.background,
                                     fontSize: FontSize.s17,
                                     fontWeight: FontWeight.bold,
@@ -468,7 +472,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                   child:  Text(
-                      AppStrings.goToGarage,
+                      AppLocalizations.of(context)!.goToGarage,
                     style: GoogleFonts.cairo(
                       color: ColorManager.white,
                       fontSize: FontSize.s17,
@@ -510,7 +514,7 @@ class OrderScreen extends StatelessWidget {
                         print(value);
                       },
                       hint: TextUtils(
-                        text: AppStrings.garageFull,
+                        text: AppLocalizations.of(context)!.garageFull,
                         color: ColorManager.background,
                         fontSize: FontSize.s11,
                         fontWeight: FontWeightManager.bold,
@@ -568,7 +572,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    AppStrings.spotLabel,
+                    AppLocalizations.of(context)!.spotLabel,
                     style: GoogleFonts.cairo(
                       color: ColorManager.white,
                       fontSize: FontSize.s17,
@@ -587,7 +591,7 @@ class OrderScreen extends StatelessWidget {
                  ),
                  width: AppSizeWidth.s100,
                  child: TextUtils(
-                   text: AppStrings.garageFull,
+                   text: AppLocalizations.of(context)!.garageFull,
                    color: ColorManager.background,
                    fontSize: FontSize.s12,
                    fontWeight: FontWeightManager.bold,
@@ -625,7 +629,7 @@ class OrderScreen extends StatelessWidget {
                         print(value);
                       },
                       hint: TextUtils(
-                        text: AppStrings.garageFull,
+                        text: AppLocalizations.of(context)!.garageFull,
                         color: ColorManager.background,
                         fontSize: FontSize.s11,
                         fontWeight: FontWeightManager.bold,
@@ -697,7 +701,7 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
             ),
           ),
           child: TextUtils(
-            text: AppStrings.selectVehicleType,
+            text: AppLocalizations.of(context)!.selectVehicleType,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,
@@ -782,7 +786,7 @@ Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
             ),
           ),
           child: TextUtils(
-            text: AppStrings.addCustomerPhone,
+            text: AppLocalizations.of(context)!.addCustomerPhone,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,
@@ -795,7 +799,7 @@ Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
               return Directionality(
                 textDirection: TextDirection.ltr,
                 child: CustomPhoneField(
-                  labelText: AppStrings.enterPhone,
+                  labelText: AppLocalizations.of(context)!.enterPhone,
                   backgroundColor: ColorManager.background,
                   labelSize: 15,
                   errorText:
@@ -847,7 +851,7 @@ Widget _buildQrSection(BuildContext context, String qr) {
             ),
           ),
           child: TextUtils(
-            text: AppStrings.scanQR,
+            text: AppLocalizations.of(context)!.scanQR,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,
@@ -902,7 +906,7 @@ Widget _buildImageCaptureSection(BuildContext context) {
             ),
           ),
           child: TextUtils(
-            text: AppStrings.captureVehicleImage,
+            text: AppLocalizations.of(context)!.captureVehicleImage,
             color: ColorManager.white,
             fontSize: FontSize.s17,
             fontWeight: FontWeight.bold,

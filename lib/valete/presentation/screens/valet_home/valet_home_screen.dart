@@ -15,6 +15,7 @@ import 'package:valet_app/valete/presentation/resources/font_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/garage_screen/garage_screen.dart';
 import 'package:valet_app/valete/presentation/screens/login/login.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../components/custom_app_bar.dart';
 import '../../controllers/home/home_events.dart';
 import '../../resources/strings_manager.dart';
@@ -45,7 +46,7 @@ class ValetHomeScreen extends StatelessWidget {
                 final title =
                     snapshot.hasData
                         ?  snapshot.data!
-                        : AppStrings.welcome;
+                        : AppLocalizations.of(context)!.welcome;
 
                 return CustomAppBar(
                   title: title,
@@ -80,7 +81,7 @@ class ValetHomeScreen extends StatelessWidget {
                     elevation: 5,
                     btnColor: ColorManager.primary,
                     widget: TextUtils(
-                      text: AppStrings.addOrder,
+                      text: AppLocalizations.of(context)!.addOrder,
                       fontSize: FontSize.s20,
                       color: ColorManager.background,
                       fontWeight: FontWeightManager.bold,
@@ -134,7 +135,7 @@ class ValetHomeScreen extends StatelessWidget {
                               },
                               child: GarageCard(
                                 name: garage.name,
-                                address: garage.address?? AppStrings.unDefined,
+                                address: garage.address?? AppLocalizations.of(context)!.unDefined,
                                 capacity: garage.capacity!,
                                 busySpots: garage.busySpotCount!,
                                 emptySpots: garage.emptySpotCount!,
@@ -237,17 +238,17 @@ class GarageCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextUtils(
-                      text: AppStrings.total+totalSpots.toString(),
+                      text: AppLocalizations.of(context)!.total+totalSpots.toString(),
                       color: ColorManager.white,
                       fontWeight: FontWeightManager.bold,
                     ),
                     TextUtils(
-                      text: AppStrings.theBusy+ occupiedSpots.toString(),
+                      text: AppLocalizations.of(context)!.theBusy+ occupiedSpots.toString(),
                       color: ColorManager.white,
                       fontWeight: FontWeightManager.bold,
                     ),
                     TextUtils(
-                      text: AppStrings.theAvailable + availableSpots.toString(),
+                      text: AppLocalizations.of(context)!.theAvailable + availableSpots.toString(),
                       color: ColorManager.white,
                       fontWeight: FontWeightManager.bold,
                     ),

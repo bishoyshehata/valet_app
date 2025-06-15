@@ -11,6 +11,7 @@ import 'package:valet_app/valete/presentation/controllers/home/home_events.dart'
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/strings_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/order_status/loading_page.dart';
+import '../../../../../core/l10n/app_locale.dart';
 import '../../../../../core/network/api_constants.dart';
 import '../../../../domain/entities/my_orders.dart';
 import '../../../components/custom_app_bar.dart';
@@ -27,24 +28,23 @@ import '../../garage_screen/garage_screen.dart';
 
 class OrdersScreen extends StatelessWidget {
   final int initialSelectedStatus = 0;
-  final List<Map<String, dynamic>> statusOptions =  [
-    {'id': 0, 'label':AppStrings.statusWaiting},
-    {'id': 1, 'label': AppStrings.statusRequested},
-    {'id': 2, 'label': AppStrings.statusOnTheWay},
-    {'id': 3, 'label': AppStrings.statusArrived},
-    {'id': 4, 'label': AppStrings.statusDelivered},
-  ];
 
    OrdersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-
+    final List<Map<String, dynamic>> statusOptions = [
+      {'id': 0, 'label': AppLocalizations.of(context)!.statusWaiting},
+      {'id': 1, 'label': AppLocalizations.of(context)!.statusRequested},
+      {'id': 2, 'label': AppLocalizations.of(context)!.statusOnTheWay},
+      {'id': 3, 'label': AppLocalizations.of(context)!.statusArrived},
+      {'id': 4, 'label': AppLocalizations.of(context)!.statusDelivered},
+    ];
     return Scaffold(
       backgroundColor: ColorManager.background,
       appBar: CustomAppBar(
-        title: AppStrings.ordersManagement,
+        title: AppLocalizations.of(context)!.ordersManagement,
         centerTitle: false,
         titleColor: ColorManager.white,
         leading: Container(
@@ -214,7 +214,7 @@ class OrdersScreen extends StatelessWidget {
                             Lottie.asset(LottieManager.noCars),
                             const SizedBox(height: 12),
                             TextUtils(
-                                text: AppStrings.noOrders,
+                                text: AppLocalizations.of(context)!.noOrders,
                               color: ColorManager.white,
                               fontSize: FontSize.s14,
                               fontWeight: FontWeightManager.bold,
@@ -295,7 +295,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                 children: [
                   Text.rich(
                     TextSpan(
-                      text: AppStrings.customerPhone,
+                      text: AppLocalizations.of(context)!.customerPhone,
                       style: GoogleFonts.cairo(
                         fontSize: FontSize.s13,
                         fontWeight: FontWeight.normal,
@@ -311,7 +311,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                           ),
                         ),
                         TextSpan(
-                          text: AppStrings.hiddenData,
+                          text: AppLocalizations.of(context)!.hiddenData,
                           style: GoogleFonts.archivo(
                             fontSize: FontSize.s13,
                             fontWeight: FontWeight.normal,
@@ -325,15 +325,15 @@ Widget statusCard(MyOrders order, BuildContext context) {
 
                   const SizedBox(height: 4),
                   TextUtils(
-                    text: AppStrings.garageLabel +'${order.garage.name}',
+                    text: AppLocalizations.of(context)!.garageLabel +'${order.garage.name}',
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text: AppStrings.spotLabel +'${order.spot.code}',
+                    text: AppLocalizations.of(context)!.spotLabel +'${order.spot.code}',
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text:  AppStrings.spotLabel +'${formatDate(order.addedOn)}',
+                    text:  AppLocalizations.of(context)!.spotLabel +'${formatDate(order.addedOn,context)}',
                     color: ColorManager.lightGrey,
                   ),
                   const SizedBox(height: 6),
@@ -348,7 +348,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      getStatusText(order.status),
+                      getStatusText(order.status, context),
                       style: TextStyle(
                         color: getStatusColor(order.status),
                         fontWeight: FontWeight.bold,
@@ -381,20 +381,20 @@ Widget statusCard(MyOrders order, BuildContext context) {
   );
 }
 
-String getStatusText(int status) {
+String getStatusText(int status, BuildContext context) {
   switch (status) {
     case 0:
-      return AppStrings.pending;
+      return AppLocalizations.of(context)!.pending;
     case 1:
-      return AppStrings.requested;
+      return AppLocalizations.of(context)!.requested;
     case 2:
-      return AppStrings.onTheWay;
+      return AppLocalizations.of(context)!.onTheWay;
     case 3:
-      return AppStrings.arrived;
+      return AppLocalizations.of(context)!.arrived;
     case 4:
-      return AppStrings.delivered;
+      return AppLocalizations.of(context)!.delivered;
     default:
-      return AppStrings.unknown;
+      return AppLocalizations.of(context)!.unknown;
   }
 }
 
@@ -413,7 +413,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          AppStrings.deliverTheVehicle,
+          AppLocalizations.of(context)!.deliverTheVehicle,context
         ),
         height: AppSizeHeight.s35,
       );
@@ -427,7 +427,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          AppStrings.iAmOnMyWay,
+          AppLocalizations.of(context)!.iAmOnMyWay,context
         ),
         height: AppSizeHeight.s35,
       );
@@ -441,7 +441,7 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          AppStrings.iHaveArrived,
+          AppLocalizations.of(context)!.iHaveArrived,context
         ),
         height: AppSizeHeight.s35,
       );
@@ -455,7 +455,8 @@ Widget getStatusButton(int status,
           state.updatingOrderId == orderId
               ? state.updateOrderStatusState
               : UpdateOrderState.initial,
-          AppStrings.delivered,
+          AppLocalizations.of(context)!.delivered,
+            context
         ),
         height: AppSizeHeight.s35,
       );
@@ -469,8 +470,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 0:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
-            message: AppStrings.areYouSureYouWantToCancelOrder,
+          AlertDialogService().showAlertDialog(context, title:AppLocalizations.of(context)!.warning,
+            message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -489,8 +490,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 1:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
-            message: AppStrings.areYouSureYouWantToCancelOrder,
+          AlertDialogService().showAlertDialog(context, title:AppLocalizations.of(context)!.warning,
+            message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -509,8 +510,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 2:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
-            message: AppStrings.areYouSureYouWantToCancelOrder,
+          AlertDialogService().showAlertDialog(context, title:AppLocalizations.of(context)!.warning,
+            message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -529,8 +530,8 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 3:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title:AppStrings.warning,
-            message: AppStrings.areYouSureYouWantToCancelOrder,
+          AlertDialogService().showAlertDialog(context, title:AppLocalizations.of(context)!.warning,
+            message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
@@ -567,17 +568,17 @@ Color getStatusColor(int status) {
   }
 }
 
-String formatDate(String dateString) {
+String formatDate(String dateString , BuildContext context) {
   try {
     final date = DateTime.parse(dateString);
     final formatter = DateFormat('dd-MM-yyyy - hh:mm a');
     return formatter.format(date);
   } catch (_) {
-    return AppStrings.invalidDate;
+    return AppLocalizations.of(context)!.invalidDate;
   }
 }
 
-Widget buildButtonContent(UpdateOrderState state, String text) {
+Widget buildButtonContent(UpdateOrderState state, String text , BuildContext context) {
   return switch (state) {
     UpdateOrderState.initial || UpdateOrderState.loaded =>
         TextUtils(
@@ -589,7 +590,7 @@ Widget buildButtonContent(UpdateOrderState state, String text) {
     UpdateOrderState.error =>
         TextUtils(
           alignnment: TextAlign.center,
-            text: AppStrings.contactAdminError,
+            text: AppLocalizations.of(context)!.contactAdminError,
           color: ColorManager.background,
           fontWeight: FontWeightManager.bold,
         ),

@@ -11,6 +11,7 @@ import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
 import 'package:valet_app/valete/presentation/resources/font_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/valet_main.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../../../core/services/services_locator.dart';
 import '../../components/custom_app_bar.dart';
 import '../../components/custom_textFormField.dart';
@@ -31,7 +32,7 @@ class LoginScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorManager.background,
         appBar: CustomAppBar(
-          title: AppStrings.login,
+          title: AppLocalizations.of(context)!.login,
           titleColor: ColorManager.white,
         ),
         body: BlocProvider<LoginBloc>(
@@ -81,13 +82,13 @@ class LoginScreen extends StatelessWidget {
                         // Phone field
                         Container(
                           padding: EdgeInsets.fromLTRB(0, 0, AppPadding.p12, AppPadding.p5),
-                          child: TextUtils(text:AppStrings.enterPhoneNumber),
+                          child: TextUtils(text:AppLocalizations.of(context)!.enterPhoneNumber),
                           alignment: AlignmentDirectional.centerEnd,
 
                         ),
 
                         CustomPhoneField(
-                          labelText: AppStrings.enterPhone,
+                          labelText: AppLocalizations.of(context)!.enterPhone,
                           labelSize: 15,
                           errorText:
                               state.hasInteractedWithPhone
@@ -110,11 +111,11 @@ class LoginScreen extends StatelessWidget {
                         // Password field
                         Container(
                           padding: EdgeInsets.fromLTRB(0, 0, AppPadding.p12, AppPadding.p5),
-                          child: TextUtils(text: AppStrings.password),
+                          child: TextUtils(text: AppLocalizations.of(context)!.password),
                           alignment: AlignmentDirectional.centerEnd,
                         ),
                         CustomTextFormField(
-                          labelText: AppStrings.enterPassword,
+                          labelText: AppLocalizations.of(context)!.enterPassword,
                           obscureText: state.isPasswordObscured,
                           onChanged:
                               (value) => context.read<LoginBloc>().add(
@@ -123,7 +124,7 @@ class LoginScreen extends StatelessWidget {
                           errorText:
                               state.hasInteractedWithPassword &&
                                       !state.isPasswordValid
-                                  ? AppStrings.shortPassword
+                                  ? AppLocalizations.of(context)!.shortPassword
                                   : null,
                           icon: Icon(
                             Icons.lock_outline,
@@ -160,7 +161,7 @@ class LoginScreen extends StatelessWidget {
                               state.loginStatus == LoginStatus.loading
                                   ? Lottie.asset(LottieManager.carLoading)
                                   : TextUtils(
-                                    text: AppStrings.login,
+                                    text: AppLocalizations.of(context)!.login,
                                     fontWeight: FontWeightManager.bold,
                                     color: ColorManager.background,
                                   ),

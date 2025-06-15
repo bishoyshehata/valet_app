@@ -9,6 +9,7 @@ import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_states.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/resources/values_manager.dart';
+import '../../../../core/l10n/app_locale.dart';
 import '../../../domain/entities/spot.dart';
 import '../../components/alert_dialog.dart';
 import '../../components/custom_app_bar.dart';
@@ -82,8 +83,11 @@ class OrderDetails extends StatelessWidget {
               ].firstWhereOrNull((spot) => spot.code == dropdownValue);
             }
 
+            final locale = Localizations.localeOf(context);
             return Directionality(
-              textDirection: TextDirection.rtl,
+              textDirection: locale.languageCode == 'ar'
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
               child: WillPopScope(
                 onWillPop: () async {
                   context.read<HomeBloc>().add(ResetSpotNameEvent());
@@ -136,8 +140,8 @@ class OrderDetails extends StatelessWidget {
                                 onPressed: () {
                                   AlertDialogService().showAlertDialog(
                                     context,
-                                    title: AppStrings.warning,
-                                    message: AppStrings.areYouSureYouWantToCancelOrder,
+                                    title: AppLocalizations.of(context)!.warning,
+                                    message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
                                     onPositiveButtonPressed: () {
                                       context.read<HomeBloc>().add(
                                         CancelHomeOrderEvent(spot!.order!.id),
@@ -246,7 +250,7 @@ class OrderDetails extends StatelessWidget {
 
                               return Text.rich(
                                 TextSpan(
-                                  text: AppStrings.customerPhone,
+                                  text: AppLocalizations.of(context)!.customerPhone,
                                   style: GoogleFonts.cairo(
                                     fontSize: FontSize.s17,
                                     fontWeight: FontWeight.normal,
@@ -263,7 +267,7 @@ class OrderDetails extends StatelessWidget {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: AppStrings.hiddenData,
+                                      text: AppLocalizations.of(context)!.hiddenData,
                                       style: GoogleFonts.archivo(
                                         fontSize: FontSize.s17,
                                         fontWeight: FontWeight.normal,
@@ -285,7 +289,7 @@ class OrderDetails extends StatelessWidget {
 
                               children: [
                                 TextUtils(
-                                  text: AppStrings.garageLabel,
+                                  text: AppLocalizations.of(context)!.garageLabel,
                                   color: ColorManager.lightGrey,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
@@ -412,7 +416,7 @@ class OrderDetails extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  AppStrings.spotLabel,
+                                  AppLocalizations.of(context)!.spotLabel,
                                   style: GoogleFonts.cairo(
                                     color: ColorManager.white,
                                     fontSize: FontSize.s17,
@@ -498,7 +502,7 @@ class OrderDetails extends StatelessWidget {
                                                     child: TextUtils(
                                                       text:
                                                           spot?.code ??
-                                                              AppStrings.noCode,
+                                                              AppLocalizations.of(context)!.noCode,
                                                       color:
                                                           ColorManager
                                                               .background,
@@ -556,7 +560,7 @@ class OrderDetails extends StatelessWidget {
 
                                       case RequestState.error:
                                         return Center(
-                                          child: TextUtils(text: AppStrings.errorOccurred),
+                                          child: TextUtils(text: AppLocalizations.of(context)!.errorOccurred),
                                         );
                                     }
                                   },
@@ -635,7 +639,7 @@ class OrderDetails extends StatelessWidget {
                                                     ? state
                                                         .updateOrderStatusState
                                                     : UpdateOrderState.initial,
-                                                AppStrings.deliverVehicle,
+                                                AppLocalizations.of(context)!.deliverVehicle,context
                                               ),
                                               height: AppSizeHeight.s35,
                                             );
@@ -690,7 +694,7 @@ class OrderDetails extends StatelessWidget {
                                         ),
                                         SizedBox(width: AppSizeWidth.s10),
                                         TextUtils(
-                                          text: AppStrings.confirmEdit,
+                                          text: AppLocalizations.of(context)!.confirmEdit,
                                           color: ColorManager.background,
                                           fontSize: FontSize.s17,
                                           fontWeight: FontWeightManager.bold,

@@ -97,7 +97,7 @@ class AppStrings {
 
 }
 
-// localization
+// l10n
 String ara = 'ar';
 
 String eng = 'en';

@@ -7,12 +7,17 @@ import 'package:valet_app/valete/data/models/update_valet_model.dart';
 import 'package:valet_app/valete/presentation/components/custom_app_bar.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/components/text/text_utils.dart';
+import 'package:valet_app/valete/presentation/controllers/language/language_bloc.dart';
+import 'package:valet_app/valete/presentation/controllers/language/language_state.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_events.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_states.dart';
 import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/profile/term_and_conditions.dart';
+import '../../../../../core/l10n/app_locale.dart';
+import '../../../../../core/utils/preferences_service.dart';
 import '../../../components/alert_dialog.dart';
+import '../../../controllers/language/language_events.dart';
 import '../../../resources/assets_manager.dart';
 import '../../../resources/colors_manager.dart';
 import '../../../resources/font_manager.dart';
@@ -50,7 +55,7 @@ class ValetProfileScreen extends StatelessWidget {
 
         if (snapshot.hasError) {
           return  Text(
-            AppStrings.errorHappened,
+            AppLocalizations.of(context)!.errorHappened,
             style: TextStyle(color: Colors.red),
           ); // error message
         }
@@ -68,7 +73,7 @@ class ValetProfileScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: ColorManager.background,
           appBar: CustomAppBar(
-            title: AppStrings.theProfile,
+            title: AppLocalizations.of(context)!.theProfile,
             centerTitle: false,
             titleColor: ColorManager.white,
             leading: Container(
@@ -137,7 +142,7 @@ class ValetProfileScreen extends StatelessWidget {
                             ),
                             SizedBox(width: AppSizeWidth.s8),
                             TextUtils(
-                              text: AppStrings.status,
+                              text: AppLocalizations.of(context)!.status,
                               color: ColorManager.white,
                               fontSize: FontSize.s17,
                               fontWeight: FontWeight.bold,
@@ -323,7 +328,7 @@ class ValetProfileScreen extends StatelessWidget {
                                     );
                                   },
                                   widget: TextUtils(
-                                    text:AppStrings.save ,
+                                    text:AppLocalizations.of(context)!.save ,
                                     color: ColorManager.white,
                                     fontWeight: FontWeightManager.bold,
                                   ),
@@ -344,7 +349,7 @@ class ValetProfileScreen extends StatelessWidget {
                         color: ColorManager.white,
                       ),
                       title: TextUtils(
-                        text: AppStrings.termsAndConditions,
+                        text: AppLocalizations.of(context)!.termsAndConditions,
                         fontSize: FontSize.s17,
                         fontWeight: FontWeight.bold,
                         color: ColorManager.white,
@@ -364,7 +369,7 @@ class ValetProfileScreen extends StatelessWidget {
                         color: ColorManager.error,
                       ),
                       title: TextUtils(
-                        text: AppStrings.deleteAccount,
+                        text: AppLocalizations.of(context)!.deleteAccount,
                         fontSize: FontSize.s17,
                         fontWeight: FontWeight.bold,
                         color: ColorManager.white,
@@ -372,10 +377,10 @@ class ValetProfileScreen extends StatelessWidget {
                       onTap: () async {
                         await AlertDialogService().showAlertDialog(
                           context,
-                          title: AppStrings.warning,
-                          message: AppStrings.areyouSureYouWantToDeleteYourAccount,
-                          positiveButtonText: AppStrings.yes,
-                          negativeButtonText: AppStrings.no,
+                          title: AppLocalizations.of(context)!.warning,
+                          message: AppLocalizations.of(context)!.areyouSureYouWantToDeleteYourAccount,
+                          positiveButtonText: AppLocalizations.of(context)!.yes,
+                          negativeButtonText: AppLocalizations.of(context)!.no,
                           onPositiveButtonPressed: () {
                             context.read<ProfileBloc>().add(
                               DeleteValetEvent(int.parse(valetId)),
@@ -387,7 +392,7 @@ class ValetProfileScreen extends StatelessWidget {
                     ListTile(
                       leading: Icon(Icons.logout, color: ColorManager.white),
                       title: TextUtils(
-                        text: AppStrings.logOut,
+                        text: AppLocalizations.of(context)!.logOut,
                         fontSize: FontSize.s17,
                         fontWeight: FontWeight.bold,
                         color: ColorManager.white,
@@ -395,16 +400,48 @@ class ValetProfileScreen extends StatelessWidget {
                       onTap: () async {
                         await AlertDialogService().showAlertDialog(
                           context,
-                          title: AppStrings.warning,
-                          message: AppStrings.areYouSureYouWantToLogOut,
-                          positiveButtonText: AppStrings.yes,
-                          negativeButtonText: AppStrings.no,
+                          title: AppLocalizations.of(context)!.warning,
+                          message: AppLocalizations.of(context)!.areYouSureYouWantToLogOut,
+                          positiveButtonText: AppLocalizations.of(context)!.yes,
+                          negativeButtonText: AppLocalizations.of(context)!.no,
                           onPositiveButtonPressed: () {
                             context.read<ProfileBloc>().add(LogoutEvent());
                           },
                         );
                       },
-                    ),
+                    ),    BlocBuilder<LanguageBloc, LanguageState>(
+  builder: (context, state) {
+    return ListTile(
+                      leading: CustomButton(
+                          width: 100,
+
+                          onTap: () async {
+                            final newLocale = Locale('en'); // أو 'ar'
+                            context.read<LanguageBloc>().add(ChangeLanguage(newLocale));
+                            await PreferencesService().setLanguage(newLocale); // احفظها
+                          },
+                          btnColor: ColorManager.white, widget: TextUtils(text: "en")),
+                      title: TextUtils(
+                        text: AppLocalizations.of(context)!.logOut,
+                        fontSize: FontSize.s17,
+                        fontWeight: FontWeight.bold,
+                        color: ColorManager.white,
+                      ),
+                      onTap: () async {
+                        await AlertDialogService().showAlertDialog(
+                          context,
+                          title: AppLocalizations.of(context)!.warning,
+                          message: AppLocalizations.of(context)!.areYouSureYouWantToLogOut,
+                          positiveButtonText: AppLocalizations.of(context)!.yes,
+                          negativeButtonText: AppLocalizations.of(context)!.no,
+                          onPositiveButtonPressed: () {
+                            context.read<ProfileBloc>().add(LogoutEvent());
+                          },
+                        );
+                      },
+                    );
+  },
+),
                   ],
                 ),
               ),
