@@ -589,31 +589,23 @@ class OrderDetails extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   spot!.order?.status == 0
-                                      ? BlocListener<
-                                        MyOrdersBloc,
-                                        MyOrdersState
-                                      >(
+                                      ? BlocListener<MyOrdersBloc,MyOrdersState>(
                                         listenWhen:
                                             (previous, current) =>
-                                                previous.updateOrderStatusState !=
-                                                    current
-                                                        .updateOrderStatusState &&
-                                                previous.updateOrderStatus !=
-                                                    current.updateOrderStatus,
+                                                current.updateOrderStatus == true &&
+                                                current.updatingOrderId == spot.order?.id ,
                                         listener: (context, state) {
-                                          context.read<HomeBloc>().add(
-                                            ChangeTabEvent(1),
-                                          );
-                                          Future.delayed(
-                                            Duration(milliseconds: 1000),
-                                            () {
+                                          context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
+                                          context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+                                          context.read<HomeBloc>().add(ChangeTabEvent(1));
+                                          context.read<MyOrdersBloc>().add(GetMyOrdersEvent(1));
+
+
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (_) => MainScreen(),
                                                 ),
-                                              );
-                                            },
                                           );
                                         },
                                         child: BlocBuilder<

@@ -175,7 +175,7 @@ try {
     );
 
     if (response.statusCode == 200) {
-      return response.data['data'];
+      return response.data['succeeded'];
     } else {
       handleHttpError(response, null);
     }

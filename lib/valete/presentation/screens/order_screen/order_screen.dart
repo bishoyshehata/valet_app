@@ -28,6 +28,8 @@ import '../../components/custom_app_bar.dart';
 import '../../components/custom_bottun.dart';
 import '../../controllers/home/home_bloc.dart';
 import '../../controllers/home/home_events.dart' show ChangeTabEvent;
+import '../../controllers/myorders/my_orders_bloc.dart';
+import '../../controllers/myorders/my_orders_events.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
@@ -240,6 +242,8 @@ class OrderScreen extends StatelessWidget {
                             ),
                           );
                           context.read<HomeBloc>().add(ChangeTabEvent(1));
+                          context.read<MyOrdersBloc>().add(GetMyOrdersEvent(0));
+
                           Future.delayed(Duration(milliseconds: 500), () {
                             Navigator.pushReplacement(
                               context,
