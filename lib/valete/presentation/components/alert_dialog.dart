@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/l10n/app_locale.dart';
 import '../resources/colors_manager.dart';
 import '../resources/font_manager.dart';
 import '../resources/strings_manager.dart';
@@ -22,8 +23,8 @@ class AlertDialogService {
         VoidCallback? onNegativeButtonPressed,
         bool? dismissible,
       }) async {
-    final String positiveText = positiveButtonText ?? AppStrings.yes;
-    final String negativeText = negativeButtonText ?? AppStrings.no;
+    final String positiveText = positiveButtonText ?? AppLocalizations.of(context)!.yes;
+    final String negativeText = negativeButtonText ?? AppLocalizations.of(context)!.no;
 
     return await showDialog<bool>(
       context: context,
@@ -57,7 +58,7 @@ class AlertDialogService {
                   Navigator.of(context).pop(false);
                 },
                 child: Text(
-                  negativeButtonText!,
+                  negativeText,
                   style:GoogleFonts.cairo(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeight.bold,
@@ -71,7 +72,7 @@ class AlertDialogService {
                   Navigator.of(context).pop(true);
                 },
                 child: Text(
-                  positiveButtonText!,
+                  positiveText,
                   style:GoogleFonts.cairo(
                     fontSize: FontSize.s14,
                     fontWeight: FontWeight.bold,

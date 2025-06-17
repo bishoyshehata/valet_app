@@ -198,11 +198,12 @@ class GarageScreen extends StatelessWidget {
                                   sliver: SliverGrid(
                                     delegate: SliverChildBuilderDelegate(
                                           (context, index) {
+                                        final locale = Localizations.localeOf(context);
                                         final spot =
                                         mainSpots[index];
                                         final isLeftSide = index % 2 == 0;
                                         return ParkingSlotWidget(
-                                          isLeftSide: isLeftSide,
+                                          isLeftSide: locale.languageCode == 'en' ?  isLeftSide : !isLeftSide,
                                           garageId: garageId,
                                           spotindex: index,
                                           status: spot.status,
@@ -288,6 +289,7 @@ class ParkingSlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final isBusy = spot.hasOrder;
     return InkWell(
       onTap: () {
@@ -318,30 +320,27 @@ class ParkingSlotWidget extends StatelessWidget {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 colors: [
-                  isLeftSide ? ColorManager.primary : Colors.transparent,
-                  ColorManager.primary,
                   isLeftSide ? Colors.transparent : ColorManager.primary,
+                  ColorManager.primary,
+                  isLeftSide ? ColorManager.primary : Colors.transparent,
                 ],
               ).createShader(bounds);
             },
             blendMode: BlendMode.dstIn,
+
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
-                  right:
-                      isLeftSide
-                          ? BorderSide(width: 0)
-                          : BorderSide(width: 1, color: ColorManager.primary),
+                  // هنا من غير أي علاقة بـ locale
+                  right: isLeftSide ? BorderSide(width: 1, color: ColorManager.primary) : BorderSide.none,
+                  left: !isLeftSide ? BorderSide(width: 1, color: ColorManager.primary) : BorderSide.none,
+                  top: BorderSide(width: 1, color: ColorManager.primary),
                   bottom: BorderSide(width: 1, color: ColorManager.primary),
-                  top: BorderSide(
-                    width: 1,
-                    color: ColorManager.primary,
-                    style: BorderStyle.solid,
-                  ),
                 ),
               ),
             ),
           ),
+
           Container(
             margin: EdgeInsets.all(5),
             color:

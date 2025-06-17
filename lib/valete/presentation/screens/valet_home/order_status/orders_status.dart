@@ -333,7 +333,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                     color: ColorManager.lightGrey,
                   ),
                   TextUtils(
-                    text:  AppLocalizations.of(context)!.spotLabel +'${formatDate(order.addedOn,context)}',
+                    text:  AppLocalizations.of(context)!.sinceLabel +'${formatDate(order.addedOn,context)}',
                     color: ColorManager.lightGrey,
                   ),
                   const SizedBox(height: 6),
@@ -490,12 +490,14 @@ Widget cancelButton(int status, BuildContext context, int orderId) {
     case 1:
       return IconButton(
         onPressed: () {
-          AlertDialogService().showAlertDialog(context, title:AppLocalizations.of(context)!.warning,
+          AlertDialogService().showAlertDialog(
+            context, title:AppLocalizations.of(context)!.warning,
+            negativeButtonText: AppLocalizations.of(context)!.no.toString(),
+            positiveButtonText: AppLocalizations.of(context)!.yes.toString(),
             message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
             onPositiveButtonPressed: () {
               context.read<MyOrdersBloc>().add(CancelMyOrderEvent(orderId));
             },
-
           );
         },
         icon: Icon(

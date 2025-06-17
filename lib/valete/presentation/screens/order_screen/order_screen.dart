@@ -58,7 +58,7 @@ class OrderScreen extends StatelessWidget {
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
         SharedPreferences.getInstance().then((prefs) {
-          if (isWhatsAppWorking == true) {
+          if (isWhatsAppWorking != true) {
             int? valetId = prefs.getInt('valetId');
             SocketService().closeSocket();
             socketService.initSocket(
@@ -166,7 +166,7 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-                          isWhatsAppWorking == true
+                          isWhatsAppWorking != true
                               ? state.phoneNumber == 'رقم هاتف العميل'
                                   ? 'رقم هاتف العميل'
                                   : state.phoneNumber.length >= 8
@@ -211,7 +211,7 @@ class OrderScreen extends StatelessWidget {
                               garageName
 
                           ),
-                          isWhatsAppWorking == true
+                          isWhatsAppWorking != true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
                                   ? _buildQrSection(context, state.data!.qr)
                                   : SizedBox.shrink())
@@ -275,7 +275,7 @@ class OrderScreen extends StatelessWidget {
                               child: CustomButton(
                                 onTap: () async {
                                   bool isValid = false;
-                                  if (isWhatsAppWorking == true) {
+                                  if (isWhatsAppWorking != true) {
                                     // الحالة لما WhatsApp شغال
                                     isValid =
                                         state.selectedVehicleType != null &&
@@ -306,14 +306,14 @@ class OrderScreen extends StatelessWidget {
                                       spotId: spotId!,
                                       carType: state.selectedVehicleType.index,
                                       ClientNumber:
-                                          isWhatsAppWorking == true
+                                          isWhatsAppWorking != true
                                               ? state.phoneNumber
                                               : state.completePhoneNumber!
                                                   .replaceFirst("+", ''),
                                       garageId: selectedGarageId,
                                     );
 
-                                    isWhatsAppWorking == true
+                                    isWhatsAppWorking != true
                                         ? context.read<OrderBloc>().add(
                                           StoreOrderWithWhatsAppEvent(model),
                                         )
@@ -321,7 +321,7 @@ class OrderScreen extends StatelessWidget {
                                           StoreOrderNoWhatsAppEvent(model),
                                         );
                                   } else {
-                                    if (isWhatsAppWorking == true &&
+                                    if (isWhatsAppWorking != true &&
                                         (state.phoneNumber ==
                                             'رقم هاتف العميل')) {
                                       ScaffoldMessenger.of(
@@ -372,7 +372,7 @@ class OrderScreen extends StatelessWidget {
                                   }
                                 },
                                 btnColor:
-                                    isWhatsAppWorking == true
+                                    isWhatsAppWorking != true
                                         ? (state.phoneNumber !=
                                                 'رقم هاتف العميل'
                                             ? ColorManager.primary
