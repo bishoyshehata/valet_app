@@ -38,7 +38,7 @@
   "statusDelivered": "Delivered",
   "ordersManagement": "Order Management",
   "noOrders": "No orders",
-  "customerPhone": "Customer phone: ",
+  "customerPhone": "phone: ",
   "hiddenData": "########",
   "garageLabel": "Garage:",
   "spotLabel": "Spot:",
@@ -89,5 +89,7 @@
   "changeLanguage": "Language",
   "active": "Active",
   "disActive": "DisActive",
-  "busy": "Busy"
+  "busy": "Busy",
+  "clientNumber": "Client Number"
+
 }

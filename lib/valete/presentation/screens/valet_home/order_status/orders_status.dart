@@ -9,7 +9,6 @@ import 'package:valet_app/valete/presentation/components/alert_dialog.dart';
 import 'package:valet_app/valete/presentation/components/custom_bottun.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
 import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
-import 'package:valet_app/valete/presentation/resources/strings_manager.dart';
 import 'package:valet_app/valete/presentation/screens/valet_home/order_status/loading_page.dart';
 import '../../../../../core/l10n/app_locale.dart';
 import '../../../../../core/network/api_constants.dart';
@@ -58,188 +57,185 @@ class OrdersScreen extends StatelessWidget {
         ),
       ),
 
-      body: RefreshIndicator(
-        onRefresh: () async {
-          context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-        },
-        child: BlocBuilder<MyOrdersBloc, MyOrdersState>(
-          builder: (context, state) {
-            final orders = state.ordersByStatus[state.selectedStatus] ?? [];
+      body: BlocBuilder<MyOrdersBloc, MyOrdersState>(
+        builder: (context, state) {
+          final orders = state.ordersByStatus[state.selectedStatus] ?? [];
 
-            switch (state.myOrdersState) {
-              case RequestState.loading:
-                return SizedBox(
-                  height: AppSizeHeight.sMaxInfinite,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder:
-                        (context, index) =>
-                        Shimmer.fromColors(
-                          baseColor: Colors.grey[850]!,
-                          highlightColor: Colors.grey[800]!,
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              right: AppMargin.m12,
-                              top: AppMargin.m12,
-                              left: AppMargin.m12,
-                            ),
-                            height: AppSizeHeight.s120,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+          switch (state.myOrdersState) {
+            case RequestState.loading:
+              return SizedBox(
+                height: AppSizeHeight.sMaxInfinite,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder:
+                      (context, index) =>
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[850]!,
+                        highlightColor: Colors.grey[800]!,
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            right: AppMargin.m12,
+                            top: AppMargin.m12,
+                            left: AppMargin.m12,
+                          ),
+                          height: AppSizeHeight.s120,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                    itemCount: 4,
-                  ),
-                );
-              case RequestState.loaded:
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 70,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: statusOptions.length,
-                        itemBuilder: (context, index) {
-                          final option = statusOptions[index];
-                          final isSelected =
-                              state.selectedStatus == option['id'];
+                      ),
+                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                  itemCount: 4,
+                ),
+              );
+            case RequestState.loaded:
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 70,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: statusOptions.length,
+                      itemBuilder: (context, index) {
+                        final option = statusOptions[index];
+                        final isSelected =
+                            state.selectedStatus == option['id'];
 
-                          return Container(
-                            margin: EdgeInsets.only(top: AppMargin.m8),
-                            padding: EdgeInsets.all(AppPadding.p6),
-                            child: Stack(
-                              children: [
-                                ChoiceChip(
-                                  elevation: 0,
-                                  label: Text(option['label']),
-                                  selected: isSelected,
-                                  onSelected: (_) {
-                                    context.read<MyOrdersBloc>().add(
-                                      GetMyOrdersEvent(option['id']),
-                                    );
-                                  },
-                                  selectedColor: ColorManager.primary,
-                                  backgroundColor: ColorManager.grey,
-                                  labelStyle: GoogleFonts.cairo(
+                        return Container(
+                          margin: EdgeInsets.only(top: AppMargin.m8),
+                          padding: EdgeInsets.all(AppPadding.p6),
+                          child: Stack(
+                            children: [
+                              ChoiceChip(
+                                elevation: 0,
+                                label: Text(option['label']),
+                                selected: isSelected,
+                                onSelected: (_) {
+                                  context.read<MyOrdersBloc>().add(
+                                    GetMyOrdersEvent(option['id']),
+                                  );
+                                },
+                                selectedColor: ColorManager.primary,
+                                backgroundColor: ColorManager.grey,
+                                labelStyle: GoogleFonts.cairo(
+                                  color:
+                                  isSelected
+                                      ? ColorManager.background
+                                      : ColorManager.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 2,
+                                  ),
+                                  constraints: BoxConstraints(
+                                    minWidth: 20,
+                                    minHeight: 20,
+                                  ),
+                                  decoration: BoxDecoration(
                                     color:
-                                    isSelected
-                                        ? ColorManager.background
-                                        : ColorManager.white,
-                                    fontWeight: FontWeight.bold,
+                                    option['id'] == 1 &&
+                                        state
+                                            .ordersByStatus[option['id']]!
+                                            .length >
+                                            0
+                                        ? ColorManager.warning
+                                        : ColorManager.background,
+                                    border: Border.all(
+                                      color: ColorManager.white,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      AppSizeHeight.s50,
+                                    ),
                                   ),
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 2,
-                                    ),
-                                    constraints: BoxConstraints(
-                                      minWidth: 20,
-                                      minHeight: 20,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                      option['id'] == 1 &&
-                                          state
-                                              .ordersByStatus[option['id']]!
-                                              .length >
-                                              0
-                                          ? ColorManager.warning
-                                          : ColorManager.background,
-                                      border: Border.all(
-                                        color: ColorManager.white,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(
-                                        AppSizeHeight.s50,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: TextUtils(
-                                        text:
-                                        '${state.ordersByStatus[option['id']]
-                                            ?.length ?? 0}',
-                                        color: ColorManager.white,
-                                        fontWeight: FontWeightManager.bold,
-                                      ),
+                                  child: Center(
+                                    child: TextUtils(
+                                      text:
+                                      '${state.ordersByStatus[option['id']]
+                                          ?.length ?? 0}',
+                                      color: ColorManager.white,
+                                      fontWeight: FontWeightManager.bold,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                    Expanded(
-                      child:
-                      orders.isNotEmpty
-                          ? ListView.builder(
-                        itemCount: orders.length,
-                        itemBuilder: (context, index) {
-                          final order = orders[index];
-                          return InkWell(
-                            onTap: () {
-                        if(order.status!=4){
-                          context.read<HomeBloc>().add(
-                              GetGarageSpotEvent(order.garageId));
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                  LoadingScreen(
-                                    spotId: order.spotId,
-                                    garageName: order.garage.name,
-                                  ),
-                            ),
-                          );
-                        }else{}
-                            },
+                  ),
+                  Expanded(
+                    child:
+                    orders.isNotEmpty
+                        ? ListView.builder(
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        final order = orders[index];
+                        return InkWell(
+                          onTap: () {
+                      if(order.status!=4){
+                        context.read<HomeBloc>().add(
+                            GetGarageSpotEvent(order.garageId));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                LoadingScreen(
+                                  spotId: order.spotId,
+                                  garageName: order.garage.name,
+                                ),
+                          ),
+                        );
+                      }else{}
+                          },
 
-                            child: statusCard(order, context),
-                          );
-                        },
-                      )
-                          : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Lottie.asset(LottieManager.noCars),
-                            const SizedBox(height: 12),
-                            TextUtils(
-                                text: AppLocalizations.of(context)!.noOrders,
-                              color: ColorManager.white,
-                              fontSize: FontSize.s14,
-                              fontWeight: FontWeightManager.bold,
-                            ),
-                          ],
-                        ),
+                          child: statusCard(order, context),
+                        );
+                      },
+                    )
+                        : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.asset(LottieManager.noCars),
+                          const SizedBox(height: 12),
+                          TextUtils(
+                              text: AppLocalizations.of(context)!.noOrders,
+                            color: ColorManager.white,
+                            fontSize: FontSize.s14,
+                            fontWeight: FontWeightManager.bold,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                );
-              case RequestState.error:
-                return buildErrorBody(
-                  context,
-                  state.myOrdersStatusCode,
-                  state.myOrdersErrorMessage,
-                );
-            }
-          },
-        ),
+                  ),
+                ],
+              );
+            case RequestState.error:
+              return buildErrorBody(
+                context,
+                state.myOrdersStatusCode,
+                state.myOrdersErrorMessage,
+              );
+          }
+        },
       ),
     );
   }
 }
 
 Widget statusCard(MyOrders order, BuildContext context) {
+  final locale = Localizations.localeOf(context);
+
   return BlocListener<MyOrdersBloc, MyOrdersState>(
     listenWhen:
         (prev, curr) =>
@@ -302,6 +298,7 @@ Widget statusCard(MyOrders order, BuildContext context) {
                         color: ColorManager.white,
                       ),
                       children: [
+                      locale.languageCode =='ar'?
                         TextSpan(
                           text: order.whatsapp.replaceRange(0, 8, ''),
                           style: GoogleFonts.archivo(
@@ -309,7 +306,16 @@ Widget statusCard(MyOrders order, BuildContext context) {
                             fontWeight: FontWeight.normal,
                             color: ColorManager.white,
                           ),
+                        ) :  TextSpan(
+                        text: AppLocalizations.of(context)!.hiddenData,
+                        style: GoogleFonts.archivo(
+                          fontSize: FontSize.s13,
+                          fontWeight: FontWeight.normal,
+                          color: ColorManager.white,
                         ),
+                      ),
+
+                        locale.languageCode =='ar'?
                         TextSpan(
                           text: AppLocalizations.of(context)!.hiddenData,
                           style: GoogleFonts.archivo(
@@ -317,7 +323,14 @@ Widget statusCard(MyOrders order, BuildContext context) {
                             fontWeight: FontWeight.normal,
                             color: ColorManager.white,
                           ),
-                        ),
+                        ) :   TextSpan(
+                          text: order.whatsapp.replaceRange(0, 8, ''),
+                          style: GoogleFonts.archivo(
+                            fontSize: FontSize.s13,
+                            fontWeight: FontWeight.normal,
+                            color: ColorManager.white,
+                          ),
+                        ) ,
                       ],
                     ),
                     // ✅ تأكد إنها كده بالظبط

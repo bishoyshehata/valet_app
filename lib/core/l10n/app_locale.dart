@@ -637,6 +637,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مشغول'**
   String get busy;
+
+  /// No description provided for @clientNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم هاتف العميل'**
+  String get clientNumber;
 }
 
 class _AppLocalizationsDelegate

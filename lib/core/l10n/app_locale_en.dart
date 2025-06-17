@@ -126,7 +126,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noOrders => 'No orders';
 
   @override
-  String get customerPhone => 'Customer phone: ';
+  String get customerPhone => 'phone: ';
 
   @override
   String get hiddenData => '########';
@@ -284,4 +284,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get busy => 'Busy';
+
+  @override
+  String get clientNumber => 'Client Number';
 }

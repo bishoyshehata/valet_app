@@ -48,128 +48,139 @@ class MainScreen extends StatelessWidget {
             ? TextDirection.rtl
             : TextDirection.ltr,
 
-        child: Scaffold(
-          backgroundColor: ColorManager.background,
-          body: screens[state.currentIndex],
-          bottomNavigationBar: BottomNavigationBar(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<HomeBloc>().add(GetMyGaragesEvent());
+            context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
+            await Future.delayed(Duration(seconds:1));
+
+          },
+edgeOffset: 80,
+          color: ColorManager.background,
+          backgroundColor: ColorManager.white,
+          child: Scaffold(
             backgroundColor: ColorManager.background,
-            currentIndex: state.currentIndex,
-            selectedItemColor: ColorManager.primary,
-            unselectedItemColor: ColorManager.white,
-            onTap: (index) {
+            body: screens[state.currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: ColorManager.background,
+              currentIndex: state.currentIndex,
+              selectedItemColor: ColorManager.primary,
+              unselectedItemColor: ColorManager.white,
+              onTap: (index) {
 
-              context.read<HomeBloc>().add(ChangeTabEvent(index));
+                context.read<HomeBloc>().add(ChangeTabEvent(index));
+              },
+              unselectedLabelStyle:GoogleFonts.cairo(color: ColorManager.white) ,
+              selectedLabelStyle: GoogleFonts.cairo(color: ColorManager.primary),
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_work_outlined, color: ColorManager.white,),
+                  label: AppLocalizations.of(context)!.theGarage,
+                  activeIcon: Icon(Icons.home_work_rounded, color: ColorManager.primary,),
+                ),
+                 BottomNavigationBarItem(
+                  icon: Icon(Icons.note_alt_outlined, color: ColorManager.white,),
+                  label: AppLocalizations.of(context)!.orders,
+                   activeIcon: Icon(Icons.note_alt_rounded, color: ColorManager.primary,),
+                ),
+                BottomNavigationBarItem(
+                  icon: BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, state) {
+              return FutureBuilder<int?>(
+                    future: SharedPreferences.getInstance()
+                        .then((prefs) => prefs.getInt('status')), // تحميل الحالة من الشيرد
+                    builder: (context, snapshot) {
+                      final statusIndex = snapshot.data ?? 0; // 0 = Active بشكل افتراضي
+                      final status = Status.values[statusIndex];
+
+                      // اختار اللون حسب الحالة
+                      Color statusColor;
+                      switch (status) {
+                        case Status.Active:
+                          statusColor = Colors.green;
+                          break;
+                        case Status.Busy:
+                          statusColor = Colors.orange;
+                          break;
+                        case Status.DisActive:
+                          statusColor = Colors.red;
+                          break;
+                      }
+
+                      return Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Icon(Icons.person_2_outlined, color: ColorManager.white),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              height: 10,
+                              width: 10,
+                              decoration: BoxDecoration(
+                                color: statusColor,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 1.5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
             },
-            unselectedLabelStyle:GoogleFonts.cairo(color: ColorManager.white) ,
-            selectedLabelStyle: GoogleFonts.cairo(color: ColorManager.primary),
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_work_outlined, color: ColorManager.white,),
-                label: AppLocalizations.of(context)!.theGarage,
-                activeIcon: Icon(Icons.home_work_rounded, color: ColorManager.primary,),
-              ),
-               BottomNavigationBarItem(
-                icon: Icon(Icons.note_alt_outlined, color: ColorManager.white,),
-                label: AppLocalizations.of(context)!.orders,
-                 activeIcon: Icon(Icons.note_alt_rounded, color: ColorManager.primary,),
-              ),
-              BottomNavigationBarItem(
-                icon: BlocBuilder<ProfileBloc, ProfileState>(
-  builder: (context, state) {
-    return FutureBuilder<int?>(
-                  future: SharedPreferences.getInstance()
-                      .then((prefs) => prefs.getInt('status')), // تحميل الحالة من الشيرد
-                  builder: (context, snapshot) {
-                    final statusIndex = snapshot.data ?? 0; // 0 = Active بشكل افتراضي
-                    final status = Status.values[statusIndex];
+          ),
+                  activeIcon: BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, state) {
+              return FutureBuilder<int?>(
+                    future: SharedPreferences.getInstance()
+                        .then((prefs) => prefs.getInt('status')),
+                    builder: (context, snapshot) {
+                      final statusIndex = snapshot.data ?? 0;
+                      final status = Status.values[statusIndex];
 
-                    // اختار اللون حسب الحالة
-                    Color statusColor;
-                    switch (status) {
-                      case Status.Active:
-                        statusColor = Colors.green;
-                        break;
-                      case Status.Busy:
-                        statusColor = Colors.orange;
-                        break;
-                      case Status.DisActive:
-                        statusColor = Colors.red;
-                        break;
-                    }
+                      Color statusColor;
+                      switch (status) {
+                        case Status.Active:
+                          statusColor = Colors.green;
+                          break;
+                        case Status.Busy:
+                          statusColor = Colors.orange;
+                          break;
+                        case Status.DisActive:
+                          statusColor = Colors.red;
+                          break;
+                      }
 
-                    return Stack(
-                      alignment: Alignment.topRight,
-                      children: [
-                        Icon(Icons.person_2_outlined, color: ColorManager.white),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            height: 10,
-                            width: 10,
-                            decoration: BoxDecoration(
-                              color: statusColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1.5),
+                      return Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Icon(Icons.person, color: ColorManager.primary),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Container(
+                              height: 10,
+                              width: 10,
+                              decoration: BoxDecoration(
+                                color: statusColor,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 1.5),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-  },
-),
-                activeIcon: BlocBuilder<ProfileBloc, ProfileState>(
-  builder: (context, state) {
-    return FutureBuilder<int?>(
-                  future: SharedPreferences.getInstance()
-                      .then((prefs) => prefs.getInt('status')),
-                  builder: (context, snapshot) {
-                    final statusIndex = snapshot.data ?? 0;
-                    final status = Status.values[statusIndex];
+                        ],
+                      );
+                    },
+                  );
+            },
+          ),
+                  label: AppLocalizations.of(context)!.profile,
+                  backgroundColor: ColorManager.primary,
+                ),
 
-                    Color statusColor;
-                    switch (status) {
-                      case Status.Active:
-                        statusColor = Colors.green;
-                        break;
-                      case Status.Busy:
-                        statusColor = Colors.orange;
-                        break;
-                      case Status.DisActive:
-                        statusColor = Colors.red;
-                        break;
-                    }
-
-                    return Stack(
-                      alignment: Alignment.topRight,
-                      children: [
-                        Icon(Icons.person, color: ColorManager.primary),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            height: 10,
-                            width: 10,
-                            decoration: BoxDecoration(
-                              color: statusColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-  },
-),
-                label: AppLocalizations.of(context)!.profile,
-                backgroundColor: ColorManager.primary,
-              ),
-
-            ],
+              ],
+            ),
           ),
         ),
       );

@@ -282,4 +282,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get busy => 'مشغول';
+
+  @override
+  String get clientNumber => 'رقم هاتف العميل';
 }

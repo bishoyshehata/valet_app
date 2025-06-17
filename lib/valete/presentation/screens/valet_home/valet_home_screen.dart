@@ -60,93 +60,88 @@ class ValetHomeScreen extends StatelessWidget {
             ),
           ),
 
-          body: RefreshIndicator(
-            onRefresh: () async {
-              context.read<HomeBloc>().add(GetMyGaragesEvent());
-            },
-            child: ListView(
-              padding: EdgeInsets.zero,
-              physics: const AlwaysScrollableScrollPhysics(), // مهم جدًا
-              children: [
-                SizedBox(height: AppSizeHeight.s10),
-                Align(
-                  alignment: Alignment.center,
-                  child:state.myGaragesState!=RequestState.error? CustomButton(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => OrderScreen()),
-                      );
-                    },
-                    elevation: 5,
-                    btnColor: ColorManager.primary,
-                    widget: TextUtils(
-                      text: AppLocalizations.of(context)!.addOrder,
-                      fontSize: FontSize.s20,
-                      color: ColorManager.background,
-                      fontWeight: FontWeightManager.bold,
-                    ),
-                  ) : SizedBox(height: 0,),
-                ),
-                SizedBox(height: AppSizeHeight.s5),
-                  switch(state.myGaragesState) {
-                  RequestState.loading => ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder:
-                        (context, index) => Shimmer.fromColors(
-                          baseColor: Colors.grey[850]!,
-                          highlightColor: Colors.grey[800]!,
-                          child: Container(
-                            margin: EdgeInsets.symmetric(
-                              horizontal: AppMargin.m12,
-                              vertical: AppMargin.m12,
-                            ),
-                            height: AppSizeHeight.s120,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+          body: ListView(
+            padding: EdgeInsets.zero,
+            physics: const AlwaysScrollableScrollPhysics(), // مهم جدًا
+            children: [
+              SizedBox(height: AppSizeHeight.s10),
+              Align(
+                alignment: Alignment.center,
+                child:state.myGaragesState!=RequestState.error? CustomButton(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => OrderScreen()),
+                    );
+                  },
+                  elevation: 5,
+                  btnColor: ColorManager.primary,
+                  widget: TextUtils(
+                    text: AppLocalizations.of(context)!.addOrder,
+                    fontSize: FontSize.s20,
+                    color: ColorManager.background,
+                    fontWeight: FontWeightManager.bold,
+                  ),
+                ) : SizedBox(height: 0,),
+              ),
+              SizedBox(height: AppSizeHeight.s5),
+                switch(state.myGaragesState) {
+                RequestState.loading => ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder:
+                      (context, index) => Shimmer.fromColors(
+                        baseColor: Colors.grey[850]!,
+                        highlightColor: Colors.grey[800]!,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: AppMargin.m12,
+                            vertical: AppMargin.m12,
+                          ),
+                          height: AppSizeHeight.s120,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                    itemCount: 4,
-                  ),
-                  RequestState.loaded =>
-                    state.data!.isEmpty
-                        ? Lottie.asset(LottieManager.noCars)
-                        : ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: state.data!.length,
-                          itemBuilder: (context, index) {
-                            final garage = state.data![index];
-                            return InkWell(
-                              onTap: () {
-                                     Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            GarageScreen(garageId: garage.id , garageName : garage.name),
-                                  ),
-                                );
-                                     context.read<HomeBloc>().add(GetGarageSpotEvent(garage.id));
-                              },
-                              child: GarageCard(
-                                name: garage.name,
-                                address: garage.address?? AppLocalizations.of(context)!.unDefined,
-                                capacity: garage.capacity!,
-                                busySpots: garage.busySpotCount!,
-                                emptySpots: garage.emptySpotCount!,
-                              ),
-                            );
-                          },
-                        ),
-                  RequestState.error => buildErrorBody(context, state.garagesStatusCode,state.myGaragesErrorMessage)
-                },
-              ],
-            ),
+                      ),
+                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                  itemCount: 4,
+                ),
+                RequestState.loaded =>
+                  state.data!.isEmpty
+                      ? Lottie.asset(LottieManager.noCars)
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: state.data!.length,
+                        itemBuilder: (context, index) {
+                          final garage = state.data![index];
+                          return InkWell(
+                            onTap: () {
+                                   Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) =>
+                                          GarageScreen(garageId: garage.id , garageName : garage.name),
+                                ),
+                              );
+                                   context.read<HomeBloc>().add(GetGarageSpotEvent(garage.id));
+                            },
+                            child: GarageCard(
+                              name: garage.name,
+                              address: garage.address?? AppLocalizations.of(context)!.unDefined,
+                              capacity: garage.capacity!,
+                              busySpots: garage.busySpotCount!,
+                              emptySpots: garage.emptySpotCount!,
+                            ),
+                          );
+                        },
+                      ),
+                RequestState.error => buildErrorBody(context, state.garagesStatusCode,state.myGaragesErrorMessage)
+              },
+            ],
           ),
         );
       },

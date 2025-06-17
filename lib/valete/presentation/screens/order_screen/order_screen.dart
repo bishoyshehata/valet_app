@@ -60,7 +60,7 @@ class OrderScreen extends StatelessWidget {
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
         SharedPreferences.getInstance().then((prefs) {
-          if (isWhatsAppWorking != true) {
+          if (isWhatsAppWorking == true) {
             int? valetId = prefs.getInt('valetId');
             SocketService().closeSocket();
             socketService.initSocket(
@@ -168,9 +168,9 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-                          isWhatsAppWorking != true
+                          isWhatsAppWorking == true
                               ? state.phoneNumber == 'رقم هاتف العميل'
-                                  ? 'رقم هاتف العميل'
+                                  ? AppLocalizations.of(context)!.clientNumber
                                   : state.phoneNumber.length >= 8
                                   ? state.phoneNumber.replaceRange(
                                     0,
@@ -213,7 +213,7 @@ class OrderScreen extends StatelessWidget {
                               garageName
 
                           ),
-                          isWhatsAppWorking != true
+                          isWhatsAppWorking == true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
                                   ? _buildQrSection(context, state.data!.qr)
                                   : SizedBox.shrink())
@@ -279,7 +279,7 @@ class OrderScreen extends StatelessWidget {
                               child: CustomButton(
                                 onTap: () async {
                                   bool isValid = false;
-                                  if (isWhatsAppWorking != true) {
+                                  if (isWhatsAppWorking == true) {
                                     // الحالة لما WhatsApp شغال
                                     isValid =
                                         state.selectedVehicleType != null &&
@@ -310,14 +310,14 @@ class OrderScreen extends StatelessWidget {
                                       spotId: spotId!,
                                       carType: state.selectedVehicleType.index,
                                       ClientNumber:
-                                          isWhatsAppWorking != true
+                                          isWhatsAppWorking == true
                                               ? state.phoneNumber
                                               : state.completePhoneNumber!
                                                   .replaceFirst("+", ''),
                                       garageId: selectedGarageId,
                                     );
 
-                                    isWhatsAppWorking != true
+                                    isWhatsAppWorking == true
                                         ? context.read<OrderBloc>().add(
                                           StoreOrderWithWhatsAppEvent(model),
                                         )
@@ -325,7 +325,7 @@ class OrderScreen extends StatelessWidget {
                                           StoreOrderNoWhatsAppEvent(model),
                                         );
                                   } else {
-                                    if (isWhatsAppWorking != true &&
+                                    if (isWhatsAppWorking == true &&
                                         (state.phoneNumber ==
                                             'رقم هاتف العميل')) {
                                       ScaffoldMessenger.of(
@@ -376,7 +376,7 @@ class OrderScreen extends StatelessWidget {
                                   }
                                 },
                                 btnColor:
-                                    isWhatsAppWorking != true
+                                    isWhatsAppWorking == true
                                         ? (state.phoneNumber !=
                                                 'رقم هاتف العميل'
                                             ? ColorManager.primary
@@ -444,6 +444,8 @@ class OrderScreen extends StatelessWidget {
     String selectedSpotName,
     String selectedGarageName,
   ) {
+    final locale = Localizations.localeOf(context);
+
     return Card(
 
       margin: EdgeInsets.symmetric(
@@ -468,11 +470,12 @@ class OrderScreen extends StatelessWidget {
               children: [
                 Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-                  padding: EdgeInsets.only(right: AppPadding.p5),
+                  margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
+                  padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
                   decoration: BoxDecoration(
                     border: Border(
-                      right: BorderSide(color: ColorManager.primary, width: 3),
+                      right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
+                      left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
                     ),
                   ),
                   child:  Text(
@@ -486,8 +489,7 @@ class OrderScreen extends StatelessWidget {
 
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: AppMargin.m24 ,top: AppMargin.m20,bottom: AppMargin.m2 ),
-
+                  margin: EdgeInsets.only(bottom: AppMargin.m2,top: AppMargin.m16, right:locale.languageCode == 'ar' ? 0 :AppMargin.m16   ),
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,
@@ -559,7 +561,7 @@ class OrderScreen extends StatelessWidget {
           ),
           // الباكية - Dropdown
           Container(
-            width: MediaQuery.of(context).size.width * .9,
+            width: MediaQuery.of(context).size.width * .95,
             height:AppSizeHeight.s50 ,
             alignment: Alignment.center,
             child: Row(
@@ -568,12 +570,12 @@ class OrderScreen extends StatelessWidget {
                 Container(
 
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(right: AppMargin.m24,bottom: AppMargin.m20 ),
-                  padding: EdgeInsets.only(right: AppPadding.p5),
+                  margin: EdgeInsets.only(bottom: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
+                  padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
                   decoration: BoxDecoration(
                     border: Border(
-                      right: BorderSide(color: ColorManager.primary, width: 3),
-                    ),
+                      right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide(color: ColorManager.grey, width: 0) ,
+                      left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,                    ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.spotLabel,
@@ -585,7 +587,7 @@ class OrderScreen extends StatelessWidget {
                   ),
                 ),
                spots.isEmpty? Container(
-                 margin: EdgeInsets.only(left: AppMargin.m24 , bottom:AppMargin.m10,top: AppMargin.m10),
+                 margin: EdgeInsets.only(bottom: AppMargin.m10,top: AppMargin.m10, right:locale.languageCode == 'ar' ? 0 :AppMargin.m24   ),
                  padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                  alignment: Alignment.center,
                  clipBehavior: Clip.antiAlias,
@@ -601,8 +603,8 @@ class OrderScreen extends StatelessWidget {
                    fontWeight: FontWeightManager.bold,
                  ),
                ): Container(
-                  margin: EdgeInsets.only(left: AppMargin.m24 , bottom:AppMargin.m10,top: AppMargin.m10),
-                  padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
+                 margin: EdgeInsets.only(bottom: AppMargin.m10,top: AppMargin.m10, right:locale.languageCode == 'ar' ? 0  : AppMargin.m24 ),
+                 padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
@@ -679,6 +681,8 @@ class OrderScreen extends StatelessWidget {
 }
 
 Widget _buildVehicleTypeSelector(BuildContext context) {
+  final locale = Localizations.localeOf(context);
+
   return Card(
     margin: EdgeInsets.symmetric(
       horizontal: AppMargin.m16,
@@ -692,16 +696,13 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
     child: Column(
       children: [
         Container(
-          alignment: Alignment.centerRight,
-          margin: EdgeInsets.only(
-            bottom: AppMargin.m16,
-            top: AppMargin.m16,
-            right: AppMargin.m24,
-          ),
-          padding: EdgeInsets.only(right: AppPadding.p5),
+          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
+          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
+          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
           decoration: BoxDecoration(
             border: Border(
-              right: BorderSide(color: ColorManager.primary, width: 3),
+              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
+              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
             ),
           ),
           child: TextUtils(
@@ -764,6 +765,8 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
 }
 
 Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
+  final locale = Localizations.localeOf(context);
+
   return Card(
     margin: EdgeInsets.symmetric(
       horizontal: AppMargin.m16,
@@ -777,16 +780,13 @@ Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
     child: Column(
       children: [
         Container(
-          alignment: Alignment.centerRight,
-          margin: EdgeInsets.only(
-            bottom: AppMargin.m16,
-            top: AppMargin.m16,
-            right: AppMargin.m24,
-          ),
-          padding: EdgeInsets.only(right: AppPadding.p5),
+          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
+          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
+          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
           decoration: BoxDecoration(
             border: Border(
-              right: BorderSide(color: ColorManager.primary, width: 3),
+              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
+              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
             ),
           ),
           child: TextUtils(
@@ -830,6 +830,8 @@ Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
 }
 
 Widget _buildQrSection(BuildContext context, String qr) {
+  final locale = Localizations.localeOf(context);
+
   String base64String = qr.replaceFirst('data:image/png;base64,', '');
   Uint8List qrBytes = base64Decode(base64String);
 
@@ -846,12 +848,13 @@ Widget _buildQrSection(BuildContext context, String qr) {
     child: Column(
       children: [
         Container(
-          alignment: Alignment.centerRight,
-          margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-          padding: EdgeInsets.only(right: AppPadding.p5),
+          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
+          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
+          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
           decoration: BoxDecoration(
             border: Border(
-              right: BorderSide(color: ColorManager.primary, width: 3),
+              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
+              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
             ),
           ),
           child: TextUtils(
@@ -888,6 +891,8 @@ Widget _buildQrSection(BuildContext context, String qr) {
 }
 
 Widget _buildImageCaptureSection(BuildContext context) {
+  final locale = Localizations.localeOf(context);
+
   return Card(
     margin: EdgeInsets.symmetric(
       horizontal: AppMargin.m16,
@@ -901,12 +906,13 @@ Widget _buildImageCaptureSection(BuildContext context) {
     child: Column(
       children: [
         Container(
-          alignment: Alignment.centerRight,
-          margin: EdgeInsets.only(top: AppMargin.m16, right: AppMargin.m24),
-          padding: EdgeInsets.only(right: AppPadding.p5),
+          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
+          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
+          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
           decoration: BoxDecoration(
             border: Border(
-              right: BorderSide(color: ColorManager.primary, width: 3),
+              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
+              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
             ),
           ),
           child: TextUtils(
