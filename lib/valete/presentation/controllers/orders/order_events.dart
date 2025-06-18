@@ -57,3 +57,10 @@ class CompletePhoneChanged extends OrderEvent {
   @override
   List<Object?> get props => [phoneNumber, countryCode];
 }
+class ToggleWhatsAppEvent extends OrderEvent {
+  final bool useWhatsApp;
+  ToggleWhatsAppEvent({required this.useWhatsApp});
+
+  @override
+  List<Object?> get props => [useWhatsApp];
+}

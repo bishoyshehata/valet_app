@@ -285,4 +285,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get clientNumber => 'رقم هاتف العميل';
+
+  @override
+  String get usingWhatsApp => 'إستخدام واتساب';
 }

@@ -287,4 +287,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientNumber => 'Client Number';
+
+  @override
+  String get usingWhatsApp => 'Using WhatsApp';
 }

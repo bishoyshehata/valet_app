@@ -90,6 +90,7 @@
   "active": "Active",
   "disActive": "DisActive",
   "busy": "Busy",
-  "clientNumber": "Client Number"
+  "clientNumber": "Client Number",
+  "usingWhatsApp": "Using WhatsApp"
 
 }

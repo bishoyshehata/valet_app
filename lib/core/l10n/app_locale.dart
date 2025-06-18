@@ -643,6 +643,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رقم هاتف العميل'**
   String get clientNumber;
+
+  /// No description provided for @usingWhatsApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'إستخدام واتساب'**
+  String get usingWhatsApp;
 }
 
 class _AppLocalizationsDelegate

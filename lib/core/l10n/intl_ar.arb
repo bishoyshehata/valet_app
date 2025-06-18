@@ -90,5 +90,6 @@
   "active": "متاح",
   "disActive": "غير متاح",
   "busy": "مشغول",
-  "clientNumber": "رقم هاتف العميل"
+  "clientNumber": "رقم هاتف العميل",
+  "usingWhatsApp": "إستخدام واتساب"
 }

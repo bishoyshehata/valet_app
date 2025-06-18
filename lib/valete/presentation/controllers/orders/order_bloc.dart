@@ -135,6 +135,13 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
         );
     });
 
+    on<ToggleWhatsAppEvent>((event, emit) {
+      if (state.useWhatsApp != event.useWhatsApp) {
+        emit(state.copyWith(useWhatsApp: event.useWhatsApp));
+      }
+    });
+
+
 
   }
 }

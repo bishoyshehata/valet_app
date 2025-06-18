@@ -26,6 +26,7 @@ class OrderState {
   final String? completePhoneNumber;
   final String? phoneErrorMessage;
   final bool isPhoneValid;
+  final bool? useWhatsApp;
 
   OrderState({
     this.data,
@@ -49,6 +50,7 @@ class OrderState {
      this.completePhoneNumber = '',
      this.phoneErrorMessage =null,
      this.isPhoneValid =false,
+     this.useWhatsApp,
 
   });
 
@@ -74,6 +76,7 @@ class OrderState {
      String? completePhoneNumber,
      String? phoneErrorMessage,
      bool? isPhoneValid,
+     bool? useWhatsApp,
   }) {
     return OrderState(
       selectedVehicleType: selectedVehicleType ?? this.selectedVehicleType,
@@ -97,6 +100,7 @@ class OrderState {
       completePhoneNumber: completePhoneNumber ?? this.completePhoneNumber,
       phoneErrorMessage: phoneErrorMessage ?? this.phoneErrorMessage,
       isPhoneValid: isPhoneValid ?? this.isPhoneValid,
+      useWhatsApp: useWhatsApp ?? this.useWhatsApp,
     );
   }
   bool? get isAllValid => isPhoneValid && hasInteractedWithPhone;

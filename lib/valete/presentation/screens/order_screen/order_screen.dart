@@ -34,7 +34,6 @@ import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
 import '../../resources/font_manager.dart';
-import '../../resources/strings_manager.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import '../error_screen/non_scaffold_error_screen.dart';
@@ -71,7 +70,12 @@ class OrderScreen extends StatelessWidget {
               onError: (errorMessage) {
                 // لازم يكون عندك BuildContext هنا عشان تعرض SnackBar
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppLocalizations.of(context)!.connectionError +'$errorMessage')),
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.connectionError +
+                          '$errorMessage',
+                    ),
+                  ),
                 );
               },
             );
@@ -86,9 +90,12 @@ class OrderScreen extends StatelessWidget {
         buildWhen: (previous, current) {
           return previous.defaultOrderState != current.defaultOrderState ||
               previous.phoneNumber != current.phoneNumber ||
-              previous.spotName != current.spotName || previous.garageName != current.garageName;
+              previous.spotName != current.spotName ||
+              previous.garageName != current.garageName ;
         },
         builder: (context, state) {
+          context.read<OrderBloc>().add(ToggleWhatsAppEvent(useWhatsApp: isWhatsAppWorking!),);
+
           switch (state.defaultOrderState) {
             case RequestState.loading:
               return SizedBox(
@@ -118,23 +125,27 @@ class OrderScreen extends StatelessWidget {
               );
 
             case RequestState.loaded:
-              final garageName = state.garageName == 'اسم الجراج'
-                  ? state.data!.garageName
-                  : state.garageName;
-              final selectedGarageId = state.garageName == 'اسم الجراج'
-                  ? state.data!.garageId
-                  : state.data!.garages
-                  .firstWhere(
-                    (garage) => garage.name == garageName,
-                orElse: () => MyGaragesModel.empty()
-                , // 🔁 نوع صحيح
-              ).id;
-
+              print("/////////////////////${isWhatsAppWorking}");
+              print("/////////////////////${state.useWhatsApp}");
+              final garageName =
+                  state.garageName == 'اسم الجراج'
+                      ? state.data!.garageName
+                      : state.garageName;
+              final selectedGarageId =
+                  state.garageName == 'اسم الجراج'
+                      ? state.data!.garageId
+                      : state.data!.garages
+                          .firstWhere(
+                            (garage) => garage.name == garageName,
+                            orElse: () => MyGaragesModel.empty(), // 🔁 نوع صحيح
+                          )
+                          .id;
 
               final allSpots = state.data?.spots ?? [];
-              final filteredSpots = allSpots
-                  .where((spot) => spot.garageId == selectedGarageId)
-                  .toList();
+              final filteredSpots =
+                  allSpots
+                      .where((spot) => spot.garageId == selectedGarageId)
+                      .toList();
 
               print(filteredSpots);
               String spotName;
@@ -147,17 +158,24 @@ class OrderScreen extends StatelessWidget {
               } else {
                 spotName = state.spotName;
               }
-              final spotId = filteredSpots.isNotEmpty
-                  ? filteredSpots
-                  .firstWhere(
-                    (spot) => spot.code == spotName,
-                orElse: () => filteredSpots.first, // تجنب الخطأ لو spotName غير موجود
-              ).id : null;
+              final spotId =
+                  filteredSpots.isNotEmpty
+                      ? filteredSpots
+                          .firstWhere(
+                            (spot) => spot.code == spotName,
+                            orElse:
+                                () =>
+                                    filteredSpots
+                                        .first, // تجنب الخطأ لو spotName غير موجود
+                          )
+                          .id
+                      : null;
               final locale = Localizations.localeOf(context);
               return Directionality(
-                textDirection: locale.languageCode == 'ar'
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
+                textDirection:
+                    locale.languageCode == 'ar'
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
                 child: WillPopScope(
                   onWillPop: () async {
                     SocketService().closeSocket();
@@ -168,14 +186,14 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-                          isWhatsAppWorking == true
+                          state.useWhatsApp == true
                               ? state.phoneNumber == 'رقم هاتف العميل'
                                   ? AppLocalizations.of(context)!.clientNumber
                                   : state.phoneNumber.length >= 8
                                   ? state.phoneNumber.replaceRange(
                                     0,
                                     8,
-                            AppLocalizations.of(context)!.hiddenData,
+                                    AppLocalizations.of(context)!.hiddenData,
                                   )
                                   : state.phoneNumber
                               : AppLocalizations.of(context)!.createNewOrder,
@@ -205,15 +223,15 @@ class OrderScreen extends StatelessWidget {
                     body: SingleChildScrollView(
                       child: Column(
                         children: [
+                          _buildSwitchWhatsAppCard(context, state.useWhatsApp!),
                           _buildGarageInfoCard(
                             state.data!.garages,
-                              filteredSpots,
+                            filteredSpots,
                             context,
                             spotName,
-                              garageName
-
+                            garageName,
                           ),
-                          isWhatsAppWorking == true
+                          state.useWhatsApp == true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
                                   ? _buildQrSection(context, state.data!.qr)
                                   : SizedBox.shrink())
@@ -235,9 +253,13 @@ class OrderScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                isWhatsAppWorking!
-                                    ? AppLocalizations.of(context)!.orderCreatedSuccessfullyViaWhatsApp
-                                    : AppLocalizations.of(context)!.orderCreatedSuccessfully,
+                                state.useWhatsApp!
+                                    ? AppLocalizations.of(
+                                      context,
+                                    )!.orderCreatedSuccessfullyViaWhatsApp
+                                    : AppLocalizations.of(
+                                      context,
+                                    )!.orderCreatedSuccessfully,
                               ),
                             ),
                           );
@@ -255,9 +277,15 @@ class OrderScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                isWhatsAppWorking!
-                                    ? AppLocalizations.of(context)!.failedToCreateOrderViaWhatsApp+"${state.errorMessage}"
-                                    :AppLocalizations.of(context)!.failedToCreateOrder+ "${state.errorMessage}",
+                                state.useWhatsApp!
+                                    ? AppLocalizations.of(
+                                          context,
+                                        )!.failedToCreateOrderViaWhatsApp +
+                                        "${state.errorMessage}"
+                                    : AppLocalizations.of(
+                                          context,
+                                        )!.failedToCreateOrder +
+                                        "${state.errorMessage}",
                               ),
                             ),
                           );
@@ -279,7 +307,7 @@ class OrderScreen extends StatelessWidget {
                               child: CustomButton(
                                 onTap: () async {
                                   bool isValid = false;
-                                  if (isWhatsAppWorking == true) {
+                                  if (state.useWhatsApp == true) {
                                     // الحالة لما WhatsApp شغال
                                     isValid =
                                         state.selectedVehicleType != null &&
@@ -305,19 +333,18 @@ class OrderScreen extends StatelessWidget {
                                     }
 
                                     final model = StoreOrderModel(
-
                                       carImageFile: carImage,
                                       spotId: spotId!,
                                       carType: state.selectedVehicleType.index,
                                       ClientNumber:
-                                          isWhatsAppWorking == true
+                                          state.useWhatsApp == true
                                               ? state.phoneNumber
                                               : state.completePhoneNumber!
                                                   .replaceFirst("+", ''),
                                       garageId: selectedGarageId,
                                     );
 
-                                    isWhatsAppWorking == true
+                                    state.useWhatsApp == true
                                         ? context.read<OrderBloc>().add(
                                           StoreOrderWithWhatsAppEvent(model),
                                         )
@@ -325,7 +352,7 @@ class OrderScreen extends StatelessWidget {
                                           StoreOrderNoWhatsAppEvent(model),
                                         );
                                   } else {
-                                    if (isWhatsAppWorking == true &&
+                                    if (state.useWhatsApp == true &&
                                         (state.phoneNumber ==
                                             'رقم هاتف العميل')) {
                                       ScaffoldMessenger.of(
@@ -334,14 +361,16 @@ class OrderScreen extends StatelessWidget {
                                         SnackBar(
                                           content: TextUtils(
                                             text:
-                                            AppLocalizations.of(context)!.pleaseAskCustomerToScanQR,
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.pleaseAskCustomerToScanQR,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       );
-                                    } else if (isWhatsAppWorking! &&
+                                    } else if (state.useWhatsApp! &&
                                         (state.completePhoneNumber == null ||
                                             state
                                                 .completePhoneNumber!
@@ -351,7 +380,10 @@ class OrderScreen extends StatelessWidget {
                                       ).showSnackBar(
                                         SnackBar(
                                           content: TextUtils(
-                                            text: AppLocalizations.of(context)!.pleaseEnterCustomerNumber,
+                                            text:
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.pleaseEnterCustomerNumber,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -365,7 +397,9 @@ class OrderScreen extends StatelessWidget {
                                         SnackBar(
                                           content: TextUtils(
                                             text:
-                                            AppLocalizations.of(context)!.sorryInvalidData,
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.sorryInvalidData,
                                             color: ColorManager.primary,
                                             fontSize: FontSize.s13,
                                             fontWeight: FontWeight.bold,
@@ -376,7 +410,7 @@ class OrderScreen extends StatelessWidget {
                                   }
                                 },
                                 btnColor:
-                                    isWhatsAppWorking == true
+                                    state.useWhatsApp == true
                                         ? (state.phoneNumber !=
                                                 'رقم هاتف العميل'
                                             ? ColorManager.primary
@@ -390,7 +424,10 @@ class OrderScreen extends StatelessWidget {
                                 elevation: 5,
                                 widget: switch (state.storeOrderState) {
                                   StoreOrderState.initial => TextUtils(
-                                    text: AppLocalizations.of(context)!.confirmOrder,
+                                    text:
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.confirmOrder,
                                     color:
                                         state.phoneNumber != 'رقم هاتف العميل'
                                             ? ColorManager.background
@@ -403,7 +440,10 @@ class OrderScreen extends StatelessWidget {
                                       color: ColorManager.white,
                                     ),
                                   StoreOrderState.loaded => TextUtils(
-                                    text: AppLocalizations.of(context)!.confirmOrder,
+                                    text:
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.confirmOrder,
                                     color: ColorManager.background,
                                     fontSize: FontSize.s17,
                                     fontWeight: FontWeight.bold,
@@ -437,6 +477,43 @@ class OrderScreen extends StatelessWidget {
   }
 
   /// widgets
+  Widget _buildSwitchWhatsAppCard(
+      BuildContext context,
+      bool isWhatsAppWorking,
+      ) {
+    return BlocBuilder<OrderBloc, OrderState>(
+      buildWhen: (previous, current) =>
+      previous.useWhatsApp != current.useWhatsApp,
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextUtils(
+                text: AppLocalizations.of(context)!.usingWhatsApp,
+                color: ColorManager.white,
+                fontSize: FontSize.s17,
+                fontWeight: FontWeight.bold,
+              ),
+              Switch(
+                value: state.useWhatsApp!,
+                // استخدام الحالة العامة للتبديل
+                activeColor: ColorManager.primary,
+                onChanged: (bool value) {
+                  context.read<OrderBloc>().add(
+                    ToggleWhatsAppEvent(useWhatsApp: value),
+                  );
+                  print(state.useWhatsApp);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildGarageInfoCard(
     List<MyGarages> garage,
     List<Spot> spots,
@@ -447,7 +524,6 @@ class OrderScreen extends StatelessWidget {
     final locale = Localizations.localeOf(context);
 
     return Card(
-
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
         vertical: AppMargin.m10,
@@ -463,33 +539,55 @@ class OrderScreen extends StatelessWidget {
           // جراج - Dropdown
           Container(
             width: MediaQuery.of(context).size.width * .9,
-            height:AppSizeHeight.s50 ,
+            height: AppSizeHeight.s50,
 
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
-                  padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
+                  margin: EdgeInsets.only(
+                    top: AppMargin.m16,
+                    right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+                    left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+                  ),
+                  padding: EdgeInsets.only(
+                    right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+                    left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+                  ),
                   decoration: BoxDecoration(
                     border: Border(
-                      right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-                      left: locale.languageCode == 'ar' ?BorderSide( color: ColorManager.grey ,width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+                      right:
+                          locale.languageCode == 'ar'
+                              ? BorderSide(
+                                color: ColorManager.primary,
+                                width: 3,
+                              )
+                              : BorderSide(color: ColorManager.grey, width: 0),
+                      left:
+                          locale.languageCode == 'ar'
+                              ? BorderSide(color: ColorManager.grey, width: 0)
+                              : BorderSide(
+                                color: ColorManager.primary,
+                                width: 3,
+                              ),
                     ),
                   ),
-                  child:  Text(
-                      AppLocalizations.of(context)!.goToGarage,
+                  child: Text(
+                    AppLocalizations.of(context)!.goToGarage,
                     style: GoogleFonts.cairo(
                       color: ColorManager.white,
                       fontSize: FontSize.s17,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                 ),
                 Container(
-                  margin: EdgeInsets.only(bottom: AppMargin.m2,top: AppMargin.m16, right:locale.languageCode == 'ar' ? 0 :AppMargin.m16   ),
+                  margin: EdgeInsets.only(
+                    bottom: AppMargin.m2,
+                    top: AppMargin.m16,
+                    right: locale.languageCode == 'ar' ? 0 : AppMargin.m16,
+                  ),
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,
@@ -502,21 +600,25 @@ class OrderScreen extends StatelessWidget {
                     child: DropdownButton2<String>(
                       isExpanded: true,
                       items:
-                      garage.map((garage) {
-                        return DropdownMenuItem<String>(
-                          value: garage.name,
-                          child: TextUtils(
-                            text: garage.name,
-                            color: ColorManager.background,
-                            fontSize: FontSize.s15,
-                            fontWeight: FontWeightManager.bold,
-                          ),
-                        );
-                      }).toList(),
+                          garage.map((garage) {
+                            return DropdownMenuItem<String>(
+                              value: garage.name,
+                              child: TextUtils(
+                                text: garage.name,
+                                color: ColorManager.background,
+                                fontSize: FontSize.s15,
+                                fontWeight: FontWeightManager.bold,
+                              ),
+                            );
+                          }).toList(),
                       value: selectedGarageName,
                       onChanged: (value) {
-                        context.read<OrderBloc>().add(UpdateGarageNameEvent(value!));
-                        context.read<OrderBloc>().add(UpdateSpotNameEvent('رقم الباكية'));
+                        context.read<OrderBloc>().add(
+                          UpdateGarageNameEvent(value!),
+                        );
+                        context.read<OrderBloc>().add(
+                          UpdateSpotNameEvent('رقم الباكية'),
+                        );
                         print(value);
                       },
                       hint: TextUtils(
@@ -555,26 +657,45 @@ class OrderScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
           // الباكية - Dropdown
           Container(
             width: MediaQuery.of(context).size.width * .95,
-            height:AppSizeHeight.s50 ,
+            height: AppSizeHeight.s50,
             alignment: Alignment.center,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.only(bottom: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
-                  padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
+                  margin: EdgeInsets.only(
+                    bottom: AppMargin.m16,
+                    right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+                    left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+                  ),
+                  padding: EdgeInsets.only(
+                    right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+                    left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+                  ),
                   decoration: BoxDecoration(
                     border: Border(
-                      right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-                      left: locale.languageCode == 'ar' ?BorderSide( color: ColorManager.grey ,width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+                      right:
+                          locale.languageCode == 'ar'
+                              ? BorderSide(
+                                color: ColorManager.primary,
+                                width: 3,
+                              )
+                              : BorderSide(color: ColorManager.grey, width: 0),
+                      left:
+                          locale.languageCode == 'ar'
+                              ? BorderSide(color: ColorManager.grey, width: 0)
+                              : BorderSide(
+                                color: ColorManager.primary,
+                                width: 3,
+                              ),
                     ),
                   ),
                   child: Text(
@@ -586,91 +707,106 @@ class OrderScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-               spots.isEmpty? Container(
-                 margin: EdgeInsets.only(bottom: AppMargin.m10,top: AppMargin.m10, right:locale.languageCode == 'ar' ? 0 :AppMargin.m24   ),
-                 padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
-                 alignment: Alignment.center,
-                 clipBehavior: Clip.antiAlias,
-                 decoration: BoxDecoration(
-                   color: ColorManager.primary,
-                   borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-                 ),
-                 width: AppSizeWidth.s100,
-                 child: TextUtils(
-                   text: AppLocalizations.of(context)!.garageFull,
-                   color: ColorManager.background,
-                   fontSize: FontSize.s12,
-                   fontWeight: FontWeightManager.bold,
-                 ),
-               ): Container(
-                 margin: EdgeInsets.only(bottom: AppMargin.m10,top: AppMargin.m8, right:locale.languageCode == 'ar' ? 0 :AppMargin.m22 ,left:locale.languageCode == 'ar' ? AppMargin.m8  : 0),
-                 padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
-                 alignment: Alignment.center,
-                 clipBehavior: Clip.antiAlias,
-                 decoration: BoxDecoration(
-                   color: ColorManager.primary,
-                   borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-                 ),
-                 width: AppSizeWidth.s100,
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      items:
-                      spots.map((spot) {
-                            return DropdownMenuItem<String>(
-                              value: spot.code.toString(),
-                              child: TextUtils(
-                                text: spot.code,
-                                color: ColorManager.background,
-                                fontSize: FontSize.s15,
-                                fontWeight: FontWeightManager.bold,
-                              ),
-                            );
-                          }).toList(),
-                      value: selectedSpotName,
-                      onChanged: (value) {
-                        context.read<OrderBloc>().add(
-                          UpdateSpotNameEvent(value!),
-                        );
-                        print(value);
-                      },
-                      hint: TextUtils(
+                spots.isEmpty
+                    ? Container(
+                      margin: EdgeInsets.only(
+                        bottom: AppMargin.m10,
+                        top: AppMargin.m10,
+                        right: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSizeWidth.s8,
+                      ),
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary,
+                        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                      ),
+                      width: AppSizeWidth.s100,
+                      child: TextUtils(
                         text: AppLocalizations.of(context)!.garageFull,
                         color: ColorManager.background,
-                        fontSize: FontSize.s11,
+                        fontSize: FontSize.s12,
                         fontWeight: FontWeightManager.bold,
                       ),
-                      iconStyleData: IconStyleData(
-                        icon: Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          color: ColorManager.background,
-                        ),
-                        iconSize: 14,
-                        iconEnabledColor: Colors.yellow,
-                        iconDisabledColor: Colors.grey,
+                    )
+                    : Container(
+                      margin: EdgeInsets.only(
+                        bottom: AppMargin.m10,
+                        top: AppMargin.m8,
+                        right: locale.languageCode == 'ar' ? 0 : AppMargin.m22,
+                        left: locale.languageCode == 'ar' ? AppMargin.m8 : 0,
                       ),
-                      dropdownStyleData: DropdownStyleData(
-                        width: AppSizeWidth.s120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          color: ColorManager.primary,
-                        ),
-                        offset: const Offset(-20, 0),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(40),
-                          thickness: MaterialStateProperty.all<double>(6),
-                          thumbVisibility: MaterialStateProperty.all<bool>(
-                            true,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSizeWidth.s8,
+                      ),
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: ColorManager.primary,
+                        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                      ),
+                      width: AppSizeWidth.s100,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          items:
+                              spots.map((spot) {
+                                return DropdownMenuItem<String>(
+                                  value: spot.code.toString(),
+                                  child: TextUtils(
+                                    text: spot.code,
+                                    color: ColorManager.background,
+                                    fontSize: FontSize.s15,
+                                    fontWeight: FontWeightManager.bold,
+                                  ),
+                                );
+                              }).toList(),
+                          value: selectedSpotName,
+                          onChanged: (value) {
+                            context.read<OrderBloc>().add(
+                              UpdateSpotNameEvent(value!),
+                            );
+                            print(value);
+                          },
+                          hint: TextUtils(
+                            text: AppLocalizations.of(context)!.garageFull,
+                            color: ColorManager.background,
+                            fontSize: FontSize.s11,
+                            fontWeight: FontWeightManager.bold,
+                          ),
+                          iconStyleData: IconStyleData(
+                            icon: Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              color: ColorManager.background,
+                            ),
+                            iconSize: 14,
+                            iconEnabledColor: Colors.yellow,
+                            iconDisabledColor: Colors.grey,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            width: AppSizeWidth.s120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              color: ColorManager.primary,
+                            ),
+                            offset: const Offset(-20, 0),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(40),
+                              thickness: MaterialStateProperty.all<double>(6),
+                              thumbVisibility: MaterialStateProperty.all<bool>(
+                                true,
+                              ),
+                            ),
+                          ),
+                          menuItemStyleData: MenuItemStyleData(
+                            height: AppSizeHeight.s35,
+                            padding: EdgeInsets.only(left: 14, right: 14),
                           ),
                         ),
                       ),
-                      menuItemStyleData: MenuItemStyleData(
-                        height: AppSizeHeight.s35,
-                        padding: EdgeInsets.only(left: 14, right: 14),
-                      ),
                     ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -696,13 +832,29 @@ Widget _buildVehicleTypeSelector(BuildContext context) {
     child: Column(
       children: [
         Container(
-          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
-          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
-          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
+          alignment:
+              locale.languageCode == 'ar'
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+          margin: EdgeInsets.only(
+            top: AppMargin.m16,
+            right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+          ),
+          padding: EdgeInsets.only(
+            right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+          ),
           decoration: BoxDecoration(
             border: Border(
-              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+              right:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(color: ColorManager.primary, width: 3)
+                      : BorderSide(color: ColorManager.grey, width: 0),
+              left:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(width: 0)
+                      : BorderSide(color: ColorManager.primary, width: 3),
             ),
           ),
           child: TextUtils(
@@ -780,13 +932,29 @@ Widget _buildPhoneFieldSection(BuildContext context, String phoneNumber) {
     child: Column(
       children: [
         Container(
-          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
-          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
-          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
+          alignment:
+              locale.languageCode == 'ar'
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+          margin: EdgeInsets.only(
+            top: AppMargin.m16,
+            right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+          ),
+          padding: EdgeInsets.only(
+            right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+          ),
           decoration: BoxDecoration(
             border: Border(
-              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+              right:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(color: ColorManager.primary, width: 3)
+                      : BorderSide(color: ColorManager.grey, width: 0),
+              left:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(width: 0)
+                      : BorderSide(color: ColorManager.primary, width: 3),
             ),
           ),
           child: TextUtils(
@@ -848,13 +1016,29 @@ Widget _buildQrSection(BuildContext context, String qr) {
     child: Column(
       children: [
         Container(
-          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
-          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
-          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
+          alignment:
+              locale.languageCode == 'ar'
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+          margin: EdgeInsets.only(
+            top: AppMargin.m16,
+            right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+          ),
+          padding: EdgeInsets.only(
+            right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+          ),
           decoration: BoxDecoration(
             border: Border(
-              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+              right:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(color: ColorManager.primary, width: 3)
+                      : BorderSide(color: ColorManager.grey, width: 0),
+              left:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(width: 0)
+                      : BorderSide(color: ColorManager.primary, width: 3),
             ),
           ),
           child: TextUtils(
@@ -906,13 +1090,29 @@ Widget _buildImageCaptureSection(BuildContext context) {
     child: Column(
       children: [
         Container(
-          alignment:locale.languageCode == 'ar' ?  Alignment.centerRight: Alignment.centerLeft,
-          margin: EdgeInsets.only(top: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
-          padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
+          alignment:
+              locale.languageCode == 'ar'
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+          margin: EdgeInsets.only(
+            top: AppMargin.m16,
+            right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+          ),
+          padding: EdgeInsets.only(
+            right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+            left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+          ),
           decoration: BoxDecoration(
             border: Border(
-              right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-              left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+              right:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(color: ColorManager.primary, width: 3)
+                      : BorderSide(color: ColorManager.grey, width: 0),
+              left:
+                  locale.languageCode == 'ar'
+                      ? BorderSide(width: 0)
+                      : BorderSide(color: ColorManager.primary, width: 3),
             ),
           ),
           child: TextUtils(
