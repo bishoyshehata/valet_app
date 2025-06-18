@@ -475,7 +475,7 @@ class OrderScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border(
                       right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
-                      left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+                      left: locale.languageCode == 'ar' ?BorderSide( color: ColorManager.grey ,width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
                     ),
                   ),
                   child:  Text(
@@ -568,14 +568,14 @@ class OrderScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(bottom: AppMargin.m16, right:locale.languageCode == 'ar' ?  AppMargin.m24 : 0 , left: locale.languageCode == 'ar' ? 0 : AppMargin.m24),
                   padding: EdgeInsets.only(right:locale.languageCode == 'ar' ? AppPadding.p5 : 0 , left: locale.languageCode == 'ar' ? 0 : AppPadding.p5),
                   decoration: BoxDecoration(
                     border: Border(
-                      right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide(color: ColorManager.grey, width: 0) ,
-                      left: locale.languageCode == 'ar' ?BorderSide( width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,                    ),
+                      right: locale.languageCode == 'ar' ?BorderSide(color: ColorManager.primary, width: 3) : BorderSide( color: ColorManager.grey ,width: 0) ,
+                      left: locale.languageCode == 'ar' ?BorderSide( color: ColorManager.grey ,width: 0): BorderSide(color: ColorManager.primary, width: 3)  ,
+                    ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.spotLabel,
@@ -603,15 +603,15 @@ class OrderScreen extends StatelessWidget {
                    fontWeight: FontWeightManager.bold,
                  ),
                ): Container(
-                 margin: EdgeInsets.only(bottom: AppMargin.m10,top: AppMargin.m10, right:locale.languageCode == 'ar' ? 0  : AppMargin.m24 ),
+                 margin: EdgeInsets.only(bottom: AppMargin.m10,top: AppMargin.m8, right:locale.languageCode == 'ar' ? 0 :AppMargin.m22 ,left:locale.languageCode == 'ar' ? AppMargin.m8  : 0),
                  padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: ColorManager.primary,
-                    borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-                  ),
-                  width: AppSizeWidth.s100,
+                 alignment: Alignment.center,
+                 clipBehavior: Clip.antiAlias,
+                 decoration: BoxDecoration(
+                   color: ColorManager.primary,
+                   borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+                 ),
+                 width: AppSizeWidth.s100,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,
