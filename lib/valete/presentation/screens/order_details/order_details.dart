@@ -248,7 +248,7 @@ class OrderDetails extends StatelessWidget {
                             builder: (context, state) {
                               final spot = findSpotById(state, spotId);
 
-                              return Text.rich(
+                               return Text.rich(
                                 TextSpan(
                                   text: AppLocalizations.of(context)!.customerPhone,
                                   style: GoogleFonts.cairo(
@@ -257,23 +257,39 @@ class OrderDetails extends StatelessWidget {
                                     color: ColorManager.white,
                                   ),
                                   children: [
+                                    locale.languageCode =='ar'?
                                     TextSpan(
-                                      text: spot?.order!.clientNumber
-                                          .replaceRange(0, 8, ''),
+                                      text: spot?.order?.clientNumber.replaceRange(0, 8, ''),
                                       style: GoogleFonts.archivo(
-                                        fontSize: FontSize.s17,
+                                        fontSize: FontSize.s15,
+                                        fontWeight: FontWeight.normal,
+                                        color: ColorManager.white,
+                                      ),
+                                    ) :  TextSpan(
+                                      text: AppLocalizations.of(context)!.hiddenData,
+                                      style: GoogleFonts.archivo(
+                                        fontSize: FontSize.s15,
                                         fontWeight: FontWeight.normal,
                                         color: ColorManager.white,
                                       ),
                                     ),
+
+                                    locale.languageCode =='ar'?
                                     TextSpan(
                                       text: AppLocalizations.of(context)!.hiddenData,
                                       style: GoogleFonts.archivo(
-                                        fontSize: FontSize.s17,
+                                        fontSize: FontSize.s15,
                                         fontWeight: FontWeight.normal,
                                         color: ColorManager.white,
                                       ),
-                                    ),
+                                    ) :   TextSpan(
+                                      text: spot?.order?.clientNumber.replaceRange(0, 8, ''),
+                                      style: GoogleFonts.archivo(
+                                        fontSize: FontSize.s15,
+                                        fontWeight: FontWeight.normal,
+                                        color: ColorManager.white,
+                                      ),
+                                    ) ,
                                   ],
                                 ),
                                 // ✅ تأكد إنها كده بالظبط

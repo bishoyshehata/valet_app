@@ -47,7 +47,7 @@ class OrderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
     final loginBloc = BlocProvider.of<LoginBloc>(context);
-    final isWhatsAppWorking = profileBloc.state.isWhatsAppWorking;
+    final isWhatsAppWorking = profileBloc.state.isWhatsAppWorking ?? false;
     final phoneNumber = loginBloc.state.completePhoneNumber.replaceFirst(
       "+",
       '',
@@ -94,8 +94,11 @@ class OrderScreen extends StatelessWidget {
               previous.garageName != current.garageName ;
         },
         builder: (context, state) {
-          context.read<OrderBloc>().add(ToggleWhatsAppEvent(useWhatsApp: isWhatsAppWorking!),);
-
+          context.read<OrderBloc>().add(
+            ToggleWhatsAppEvent(useWhatsApp: isWhatsAppWorking!),
+          );
+          print("/////////////////////${isWhatsAppWorking}");
+          print("/////////////////////${state.useWhatsApp}");
           switch (state.defaultOrderState) {
             case RequestState.loading:
               return SizedBox(
@@ -125,8 +128,6 @@ class OrderScreen extends StatelessWidget {
               );
 
             case RequestState.loaded:
-              print("/////////////////////${isWhatsAppWorking}");
-              print("/////////////////////${state.useWhatsApp}");
               final garageName =
                   state.garageName == 'اسم الجراج'
                       ? state.data!.garageName
@@ -186,7 +187,7 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-                          state.useWhatsApp == true
+                          isWhatsAppWorking == true
                               ? state.phoneNumber == 'رقم هاتف العميل'
                                   ? AppLocalizations.of(context)!.clientNumber
                                   : state.phoneNumber.length >= 8
@@ -231,7 +232,7 @@ class OrderScreen extends StatelessWidget {
                             spotName,
                             garageName,
                           ),
-                          state.useWhatsApp == true
+                          isWhatsAppWorking == true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
                                   ? _buildQrSection(context, state.data!.qr)
                                   : SizedBox.shrink())
@@ -253,7 +254,7 @@ class OrderScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                state.useWhatsApp!
+                                state.useWhatsApp == true
                                     ? AppLocalizations.of(
                                       context,
                                     )!.orderCreatedSuccessfullyViaWhatsApp
@@ -277,7 +278,7 @@ class OrderScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                state.useWhatsApp!
+                                state.useWhatsApp == true
                                     ? AppLocalizations.of(
                                           context,
                                         )!.failedToCreateOrderViaWhatsApp +
@@ -337,7 +338,7 @@ class OrderScreen extends StatelessWidget {
                                       spotId: spotId!,
                                       carType: state.selectedVehicleType.index,
                                       ClientNumber:
-                                          state.useWhatsApp == true
+                                      state.useWhatsApp == true
                                               ? state.phoneNumber
                                               : state.completePhoneNumber!
                                                   .replaceFirst("+", ''),
@@ -370,7 +371,7 @@ class OrderScreen extends StatelessWidget {
                                           ),
                                         ),
                                       );
-                                    } else if (state.useWhatsApp! &&
+                                    } else if (isWhatsAppWorking &&
                                         (state.completePhoneNumber == null ||
                                             state
                                                 .completePhoneNumber!
@@ -410,7 +411,7 @@ class OrderScreen extends StatelessWidget {
                                   }
                                 },
                                 btnColor:
-                                    state.useWhatsApp == true
+                                   state.useWhatsApp == true
                                         ? (state.phoneNumber !=
                                                 'رقم هاتف العميل'
                                             ? ColorManager.primary
@@ -1003,75 +1004,155 @@ Widget _buildQrSection(BuildContext context, String qr) {
   String base64String = qr.replaceFirst('data:image/png;base64,', '');
   Uint8List qrBytes = base64Decode(base64String);
 
-  return Card(
-    margin: EdgeInsets.symmetric(
-      horizontal: AppMargin.m16,
-      vertical: AppMargin.m10,
-    ),
-    color: ColorManager.grey,
-    elevation: 5,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppSizeHeight.s10),
-    ),
-    child: Column(
-      children: [
-        Container(
-          alignment:
-              locale.languageCode == 'ar'
-                  ? Alignment.centerRight
-                  : Alignment.centerLeft,
-          margin: EdgeInsets.only(
-            top: AppMargin.m16,
-            right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
-            left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
-          ),
-          padding: EdgeInsets.only(
-            right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
-            left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              right:
-                  locale.languageCode == 'ar'
-                      ? BorderSide(color: ColorManager.primary, width: 3)
-                      : BorderSide(color: ColorManager.grey, width: 0),
-              left:
-                  locale.languageCode == 'ar'
-                      ? BorderSide(width: 0)
-                      : BorderSide(color: ColorManager.primary, width: 3),
+  return BlocBuilder<OrderBloc, OrderState>(
+    buildWhen: (previous, current) => previous.useWhatsApp != current.useWhatsApp,
+  builder: (context, state) {
+    return state.useWhatsApp == true ? Card(
+      margin: EdgeInsets.symmetric(
+        horizontal: AppMargin.m16,
+        vertical: AppMargin.m10,
+      ),
+      color: ColorManager.grey,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+      ),
+      child: Column(
+        children: [
+          Container(
+            alignment:
+            locale.languageCode == 'ar'
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            margin: EdgeInsets.only(
+              top: AppMargin.m16,
+              right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+              left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+            ),
+            padding: EdgeInsets.only(
+              right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+              left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+            ),
+            decoration: BoxDecoration(
+              border: Border(
+                right:
+                locale.languageCode == 'ar'
+                    ? BorderSide(color: ColorManager.primary, width: 3)
+                    : BorderSide(color: ColorManager.grey, width: 0),
+                left:
+                locale.languageCode == 'ar'
+                    ? BorderSide(width: 0)
+                    : BorderSide(color: ColorManager.primary, width: 3),
+              ),
+            ),
+            child: TextUtils(
+              text: AppLocalizations.of(context)!.scanQR,
+              color: ColorManager.white,
+              fontSize: FontSize.s17,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          child: TextUtils(
-            text: AppLocalizations.of(context)!.scanQR,
-            color: ColorManager.white,
-            fontSize: FontSize.s17,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        BlocBuilder<OrderBloc, OrderState>(
-          builder: (context, state) {
-            return Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(
-                vertical: AppMargin.m16,
-                horizontal: AppMargin.m16,
-              ),
-              child: Container(
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(AppSizeHeight.s10),
-                  ),
-                  border: Border.all(width: 5, color: ColorManager.primary),
+          BlocBuilder<OrderBloc, OrderState>(
+            builder: (context, state) {
+              return Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(
+                  vertical: AppMargin.m16,
+                  horizontal: AppMargin.m16,
                 ),
-                child: Image.memory(qrBytes),
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(AppSizeHeight.s10),
+                    ),
+                    border: Border.all(width: 5, color: ColorManager.primary),
+                  ),
+                  child: Image.memory(qrBytes),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ) : Card(
+      margin: EdgeInsets.symmetric(
+        horizontal: AppMargin.m16,
+        vertical: AppMargin.m10,
+      ),
+      color: ColorManager.grey,
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizeHeight.s10),
+      ),
+      child: Column(
+        children: [
+          Container(
+            alignment:
+            locale.languageCode == 'ar'
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            margin: EdgeInsets.only(
+              top: AppMargin.m16,
+              right: locale.languageCode == 'ar' ? AppMargin.m24 : 0,
+              left: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+            ),
+            padding: EdgeInsets.only(
+              right: locale.languageCode == 'ar' ? AppPadding.p5 : 0,
+              left: locale.languageCode == 'ar' ? 0 : AppPadding.p5,
+            ),
+            decoration: BoxDecoration(
+              border: Border(
+                right:
+                locale.languageCode == 'ar'
+                    ? BorderSide(color: ColorManager.primary, width: 3)
+                    : BorderSide(color: ColorManager.grey, width: 0),
+                left:
+                locale.languageCode == 'ar'
+                    ? BorderSide(width: 0)
+                    : BorderSide(color: ColorManager.primary, width: 3),
               ),
-            );
-          },
-        ),
-      ],
-    ),
-  );
+            ),
+            child: TextUtils(
+              text: AppLocalizations.of(context)!.addCustomerPhone,
+              color: ColorManager.white,
+              fontSize: FontSize.s17,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: BlocBuilder<OrderBloc, OrderState>(
+              builder: (context, state) {
+                return Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: CustomPhoneField(
+                    labelText: AppLocalizations.of(context)!.enterPhone,
+                    backgroundColor: ColorManager.background,
+                    labelSize: 15,
+                    errorText:
+                    state.hasInteractedWithPhone
+                        ? state.phoneErrorMessage
+                        : null,
+
+                    onChanged: (phone) {
+                      context.read<OrderBloc>().add(
+                        CompletePhoneChanged(
+                          phoneNumber: phone.number, // ex: 1550637983
+                          countryCode: phone.countryCode.replaceFirst('+', ''),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );;
+  },
+);
 }
 
 Widget _buildImageCaptureSection(BuildContext context) {
