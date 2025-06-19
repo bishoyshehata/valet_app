@@ -199,11 +199,16 @@ class GarageCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    TextUtils(
-                      text: name,
-                      color: ColorManager.white,
-                      fontSize: FontSize.s20,
-                      fontWeight: FontWeight.bold,
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: TextUtils(
+                        text: name,
+                        color: ColorManager.white,
+                        noOfLines: 3,
+                        overFlow: TextOverflow.ellipsis,
+                        fontSize: FontSize.s15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -219,11 +224,16 @@ class GarageCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: TextUtils(
-                        text: address,
-                        color: ColorManager.white,
-                        fontSize: FontSize.s12,
-                        fontWeight: FontWeight.bold,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: TextUtils(
+                          text: address,
+                          color: ColorManager.white,
+                          noOfLines: 3,
+                          overFlow: TextOverflow.ellipsis,
+                          fontSize: FontSize.s13,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
