@@ -91,5 +91,6 @@
   "disActive": "غير متاح",
   "busy": "مشغول",
   "clientNumber": "رقم هاتف العميل",
-  "usingWhatsApp": "إستخدام واتساب"
+  "usingWhatsApp": "إستخدام واتساب",
+  "sorryThisCarBelongsToAnotherValet": "نأسف و لكن هذه السيارة تخص فاليه أخر ٫"
 }

@@ -290,4 +290,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usingWhatsApp => 'Using WhatsApp';
+
+  @override
+  String get sorryThisCarBelongsToAnotherValet =>
+      'Sorry this car belongs to another valet.';
 }

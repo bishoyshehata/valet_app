@@ -91,6 +91,6 @@
   "disActive": "DisActive",
   "busy": "Busy",
   "clientNumber": "Client Number",
-  "usingWhatsApp": "Using WhatsApp"
-
+  "usingWhatsApp": "Using WhatsApp",
+  "sorryThisCarBelongsToAnotherValet": "Sorry this car belongs to another valet."
 }

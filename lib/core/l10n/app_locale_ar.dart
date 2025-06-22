@@ -288,4 +288,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get usingWhatsApp => 'إستخدام واتساب';
+
+  @override
+  String get sorryThisCarBelongsToAnotherValet =>
+      'نأسف و لكن هذه السيارة تخص فاليه أخر ٫';
 }

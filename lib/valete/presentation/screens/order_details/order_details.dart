@@ -658,26 +658,41 @@ class OrderDetails extends StatelessWidget {
                                           builder: (context, state) {
                                             return CustomButton(
                                               onTap: () {
-                                                context
-                                                    .read<MyOrdersBloc>()
-                                                    .add(
-                                                      UpdateOrderStatusEvent(
-                                                        spot.order!.id,
-                                                        1,
-                                                      ),
-                                                    );
-                                                context.read<HomeBloc>().add(
-                                                  ChangeTabEvent(1),
-                                                );
-                                                context.read<MyOrdersBloc>().add(
-                                                  GetMyOrdersEvent(1),
-                                                );
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (_) => MainScreen(),
-                                                  ),
-                                                );
+                                                final orderId = spot.order?.id;
+
+                                                if (orderId == null || !state.orders.any((order) => order.id == orderId)) {
+                                                  AlertDialogService().showAlertDialog(
+                                                    context,
+                                                    title: AppLocalizations.of(context)!.warning,
+                                                    message: AppLocalizations.of(context)!.sorryThisCarBelongsToAnotherValet,
+                                                    onPositiveButtonPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  );
+                                               }else{
+                                                 context
+                                                     .read<MyOrdersBloc>()
+                                                     .add(
+                                                   UpdateOrderStatusEvent(
+                                                     spot.order!.id,
+                                                     1,
+                                                   ),
+                                                 );
+                                                 context.read<HomeBloc>().add(
+                                                   ChangeTabEvent(1),
+                                                 );
+                                                 context.read<MyOrdersBloc>().add(
+                                                   GetMyOrdersEvent(1),
+                                                 );
+                                                 Navigator.push(
+                                                   context,
+                                                   MaterialPageRoute(
+                                                     builder: (_) => MainScreen(),
+                                                   ),
+                                                 );
+                                               }
+
+
                                               },
                                               btnColor: ColorManager.primary,
                                               widget: buildButtonContent(

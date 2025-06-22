@@ -649,6 +649,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إستخدام واتساب'**
   String get usingWhatsApp;
+
+  /// No description provided for @sorryThisCarBelongsToAnotherValet.
+  ///
+  /// In ar, this message translates to:
+  /// **'نأسف و لكن هذه السيارة تخص فاليه أخر ٫'**
+  String get sorryThisCarBelongsToAnotherValet;
 }
 
 class _AppLocalizationsDelegate
