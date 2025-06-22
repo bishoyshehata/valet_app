@@ -605,8 +605,8 @@ class OrderScreen extends StatelessWidget {
                   margin: EdgeInsets.only(
                     bottom: AppMargin.m2,
                     top: AppMargin.m16,
-                    right: locale.languageCode == 'ar' ? 0 : AppMargin.m16,
-                  ),
+                    right: locale.languageCode == 'ar' ? 0 : AppMargin.m22,
+                    left: locale.languageCode == 'ar' ? AppMargin.m22 : 0,                  ),
                   padding: EdgeInsets.symmetric(horizontal: AppSizeWidth.s8),
                   alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,
@@ -614,7 +614,7 @@ class OrderScreen extends StatelessWidget {
                     color: ColorManager.primary,
                     borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                   ),
-                  width: AppSizeWidth.s100,
+                  width: AppSizeWidth.s120,
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton2<String>(
                       isExpanded: true,
@@ -622,11 +622,16 @@ class OrderScreen extends StatelessWidget {
                           garage.map((garage) {
                             return DropdownMenuItem<String>(
                               value: garage.name,
-                              child: TextUtils(
-                                text: garage.name,
-                                color: ColorManager.background,
-                                fontSize: FontSize.s15,
-                                fontWeight: FontWeightManager.bold,
+                              child: Container(
+                                width: AppSizeWidth.s100,
+                                child: TextUtils(
+                                  text: garage.name,
+                                  color: ColorManager.background,
+                                  fontSize: FontSize.s15,
+                                  noOfLines: 1,
+                                  overFlow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeightManager.bold,
+                                ),
                               ),
                             );
                           }).toList(),
@@ -640,11 +645,17 @@ class OrderScreen extends StatelessWidget {
                         );
                         print(value);
                       },
-                      hint: TextUtils(
-                        text: AppLocalizations.of(context)!.garageFull,
-                        color: ColorManager.background,
-                        fontSize: FontSize.s11,
-                        fontWeight: FontWeightManager.bold,
+                      hint: Container(
+                        width: AppSizeWidth.s100,
+
+                        child: TextUtils(
+                          text: AppLocalizations.of(context)!.garageFull,
+                          color: ColorManager.background,
+                          fontSize: FontSize.s11,
+                          noOfLines: 1,
+                          overFlow: TextOverflow.ellipsis,
+                          fontWeight: FontWeightManager.bold,
+                        ),
                       ),
                       iconStyleData: IconStyleData(
                         icon: Icon(
@@ -766,7 +777,7 @@ class OrderScreen extends StatelessWidget {
                         color: ColorManager.primary,
                         borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                       ),
-                      width: AppSizeWidth.s100,
+                      width: AppSizeWidth.s120,
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton2<String>(
                           isExpanded: true,
@@ -774,11 +785,16 @@ class OrderScreen extends StatelessWidget {
                               spots.map((spot) {
                                 return DropdownMenuItem<String>(
                                   value: spot.code.toString(),
-                                  child: TextUtils(
-                                    text: spot.code,
-                                    color: ColorManager.background,
-                                    fontSize: FontSize.s15,
-                                    fontWeight: FontWeightManager.bold,
+                                  child: Container(
+                                    width: AppSizeWidth.s100,
+                                    child: TextUtils(
+                                      text: spot.code,
+                                      color: ColorManager.background,
+                                      fontSize: FontSize.s15,
+                                      noOfLines: 1,
+                                      overFlow: TextOverflow.ellipsis,
+                                      fontWeight: FontWeightManager.bold,
+                                    ),
                                   ),
                                 );
                               }).toList(),

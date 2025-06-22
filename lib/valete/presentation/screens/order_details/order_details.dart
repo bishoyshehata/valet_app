@@ -85,9 +85,10 @@ class OrderDetails extends StatelessWidget {
 
             final locale = Localizations.localeOf(context);
             return Directionality(
-              textDirection: locale.languageCode == 'ar'
-                  ? TextDirection.rtl
-                  : TextDirection.ltr,
+              textDirection:
+                  locale.languageCode == 'ar'
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
               child: WillPopScope(
                 onWillPop: () async {
                   context.read<HomeBloc>().add(ResetSpotNameEvent());
@@ -140,8 +141,12 @@ class OrderDetails extends StatelessWidget {
                                 onPressed: () {
                                   AlertDialogService().showAlertDialog(
                                     context,
-                                    title: AppLocalizations.of(context)!.warning,
-                                    message: AppLocalizations.of(context)!.areYouSureYouWantToCancelOrder,
+                                    title:
+                                        AppLocalizations.of(context)!.warning,
+                                    message:
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.areYouSureYouWantToCancelOrder,
                                     onPositiveButtonPressed: () {
                                       context.read<HomeBloc>().add(
                                         CancelHomeOrderEvent(spot!.order!.id),
@@ -248,48 +253,61 @@ class OrderDetails extends StatelessWidget {
                             builder: (context, state) {
                               final spot = findSpotById(state, spotId);
 
-                               return Text.rich(
+                              return Text.rich(
                                 TextSpan(
-                                  text: AppLocalizations.of(context)!.customerPhone,
+                                  text:
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.customerPhone,
                                   style: GoogleFonts.cairo(
                                     fontSize: FontSize.s17,
                                     fontWeight: FontWeight.normal,
                                     color: ColorManager.white,
                                   ),
                                   children: [
-                                    locale.languageCode =='ar'?
-                                    TextSpan(
-                                      text: spot?.order?.clientNumber.replaceRange(0, 8, ''),
-                                      style: GoogleFonts.archivo(
-                                        fontSize: FontSize.s15,
-                                        fontWeight: FontWeight.normal,
-                                        color: ColorManager.white,
-                                      ),
-                                    ) :  TextSpan(
-                                      text: AppLocalizations.of(context)!.hiddenData,
-                                      style: GoogleFonts.archivo(
-                                        fontSize: FontSize.s15,
-                                        fontWeight: FontWeight.normal,
-                                        color: ColorManager.white,
-                                      ),
-                                    ),
+                                    locale.languageCode == 'ar'
+                                        ? TextSpan(
+                                          text: spot?.order?.clientNumber
+                                              .replaceRange(0, 8, ''),
+                                          style: GoogleFonts.archivo(
+                                            fontSize: FontSize.s15,
+                                            fontWeight: FontWeight.normal,
+                                            color: ColorManager.white,
+                                          ),
+                                        )
+                                        : TextSpan(
+                                          text:
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.hiddenData,
+                                          style: GoogleFonts.archivo(
+                                            fontSize: FontSize.s15,
+                                            fontWeight: FontWeight.normal,
+                                            color: ColorManager.white,
+                                          ),
+                                        ),
 
-                                    locale.languageCode =='ar'?
-                                    TextSpan(
-                                      text: AppLocalizations.of(context)!.hiddenData,
-                                      style: GoogleFonts.archivo(
-                                        fontSize: FontSize.s15,
-                                        fontWeight: FontWeight.normal,
-                                        color: ColorManager.white,
-                                      ),
-                                    ) :   TextSpan(
-                                      text: spot?.order?.clientNumber.replaceRange(0, 8, ''),
-                                      style: GoogleFonts.archivo(
-                                        fontSize: FontSize.s15,
-                                        fontWeight: FontWeight.normal,
-                                        color: ColorManager.white,
-                                      ),
-                                    ) ,
+                                    locale.languageCode == 'ar'
+                                        ? TextSpan(
+                                          text:
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.hiddenData,
+                                          style: GoogleFonts.archivo(
+                                            fontSize: FontSize.s15,
+                                            fontWeight: FontWeight.normal,
+                                            color: ColorManager.white,
+                                          ),
+                                        )
+                                        : TextSpan(
+                                          text: spot?.order?.clientNumber
+                                              .replaceRange(0, 8, ''),
+                                          style: GoogleFonts.archivo(
+                                            fontSize: FontSize.s15,
+                                            fontWeight: FontWeight.normal,
+                                            color: ColorManager.white,
+                                          ),
+                                        ),
                                   ],
                                 ),
                                 // ✅ تأكد إنها كده بالظبط
@@ -305,7 +323,8 @@ class OrderDetails extends StatelessWidget {
 
                               children: [
                                 TextUtils(
-                                  text: AppLocalizations.of(context)!.garageLabel,
+                                  text:
+                                      AppLocalizations.of(context)!.garageLabel,
                                   color: ColorManager.lightGrey,
                                   fontSize: FontSize.s17,
                                   fontWeight: FontWeight.bold,
@@ -518,7 +537,9 @@ class OrderDetails extends StatelessWidget {
                                                     child: TextUtils(
                                                       text:
                                                           spot?.code ??
-                                                              AppLocalizations.of(context)!.noCode,
+                                                          AppLocalizations.of(
+                                                            context,
+                                                          )!.noCode,
                                                       color:
                                                           ColorManager
                                                               .background,
@@ -576,7 +597,12 @@ class OrderDetails extends StatelessWidget {
 
                                       case RequestState.error:
                                         return Center(
-                                          child: TextUtils(text: AppLocalizations.of(context)!.errorOccurred),
+                                          child: TextUtils(
+                                            text:
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.errorOccurred,
+                                          ),
                                         );
                                     }
                                   },
@@ -605,24 +631,25 @@ class OrderDetails extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   spot!.order?.status == 0
-                                      ? BlocListener<MyOrdersBloc,MyOrdersState>(
+                                      ? BlocListener<
+                                        MyOrdersBloc,
+                                        MyOrdersState
+                                      >(
                                         listenWhen:
                                             (previous, current) =>
-                                                current.updateOrderStatus == true &&
-                                                current.updatingOrderId == spot.order?.id ,
+                                                current.updateOrderStatus ==
+                                                    true &&
+                                                current.updatingOrderId ==
+                                                    spot.order?.id,
                                         listener: (context, state) {
-                                          context.read<MyOrdersBloc>().add(ResetOrderUpdateStatus());
-                                          context.read<MyOrdersBloc>().add(GetAllMyOrdersEvent());
-                                          context.read<HomeBloc>().add(ChangeTabEvent(1));
-                                          context.read<MyOrdersBloc>().add(GetMyOrdersEvent(1));
-
-
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (_) => MainScreen(),
-                                                ),
+                                          context.read<MyOrdersBloc>().add(
+                                            ResetOrderUpdateStatus(),
                                           );
+                                          context.read<MyOrdersBloc>().add(
+                                            GetAllMyOrdersEvent(),
+                                          );
+
+
                                         },
                                         child: BlocBuilder<
                                           MyOrdersBloc,
@@ -639,6 +666,18 @@ class OrderDetails extends StatelessWidget {
                                                         1,
                                                       ),
                                                     );
+                                                context.read<HomeBloc>().add(
+                                                  ChangeTabEvent(1),
+                                                );
+                                                context.read<MyOrdersBloc>().add(
+                                                  GetMyOrdersEvent(1),
+                                                );
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (_) => MainScreen(),
+                                                  ),
+                                                );
                                               },
                                               btnColor: ColorManager.primary,
                                               widget: buildButtonContent(
@@ -647,7 +686,10 @@ class OrderDetails extends StatelessWidget {
                                                     ? state
                                                         .updateOrderStatusState
                                                     : UpdateOrderState.initial,
-                                                AppLocalizations.of(context)!.deliverVehicle,context
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.deliverVehicle,
+                                                context,
                                               ),
                                               height: AppSizeHeight.s35,
                                             );
@@ -702,7 +744,10 @@ class OrderDetails extends StatelessWidget {
                                         ),
                                         SizedBox(width: AppSizeWidth.s10),
                                         TextUtils(
-                                          text: AppLocalizations.of(context)!.confirmEdit,
+                                          text:
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.confirmEdit,
                                           color: ColorManager.background,
                                           fontSize: FontSize.s17,
                                           fontWeight: FontWeightManager.bold,
@@ -722,19 +767,19 @@ class OrderDetails extends StatelessWidget {
               ),
             );
           case RequestState.error:
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(child: Lottie.asset(LottieManager.noCars)),
-            TextUtils(
-              text: state.getGaragesSpotErrorMessage,
-              color: ColorManager.white,
-              fontSize: FontSize.s13,
-              noOfLines: 2,
-              overFlow: TextOverflow.ellipsis,
-            ),
-          ],
-        );
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(child: Lottie.asset(LottieManager.noCars)),
+                TextUtils(
+                  text: state.getGaragesSpotErrorMessage,
+                  color: ColorManager.white,
+                  fontSize: FontSize.s13,
+                  noOfLines: 2,
+                  overFlow: TextOverflow.ellipsis,
+                ),
+              ],
+            );
         }
       },
     );
