@@ -33,6 +33,7 @@ import '../../controllers/myorders/my_orders_events.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
+import '../../controllers/profile/profile_states.dart';
 import '../../resources/font_manager.dart';
 import 'image_full_screen.dart';
 import 'package:shimmer/shimmer.dart';
@@ -58,6 +59,10 @@ class OrderScreen extends StatelessWidget {
           sl<CreateOrderUseCase>(),
           sl<StoreOrderUseCase>(),
         )..add(CreateOrderEvent());
+        if (isWhatsAppWorking != null) {
+          bloc.add(ToggleWhatsAppEvent(useWhatsApp: isWhatsAppWorking));
+        }
+
         SharedPreferences.getInstance().then((prefs) {
           if (isWhatsAppWorking == true) {
             int? valetId = prefs.getInt('valetId');
@@ -86,17 +91,28 @@ class OrderScreen extends StatelessWidget {
 
         return bloc;
       },
-      child: BlocBuilder<OrderBloc, OrderState>(
+      child: BlocListener<ProfileBloc, ProfileState>(
+        listenWhen: (previous, current) =>
+        previous.isWhatsAppWorking != current.isWhatsAppWorking ,
+        listener: (context, profileState) {
+          final orderBloc = context.read<OrderBloc>();
+          final currentOrderWhatsApp = orderBloc.state.useWhatsApp;
+
+          if (profileState.isWhatsAppWorking != null &&
+              currentOrderWhatsApp != profileState.isWhatsAppWorking) {
+            orderBloc.add(
+              ToggleWhatsAppEvent(useWhatsApp: profileState.isWhatsAppWorking!),
+            );
+          }
+        },
+  child: BlocBuilder<OrderBloc, OrderState>(
         buildWhen: (previous, current) {
           return previous.defaultOrderState != current.defaultOrderState ||
               previous.phoneNumber != current.phoneNumber ||
               previous.spotName != current.spotName ||
-              previous.garageName != current.garageName ;
+              previous.garageName != current.garageName || previous.useWhatsApp != current.useWhatsApp;
         },
         builder: (context, state) {
-          context.read<OrderBloc>().add(
-            ToggleWhatsAppEvent(useWhatsApp: isWhatsAppWorking!),
-          );
           print("/////////////////////${isWhatsAppWorking}");
           print("/////////////////////${state.useWhatsApp}");
           switch (state.defaultOrderState) {
@@ -187,7 +203,7 @@ class OrderScreen extends StatelessWidget {
                     backgroundColor: ColorManager.background,
                     appBar: CustomAppBar(
                       title:
-                          isWhatsAppWorking == true
+                      state.useWhatsApp == true
                               ? state.phoneNumber == 'رقم هاتف العميل'
                                   ? AppLocalizations.of(context)!.clientNumber
                                   : state.phoneNumber.length >= 8
@@ -232,7 +248,7 @@ class OrderScreen extends StatelessWidget {
                             spotName,
                             garageName,
                           ),
-                          isWhatsAppWorking == true
+                          state.useWhatsApp == true
                               ? (state.phoneNumber == 'رقم هاتف العميل'
                                   ? _buildQrSection(context, state.data!.qr)
                                   : SizedBox.shrink())
@@ -474,6 +490,7 @@ class OrderScreen extends StatelessWidget {
           }
         },
       ),
+),
     );
   }
 
@@ -539,7 +556,8 @@ class OrderScreen extends StatelessWidget {
         children: [
           // جراج - Dropdown
           Container(
-            width: MediaQuery.of(context).size.width * .9,
+
+            width: MediaQuery.of(context).size.width * .95,
             height: AppSizeHeight.s50,
 
             child: Row(
@@ -737,7 +755,7 @@ class OrderScreen extends StatelessWidget {
                         bottom: AppMargin.m10,
                         top: AppMargin.m8,
                         right: locale.languageCode == 'ar' ? 0 : AppMargin.m22,
-                        left: locale.languageCode == 'ar' ? AppMargin.m8 : 0,
+                        left: locale.languageCode == 'ar' ? AppMargin.m22 : 0,
                       ),
                       padding: EdgeInsets.symmetric(
                         horizontal: AppSizeWidth.s8,
@@ -1007,6 +1025,7 @@ Widget _buildQrSection(BuildContext context, String qr) {
   return BlocBuilder<OrderBloc, OrderState>(
     buildWhen: (previous, current) => previous.useWhatsApp != current.useWhatsApp,
   builder: (context, state) {
+
     return state.useWhatsApp == true ? Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
@@ -1075,7 +1094,8 @@ Widget _buildQrSection(BuildContext context, String qr) {
           ),
         ],
       ),
-    ) : Card(
+    ) :
+    Card(
       margin: EdgeInsets.symmetric(
         horizontal: AppMargin.m16,
         vertical: AppMargin.m10,
@@ -1122,30 +1142,26 @@ Widget _buildQrSection(BuildContext context, String qr) {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: BlocBuilder<OrderBloc, OrderState>(
-              builder: (context, state) {
-                return Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: CustomPhoneField(
-                    labelText: AppLocalizations.of(context)!.enterPhone,
-                    backgroundColor: ColorManager.background,
-                    labelSize: 15,
-                    errorText:
-                    state.hasInteractedWithPhone
-                        ? state.phoneErrorMessage
-                        : null,
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: CustomPhoneField(
+                labelText: AppLocalizations.of(context)!.enterPhone,
+                backgroundColor: ColorManager.background,
+                labelSize: 15,
+                errorText:
+                state.hasInteractedWithPhone
+                    ? state.phoneErrorMessage
+                    : null,
 
-                    onChanged: (phone) {
-                      context.read<OrderBloc>().add(
-                        CompletePhoneChanged(
-                          phoneNumber: phone.number, // ex: 1550637983
-                          countryCode: phone.countryCode.replaceFirst('+', ''),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
+                onChanged: (phone) {
+                  context.read<OrderBloc>().add(
+                    CompletePhoneChanged(
+                      phoneNumber: phone.number, // ex: 1550637983
+                      countryCode: phone.countryCode.replaceFirst('+', ''),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],
