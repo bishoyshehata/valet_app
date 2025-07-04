@@ -658,18 +658,18 @@ class OrderDetails extends StatelessWidget {
                                           builder: (context, state) {
                                             return CustomButton(
                                               onTap: () {
-                                                final orderId = spot.order?.id;
-
-                                                if (orderId == null || !state.orders.any((order) => order.id == orderId)) {
-                                                  AlertDialogService().showAlertDialog(
-                                                    context,
-                                                    title: AppLocalizations.of(context)!.warning,
-                                                    message: AppLocalizations.of(context)!.sorryThisCarBelongsToAnotherValet,
-                                                    onPositiveButtonPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  );
-                                               }else{
+                                                // final orderId = spot.order?.id;
+                                               //
+                                               //  if (orderId == null || !state.orders.any((order) => order.id == orderId)) {
+                                               //    AlertDialogService().showAlertDialog(
+                                               //      context,
+                                               //      title: AppLocalizations.of(context)!.warning,
+                                               //      message: AppLocalizations.of(context)!.sorryThisCarBelongsToAnotherValet,
+                                               //      onPositiveButtonPressed: () {
+                                               //        Navigator.pop(context);
+                                               //      },
+                                               //    );
+                                               // }else{
                                                  context
                                                      .read<MyOrdersBloc>()
                                                      .add(
@@ -690,7 +690,7 @@ class OrderDetails extends StatelessWidget {
                                                      builder: (_) => MainScreen(),
                                                    ),
                                                  );
-                                               }
+
 
 
                                               },
