@@ -25,6 +25,7 @@ class AssetsManager {
   static String noCars2 = 'assets/lottie/no_cars.json';
   static String carLoading = 'assets/lottie/car_loading.json';
   static String carTransparent = 'assets/lottie/car_transparent.json';
+  static String update = 'assets/lottie/update.json';
 
 
 }

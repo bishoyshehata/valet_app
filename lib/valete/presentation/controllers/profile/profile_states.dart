@@ -21,6 +21,8 @@ class ProfileState {
   final Status? selectedStatus;
   final bool isStatusChanged;
   final UpdateValetModel? valetModel;
+  final String ? androidVersion;
+  final String ? iosVersion;
 
   ProfileState({
     this.deleteState =RequestState.loading,
@@ -40,6 +42,8 @@ class ProfileState {
     this.valetModel,
     this.selectedStatus = Status.Active,
     this.isStatusChanged = false,
+    this.androidVersion ,
+    this.iosVersion ,
 
 
   });
@@ -63,6 +67,8 @@ class ProfileState {
     UpdateValetModel? valetModel,
     Status? selectedStatus,
     bool? isStatusChanged,
+    String? androidVersion,
+    String? iosVersion,
 
   }) {
     return ProfileState(
@@ -83,6 +89,8 @@ class ProfileState {
         selectedStatus: selectedStatus,
         isStatusChanged: isStatusChanged ?? this.isStatusChanged,
       valetModel: valetModel ?? this.valetModel,
+      androidVersion: androidVersion ?? this.androidVersion,
+      iosVersion: iosVersion ?? this.iosVersion,
 
     );
   }

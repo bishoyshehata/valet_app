@@ -92,5 +92,8 @@
   "busy": "مشغول",
   "clientNumber": "رقم هاتف العميل",
   "usingWhatsApp": "إستخدام واتساب",
-  "sorryThisCarBelongsToAnotherValet": "نأسف و لكن هذه السيارة تخص فاليه أخر ٫"
+  "sorryThisCarBelongsToAnotherValet": "نأسف و لكن هذه السيارة تخص فاليه أخر ٫",
+  "pleaseUpdatedLatestVersion": "من فضلك قم بالتحديث لأخر إصدار٫",
+  "goToGooglePlay": "الذهاب إلى المتجر",
+  "goToAppStore": "الذهاب إلى المتجر"
 }

@@ -294,4 +294,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sorryThisCarBelongsToAnotherValet =>
       'Sorry this car belongs to another valet.';
+
+  @override
+  String get pleaseUpdatedLatestVersion =>
+      'Please Update To The Latest Version.';
+
+  @override
+  String get goToGooglePlay => 'Go To Google Play';
+
+  @override
+  String get goToAppStore => 'Go To App Store';
 }

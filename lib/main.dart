@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/home/home_events.dart';
@@ -12,9 +13,12 @@ import 'package:valet_app/valete/presentation/controllers/myorders/my_orders_blo
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_bloc.dart';
 import 'package:valet_app/valete/presentation/controllers/profile/profile_events.dart';
+import 'package:valet_app/valete/presentation/resources/assets_manager.dart';
+import 'package:valet_app/valete/presentation/resources/colors_manager.dart';
 import 'package:valet_app/valete/presentation/screens/splash/splash.dart';
 import 'core/l10n/app_locale.dart';
 import 'core/notifications/firebase_notifications/firebase.dart';
+import 'core/services/force_update.dart';
 import 'core/services/services_locator.dart';
 import 'core/utils/preferences_service.dart';
 
@@ -114,7 +118,23 @@ class _MyAppState extends State<MyApp> {
               ],
               debugShowCheckedModeBanner: false,
               title: 'Lag Valet',
-              home: const SplashScreen(),
+              home: FutureBuilder<Widget>(
+                future: determineStartScreen(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return  Scaffold(
+                      backgroundColor: ColorManager.background,
+                      body: Center(child: Lottie.asset(LottieManager.carTransparent)),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Scaffold(
+                      body: Center(child: Text("Error while starting app")),
+                    );
+                  } else {
+                    return snapshot.data!;
+                  }
+                },
+              ),
             );
           },
         );

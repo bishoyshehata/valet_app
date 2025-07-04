@@ -92,5 +92,9 @@
   "busy": "Busy",
   "clientNumber": "Client Number",
   "usingWhatsApp": "Using WhatsApp",
-  "sorryThisCarBelongsToAnotherValet": "Sorry this car belongs to another valet."
+  "sorryThisCarBelongsToAnotherValet": "Sorry this car belongs to another valet.",
+  "pleaseUpdatedLatestVersion": "Please Update To The Latest Version.",
+  "goToGooglePlay": "Go To Google Play",
+  "goToAppStore": "Go To App Store"
+
 }

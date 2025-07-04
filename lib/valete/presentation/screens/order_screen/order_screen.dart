@@ -649,7 +649,7 @@ class OrderScreen extends StatelessWidget {
                         print(value);
                       },
                       hint: Container(
-                        width: AppSizeWidth.s100,
+                        width: AppSizeWidth.s120,
 
                         child: TextUtils(
                           text: AppLocalizations.of(context)!.garageFull,
@@ -703,6 +703,7 @@ class OrderScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
+
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(
                     bottom: AppMargin.m16,
@@ -746,6 +747,8 @@ class OrderScreen extends StatelessWidget {
                         bottom: AppMargin.m10,
                         top: AppMargin.m10,
                         right: locale.languageCode == 'ar' ? 0 : AppMargin.m24,
+                        left: locale.languageCode == 'ar' ?  AppMargin.m24 :0,
+
                       ),
                       padding: EdgeInsets.symmetric(
                         horizontal: AppSizeWidth.s8,
@@ -756,7 +759,8 @@ class OrderScreen extends StatelessWidget {
                         color: ColorManager.primary,
                         borderRadius: BorderRadius.circular(AppSizeHeight.s10),
                       ),
-                      width: AppSizeWidth.s100,
+                      width: AppSizeWidth.s120,
+
                       child: TextUtils(
                         text: AppLocalizations.of(context)!.garageFull,
                         color: ColorManager.background,

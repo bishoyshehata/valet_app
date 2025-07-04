@@ -69,7 +69,9 @@ class ProfileBloc extends Bloc<ProfileEvents, ProfileState> {
         emit(state.copyWith(
           settingsData: settings,
           settingsState: RequestState.loaded,
-            isWhatsAppWorking: settings.whatsappSettings.isWorking
+            isWhatsAppWorking: settings.whatsappSettings.isWorking,
+            androidVersion: settings.androidVersion,
+            iosVersion: settings.iosVersion
         ));
       });
     });

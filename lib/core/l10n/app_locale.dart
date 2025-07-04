@@ -655,6 +655,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'نأسف و لكن هذه السيارة تخص فاليه أخر ٫'**
   String get sorryThisCarBelongsToAnotherValet;
+
+  /// No description provided for @pleaseUpdatedLatestVersion.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فضلك قم بالتحديث لأخر إصدار٫'**
+  String get pleaseUpdatedLatestVersion;
+
+  /// No description provided for @goToGooglePlay.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب إلى المتجر'**
+  String get goToGooglePlay;
+
+  /// No description provided for @goToAppStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب إلى المتجر'**
+  String get goToAppStore;
 }
 
 class _AppLocalizationsDelegate

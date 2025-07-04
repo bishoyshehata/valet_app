@@ -5,7 +5,7 @@ description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
-version: 1.0.0+11
+version: 1.0.1+11
 
 environment:
   sdk: ^3.7.2
@@ -42,6 +42,9 @@ dependencies:
   path: ^1.9.1
   image: ^4.5.4
   dropdown_button2: ^2.3.9
+  package_info_plus: ^8.3.0
+  url_launcher: ^6.3.1
+
   flutter_localizations:
     sdk: flutter
 

@@ -292,4 +292,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get sorryThisCarBelongsToAnotherValet =>
       'نأسف و لكن هذه السيارة تخص فاليه أخر ٫';
+
+  @override
+  String get pleaseUpdatedLatestVersion => 'من فضلك قم بالتحديث لأخر إصدار٫';
+
+  @override
+  String get goToGooglePlay => 'الذهاب إلى المتجر';
+
+  @override
+  String get goToAppStore => 'الذهاب إلى المتجر';
 }
