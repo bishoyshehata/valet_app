@@ -30,7 +30,7 @@ class ProfileState {
     this.logOutState =LogOutState.initial,
     this.settingErrorMessage ='',
     this.settingsData,
-    this.isWhatsAppWorking,
+    this.isWhatsAppWorking =false,
     this.settingsState = RequestState.loading,
     this.settingsStatusCode=0,
     this.updateValetState = RequestStatess.initial,

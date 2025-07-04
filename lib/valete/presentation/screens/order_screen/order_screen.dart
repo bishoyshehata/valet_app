@@ -33,6 +33,7 @@ import '../../controllers/myorders/my_orders_events.dart';
 import '../../controllers/orders/order_bloc.dart';
 import '../../controllers/orders/order_events.dart';
 import '../../controllers/orders/order_states.dart';
+import '../../controllers/profile/profile_events.dart';
 import '../../controllers/profile/profile_states.dart';
 import '../../resources/font_manager.dart';
 import 'image_full_screen.dart';
@@ -48,7 +49,7 @@ class OrderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileBloc = BlocProvider.of<ProfileBloc>(context);
     final loginBloc = BlocProvider.of<LoginBloc>(context);
-    final isWhatsAppWorking = profileBloc.state.isWhatsAppWorking ?? false;
+    final isWhatsAppWorking = profileBloc.state.isWhatsAppWorking ;
     final phoneNumber = loginBloc.state.completePhoneNumber.replaceFirst(
       "+",
       '',
@@ -61,6 +62,8 @@ class OrderScreen extends StatelessWidget {
         )..add(CreateOrderEvent());
         if (isWhatsAppWorking != null) {
           bloc.add(ToggleWhatsAppEvent(useWhatsApp: isWhatsAppWorking));
+          sl<ProfileBloc>()..add(GetSettingsEvent());
+
         }
 
         SharedPreferences.getInstance().then((prefs) {
@@ -240,7 +243,7 @@ class OrderScreen extends StatelessWidget {
                     body: SingleChildScrollView(
                       child: Column(
                         children: [
-                          _buildSwitchWhatsAppCard(context, state.useWhatsApp!),
+                          isWhatsAppWorking == true ? _buildSwitchWhatsAppCard(context, state.useWhatsApp!) :SizedBox(height: 0,),
                           _buildGarageInfoCard(
                             state.data!.garages,
                             filteredSpots,
@@ -387,7 +390,7 @@ class OrderScreen extends StatelessWidget {
                                           ),
                                         ),
                                       );
-                                    } else if (isWhatsAppWorking &&
+                                    } else if (isWhatsAppWorking! &&
                                         (state.completePhoneNumber == null ||
                                             state
                                                 .completePhoneNumber!

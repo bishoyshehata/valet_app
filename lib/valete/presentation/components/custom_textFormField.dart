@@ -78,17 +78,6 @@ class CustomTextFormField extends StatelessWidget {
             borderRadius: BorderRadius.circular(radius ?? 25),
             borderSide: BorderSide(color: ColorManager.white,width: 1),
           ),
-          // hintText: hintText,
-          // hintStyle: TextStyle(
-          //   color: hintTextColor ?? ColorManager.white,
-          //   fontSize:hintSize,
-          // ),
-          // labelText: labelText,
-          // labelStyle:TextStyle(
-          //
-          //   color: labelTextColor ?? ColorManager.white,
-          //   fontSize:labelSize,
-          // ),
 
         ),
       ),
