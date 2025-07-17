@@ -352,6 +352,55 @@ class ValetProfileScreen extends StatelessWidget {
                         );
                       },
                     ),
+                    BlocBuilder<LanguageBloc, LanguageState>(
+                      builder: (context, state) {
+                        return ListTile(
+                          leading: Icon(Icons.language, color: ColorManager.white),
+                          title: TextUtils(
+                            text: AppLocalizations.of(context)!.changeLanguage,
+                            fontSize: FontSize.s17,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManager.white,
+                          ),
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                              ),
+                              backgroundColor: ColorManager.white,
+                              builder: (context) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: Text("🇺🇸", style: TextStyle(fontSize: 20)),
+                                      title: Text("English"),
+                                      onTap: () async {
+                                        context.read<LanguageBloc>().add(ChangeLanguage(Locale('en')));
+                                        await PreferencesService().setLanguage(Locale('en'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: Text("🇸🇦", style: TextStyle(fontSize: 20)),
+                                      title: Text("العربية"),
+                                      onTap: () async {
+                                        context.read<LanguageBloc>().add(ChangeLanguage(Locale('ar')));
+                                        await PreferencesService().setLanguage(Locale('ar'));
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+
+
+                      },
+                    ),
 
                     ListTile(
                       leading: Icon(
@@ -373,32 +422,33 @@ class ValetProfileScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    ListTile(
-                      leading: Icon(
-                        Icons.delete_forever,
-                        color: ColorManager.error,
-                      ),
-                      title: TextUtils(
-                        text: AppLocalizations.of(context)!.deleteAccount,
-                        fontSize: FontSize.s17,
-                        fontWeight: FontWeight.bold,
-                        color: ColorManager.white,
-                      ),
-                      onTap: () async {
-                        await AlertDialogService().showAlertDialog(
-                          context,
-                          title: AppLocalizations.of(context)!.warning,
-                          message: AppLocalizations.of(context)!.areyouSureYouWantToDeleteYourAccount,
-                          positiveButtonText: AppLocalizations.of(context)!.yes,
-                          negativeButtonText: AppLocalizations.of(context)!.no,
-                          onPositiveButtonPressed: () {
-                            context.read<ProfileBloc>().add(
-                              DeleteValetEvent(int.parse(valetId)),
-                            );
-                          },
-                        );
-                      },
-                    ),
+
+                    // ListTile(
+                    //   leading: Icon(
+                    //     Icons.delete_forever,
+                    //     color: ColorManager.error,
+                    //   ),
+                    //   title: TextUtils(
+                    //     text: AppLocalizations.of(context)!.deleteAccount,
+                    //     fontSize: FontSize.s17,
+                    //     fontWeight: FontWeight.bold,
+                    //     color: ColorManager.white,
+                    //   ),
+                    //   onTap: () async {
+                    //     await AlertDialogService().showAlertDialog(
+                    //       context,
+                    //       title: AppLocalizations.of(context)!.warning,
+                    //       message: AppLocalizations.of(context)!.areyouSureYouWantToDeleteYourAccount,
+                    //       positiveButtonText: AppLocalizations.of(context)!.yes,
+                    //       negativeButtonText: AppLocalizations.of(context)!.no,
+                    //       onPositiveButtonPressed: () {
+                    //         context.read<ProfileBloc>().add(
+                    //           DeleteValetEvent(int.parse(valetId)),
+                    //         );
+                    //       },
+                    //     );
+                    //   },
+                    // ),
                     ListTile(
                       leading: Icon(Icons.logout, color: ColorManager.white),
                       title: TextUtils(
@@ -419,55 +469,7 @@ class ValetProfileScreen extends StatelessWidget {
                           },
                         );
                       },
-                    ),    BlocBuilder<LanguageBloc, LanguageState>(
-  builder: (context, state) {
-    return ListTile(
-      leading: Icon(Icons.language, color: ColorManager.white),
-      title: TextUtils(
-        text: AppLocalizations.of(context)!.changeLanguage,
-        fontSize: FontSize.s17,
-        fontWeight: FontWeight.bold,
-        color: ColorManager.white,
-      ),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          ),
-          backgroundColor: ColorManager.white,
-          builder: (context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Text("🇺🇸", style: TextStyle(fontSize: 20)),
-                  title: Text("English"),
-                  onTap: () async {
-                    context.read<LanguageBloc>().add(ChangeLanguage(Locale('en')));
-                    await PreferencesService().setLanguage(Locale('en'));
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Text("🇸🇦", style: TextStyle(fontSize: 20)),
-                  title: Text("العربية"),
-                  onTap: () async {
-                    context.read<LanguageBloc>().add(ChangeLanguage(Locale('ar')));
-                    await PreferencesService().setLanguage(Locale('ar'));
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-
-
-  },
-),
+                    ),
                   ],
                 ),
               ),
