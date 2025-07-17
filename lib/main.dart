@@ -127,10 +127,12 @@ class _MyAppState extends State<MyApp> {
                       body: Center(child: Lottie.asset(LottieManager.carTransparent)),
                     );
                   } else if (snapshot.hasError) {
-                    return const Scaffold(
-                      body: Center(child: Text("Error while starting app")),
+                    print("Start Screen Error: ${snapshot.error}");
+                    return Scaffold(
+                      body: Center(child: Text("Error: ${snapshot.error}")),
                     );
-                  } else {
+                  }
+                  else {
                     return snapshot.data!;
                   }
                 },

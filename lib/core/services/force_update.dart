@@ -24,13 +24,18 @@ Future<Widget> determineStartScreen() async {
   final loadedState = await bloc.stream.firstWhere(
         (state) => state.settingsState == RequestState.loaded,
   );
+  print("androidVersion: ${loadedState.androidVersion}");
+  print("iosVersion: ${loadedState.iosVersion}");
 
   final requiredVersion = Platform.isAndroid
-      ? loadedState.androidVersion
-      : loadedState.iosVersion ;
+      ? loadedState.androidVersion ?? "1.0.0"
+      : loadedState.iosVersion ?? "1.0.0";
 
- return !(isValidVersion(currentVersion, requiredVersion!)) ? const NotUpdatedVersion() : accessToken != null ? MainScreen() : LoginScreen();
-
+  return !(isValidVersion(currentVersion, requiredVersion))
+      ? const NotUpdatedVersion()
+      : accessToken != null
+      ? MainScreen()
+      : LoginScreen();
 }
 
 
