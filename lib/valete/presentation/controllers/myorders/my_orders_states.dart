@@ -1,3 +1,5 @@
+import 'package:valet_app/valete/data/models/store_order_response_model.dart';
+
 import '../../../../core/utils/enums.dart';
 import '../../../domain/entities/my_orders.dart';
 
@@ -11,6 +13,7 @@ class MyOrdersState {
   final UpdateOrderState updateOrderStatusState;
   final String updateOrderStatusErrorMessage;
   final bool? updateOrderStatus;
+  final OrdersResponseModel? orderStatus;
   final bool? cancelOrderResult;
   final UpdateOrderState cancelOrderState;
   final String cancelOrderErrorMessage;
@@ -25,6 +28,7 @@ class MyOrdersState {
     this.myOrdersStatusCode = 0,
     this.ordersByStatus = const {},
     this.updateOrderStatus,
+    this.orderStatus,
     this.updatingOrderId,
     this.cancelOrderResult,
     this.cancelOrderState= UpdateOrderState.initial,
@@ -46,6 +50,7 @@ class MyOrdersState {
     UpdateOrderState? updateOrderStatusState,
     String? updateOrderStatusErrorMessage,
     bool? updateOrderStatus,
+    OrdersResponseModel? orderStatus,
     int? updatingOrderId,
      bool? cancelOrderResult,
      UpdateOrderState? cancelOrderState,
@@ -62,6 +67,7 @@ class MyOrdersState {
       updateOrderStatusState: updateOrderStatusState ?? this.updateOrderStatusState,
       updateOrderStatusErrorMessage: updateOrderStatusErrorMessage ?? this.updateOrderStatusErrorMessage,
       updateOrderStatus: updateOrderStatus ?? this.updateOrderStatus,
+      orderStatus: orderStatus ?? this.orderStatus,
       updatingOrderId: updatingOrderId ?? this.updatingOrderId,
       cancelOrderResult: cancelOrderResult ?? this.cancelOrderResult,
       cancelOrderState: cancelOrderState ?? this.cancelOrderState,

@@ -4,6 +4,7 @@ import 'package:valet_app/core/error/failure.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
 import '../../../core/services/services_locator.dart';
+import '../../data/models/store_order_response_model.dart';
 import '../../presentation/controllers/login/login_bloc.dart';
 import '../../presentation/controllers/login/login_events.dart';
 
@@ -12,7 +13,7 @@ class UpdateOrderStatusUseCase {
 
   UpdateOrderStatusUseCase(this.repository);
 
-  Future<Either<Failure,  bool >> updateOrderStatus(int orderId , int newStatus) async {
+  Future<Either<Failure,  OrdersResponseModel >> updateOrderStatus(int orderId , int newStatus) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? isUnAuth = prefs.getBool('unAuthorized');
     try {

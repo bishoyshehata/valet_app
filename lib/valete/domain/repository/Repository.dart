@@ -9,6 +9,7 @@ import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/entities/valet.dart';
 
 import '../../../core/error/failure.dart';
+import '../../data/models/store_order_response_model.dart';
 import '../entities/get_garage_spot.dart';
 
 abstract class IValetRepository{
@@ -16,9 +17,9 @@ abstract class IValetRepository{
   Future<Either<Failure , Valet>> login(String phone , String password);
   Future<Either<Failure , CreateOrder>> createOrder();
   Future<Either<Failure , List<MyGarages>>> myGarages();
-  Future<Either<Failure , bool >> storeOrder(StoreOrder storeOrder);
+  Future<Either<Failure , OrdersResponseModel >> storeOrder(StoreOrder storeOrder);
   Future<Either<Failure , List<MyOrders> >> myOrders(int status);
-  Future<Either<Failure , bool >> updateOrderStatus(int orderId , int newStatus);
+  Future<Either<Failure , OrdersResponseModel >> updateOrderStatus(int orderId , int newStatus);
   Future<Either<Failure , bool >> deleteValet(int valetId);
   Future<Either<Failure , GetGarageSpot >> getGarageSpot(int garageId);
   Future<Either<Failure , bool >> updateOrderSpot(int orderId , int spotId ,int garageId);

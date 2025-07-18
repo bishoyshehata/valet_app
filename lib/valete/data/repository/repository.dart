@@ -12,6 +12,7 @@ import 'package:valet_app/valete/domain/repository/Repository.dart';
 
 import '../../../core/error/exceptions.dart';
 import '../../domain/entities/settings.dart';
+import '../models/store_order_response_model.dart';
 
 
 class ValetRepository extends IValetRepository {
@@ -49,7 +50,7 @@ class ValetRepository extends IValetRepository {
 
 
   @override
-  Future<Either<Failure, bool>> storeOrder(StoreOrder storeOrder) async{
+  Future<Either<Failure, OrdersResponseModel>> storeOrder(StoreOrder storeOrder) async{
     try {
       final result = await valetDataSource.storeOrder(storeOrder);
       return Right(result);
@@ -69,7 +70,7 @@ class ValetRepository extends IValetRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateOrderStatus(int orderId, int newStatus) async {
+  Future<Either<Failure, OrdersResponseModel>> updateOrderStatus(int orderId, int newStatus) async {
     try {
       final result = await valetDataSource.updateOrderStatus(orderId,newStatus);
       return Right(result);

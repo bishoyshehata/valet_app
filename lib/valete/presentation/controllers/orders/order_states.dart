@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:valet_app/valete/domain/entities/create_order.dart';
 
 import '../../../../core/utils/enums.dart';
+import '../../../data/models/store_order_response_model.dart';
 
 class OrderState {
   final VehicleType selectedVehicleType;
@@ -19,7 +20,7 @@ class OrderState {
   final StoreOrderState storeOrderState;
   final String storeOrderError;
   final int storeOrderStatusCode;
-  final bool? storeOrderData;
+  final OrdersResponseModel? storeOrderData;
   final ImageProcessingStatus? imageStatus;
   final String? errorMessage;
   final bool hasInteractedWithPhone;
@@ -69,7 +70,7 @@ class OrderState {
     StoreOrderState? storeOrderState,
      String? storeOrderError,
      int? storeOrderStatusCode,
-    bool? storeOrderData,
+    OrdersResponseModel? storeOrderData,
     ImageProcessingStatus? imageStatus,
     String? errorMessage,
      bool? hasInteractedWithPhone,

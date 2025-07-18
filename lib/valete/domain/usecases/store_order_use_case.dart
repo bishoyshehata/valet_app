@@ -5,6 +5,7 @@ import 'package:valet_app/valete/domain/entities/store_order.dart';
 import 'package:valet_app/valete/domain/repository/Repository.dart';
 
 import '../../../core/services/services_locator.dart';
+import '../../data/models/store_order_response_model.dart';
 import '../../presentation/controllers/login/login_bloc.dart';
 import '../../presentation/controllers/login/login_events.dart';
 
@@ -13,7 +14,7 @@ class StoreOrderUseCase {
 
   StoreOrderUseCase(this.repository);
 
-  Future<Either<Failure,  bool >> storeOrder(StoreOrder storeOrder) async {
+  Future<Either<Failure,  OrdersResponseModel >> storeOrder(StoreOrder storeOrder) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? isUnAuth = prefs.getBool('unAuthorized');
     try {

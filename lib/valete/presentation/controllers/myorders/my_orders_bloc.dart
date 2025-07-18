@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:valet_app/valete/domain/usecases/cancel_order_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/my_orders_use_case.dart';
 import 'package:valet_app/valete/domain/usecases/update_order_status_use_case.dart';
@@ -140,11 +141,14 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
         (data) {
           emit(
             state.copyWith(
-              updateOrderStatus: data,
+              updateOrderStatus: data.succeeded,
+              orderStatus: data,
               updateOrderStatusState: UpdateOrderState.loaded,
               updatingOrderId: event.orderId,
             ),
           );
+          launchUrl(Uri.parse(data.data.toString()));
+
            add(GetMyOrdersEvent(event.newStatus) );
 
         }
@@ -161,7 +165,7 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent, MyOrdersState> {
     on<ResetOrderUpdateStatus>((event, emit) {
       emit(
         state.copyWith(
-          updateOrderStatus: false,
+          updateOrderStatus:false ,
           updateOrderStatusState: UpdateOrderState.initial,
           updatingOrderId: null,
         ),

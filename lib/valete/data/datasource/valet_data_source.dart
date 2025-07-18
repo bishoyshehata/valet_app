@@ -14,14 +14,16 @@ import '../../domain/entities/store_order.dart';
 import '../models/create_order_model.dart';
 import 'dart:convert';
 
+import '../models/store_order_response_model.dart';
+
 
 abstract class IValetDataSource {
   Future<ValetModel> login(String phone, String password);
   Future<CreateOrderModel> createOrder();
   Future<List<MyGaragesModel>> myGarages();
-  Future<bool> storeOrder(StoreOrder storeOrder);
+  Future<OrdersResponseModel> storeOrder(StoreOrder storeOrder);
   Future<List<MyOrdersModel>> myOrders(int status);
-  Future<bool> updateOrderStatus(int orderId,int newStatus);
+  Future<OrdersResponseModel> updateOrderStatus(int orderId,int newStatus);
   Future<bool> deleteValet(int valetId);
   Future<GetGarageSpotModel> getGarageSpot(int garageId);
   Future<bool> updateOrderSpot(int orderId , int spotId,int garageId);
@@ -113,7 +115,7 @@ class ValetDataSource extends IValetDataSource {
     }
   }
   @override
-  Future<bool> storeOrder(StoreOrder storeOrder) async {
+  Future<OrdersResponseModel> storeOrder(StoreOrder storeOrder) async {
     try {
       final formMap = {
         'ClientNumber': storeOrder.ClientNumber,
@@ -136,7 +138,7 @@ class ValetDataSource extends IValetDataSource {
       );
 
       if (response.statusCode == 200) {
-        return response.data['data'];
+        return OrdersResponseModel.fromJson(response.data);
       } else {
         handleHttpError(response, null);
       }
@@ -167,7 +169,7 @@ class ValetDataSource extends IValetDataSource {
   }
 
   @override
-  Future<bool> updateOrderStatus(int orderId, int newStatus) async {
+  Future<OrdersResponseModel> updateOrderStatus(int orderId, int newStatus) async {
 try {
     final response = await DioHelper.post(
       ApiConstants.updateOrderStatusEndPoint(orderId, newStatus),
@@ -175,7 +177,7 @@ try {
     );
 
     if (response.statusCode == 200) {
-      return response.data['succeeded'];
+      return OrdersResponseModel.fromJson(response.data);
     } else {
       handleHttpError(response, null);
     }
