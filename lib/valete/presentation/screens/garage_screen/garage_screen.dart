@@ -411,26 +411,29 @@ class MiniParkingSlotWidget extends StatelessWidget {
       },
       child: Card(
         color: isBusy ? ColorManager.primary : ColorManager.darkGrey,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextUtils(
-                text: spot.code,
-                color: isBusy ? ColorManager.background : ColorManager.white,
-                fontSize: FontSize.s15,
-                fontWeight: FontWeight.bold,
-              ),
-              spot.hasOrder== true
-                  ? buildCarTypeImage(spot.order!.carType)
-                  : Icon(
-                    Icons.local_parking,
-                    color:
-                        isBusy ? ColorManager.background : ColorManager.primary,
-                    // تغيير لون الأيقونة
-                    size: AppSizeHeight.s25,
-                  ),
-            ],
+        child: Container(
+
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextUtils(
+                  text: spot.code,
+                  color: isBusy ? ColorManager.background : ColorManager.white,
+                  fontSize: FontSize.s15,
+                  fontWeight: FontWeight.bold,
+                ),
+                spot.hasOrder== true
+                    ? buildCarTypeImage(spot.order!.carType)
+                    : Icon(
+                      Icons.local_parking,
+                      color:
+                          isBusy ? ColorManager.background : ColorManager.primary,
+                      // تغيير لون الأيقونة
+                      size: AppSizeHeight.s25,
+                    ),
+              ],
+            ),
           ),
         ),
       ),
