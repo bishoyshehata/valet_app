@@ -14,6 +14,7 @@ class AlertDialogService {
   AlertDialogService._internal();
 
   Future<bool?> showAlertDialog(
+
       BuildContext context, {
         required String title,
         required String message,
@@ -25,14 +26,18 @@ class AlertDialogService {
       }) async {
     final String positiveText = positiveButtonText ?? AppLocalizations.of(context)!.yes;
     final String negativeText = negativeButtonText ?? AppLocalizations.of(context)!.no;
+    final locale = Localizations.localeOf(context);
 
     return await showDialog<bool>(
       context: context,
       barrierDismissible: dismissible ?? false,
       builder: (BuildContext context) {
         return Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: locale.languageCode == 'ar'
+              ? TextDirection.rtl
+              : TextDirection.ltr,
           child: AlertDialog(
+
             backgroundColor: ColorManager.grey,
 
             title: Text(

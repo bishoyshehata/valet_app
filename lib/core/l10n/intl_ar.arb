@@ -26,7 +26,7 @@
   "save": "حفظ",
   "deleteAccount": "حذف الحساب",
   "warning": "تنبيه !",
-  "areyouSureYouWantToDeleteYourAccount": "هل أنت متأكد من حذف حسابك ؟",
+  "areyouSureYouWantToDeleteYourAccount": "سيتم حذف الحساب تلقائيًا إذا لم يتم تسجيل الدخول من جانبك لمدة 15 يومًا متتاليًا.",
   "yes": "نعم",
   "no": "لا",
   "logOut": "تسجيل الخروج",

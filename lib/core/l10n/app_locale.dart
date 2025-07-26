@@ -257,7 +257,7 @@ abstract class AppLocalizations {
   /// No description provided for @areyouSureYouWantToDeleteYourAccount.
   ///
   /// In ar, this message translates to:
-  /// **'هل أنت متأكد من حذف حسابك ؟'**
+  /// **'سيتم حذف الحساب تلقائيًا إذا لم يتم تسجيل الدخول من جانبك لمدة 15 يومًا متتاليًا.'**
   String get areyouSureYouWantToDeleteYourAccount;
 
   /// No description provided for @yes.

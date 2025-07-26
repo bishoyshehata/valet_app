@@ -423,32 +423,33 @@ class ValetProfileScreen extends StatelessWidget {
                       },
                     ),
 
-                    // ListTile(
-                    //   leading: Icon(
-                    //     Icons.delete_forever,
-                    //     color: ColorManager.error,
-                    //   ),
-                    //   title: TextUtils(
-                    //     text: AppLocalizations.of(context)!.deleteAccount,
-                    //     fontSize: FontSize.s17,
-                    //     fontWeight: FontWeight.bold,
-                    //     color: ColorManager.white,
-                    //   ),
-                    //   onTap: () async {
-                    //     await AlertDialogService().showAlertDialog(
-                    //       context,
-                    //       title: AppLocalizations.of(context)!.warning,
-                    //       message: AppLocalizations.of(context)!.areyouSureYouWantToDeleteYourAccount,
-                    //       positiveButtonText: AppLocalizations.of(context)!.yes,
-                    //       negativeButtonText: AppLocalizations.of(context)!.no,
-                    //       onPositiveButtonPressed: () {
-                    //         context.read<ProfileBloc>().add(
-                    //           DeleteValetEvent(int.parse(valetId)),
-                    //         );
-                    //       },
-                    //     );
-                    //   },
-                    // ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.delete_forever,
+                        color: ColorManager.error,
+                      ),
+                      title: TextUtils(
+                        text: AppLocalizations.of(context)!.deleteAccount,
+                        fontSize: FontSize.s17,
+                        fontWeight: FontWeight.bold,
+                        color: ColorManager.white,
+                      ),
+                      onTap: () async {
+                        await AlertDialogService().showAlertDialog(
+                          context,
+                          title: AppLocalizations.of(context)!.warning,
+                          message: AppLocalizations.of(context)!.areyouSureYouWantToDeleteYourAccount,
+                          positiveButtonText: AppLocalizations.of(context)!.yes,
+                          negativeButtonText: AppLocalizations.of(context)!.no,
+                          onPositiveButtonPressed: () {
+                            context.read<ProfileBloc>().add(
+                              DeleteValetEvent(valetId),
+                            );
+
+                          },
+                        );
+                      },
+                    ),
                     ListTile(
                       leading: Icon(Icons.logout, color: ColorManager.white),
                       title: TextUtils(

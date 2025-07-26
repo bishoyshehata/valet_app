@@ -89,7 +89,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get areyouSureYouWantToDeleteYourAccount =>
-      'هل أنت متأكد من حذف حسابك ؟';
+      'سيتم حذف الحساب تلقائيًا إذا لم يتم تسجيل الدخول من جانبك لمدة 15 يومًا متتاليًا.';
 
   @override
   String get yes => 'نعم';

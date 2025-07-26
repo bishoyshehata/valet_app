@@ -90,7 +90,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get areyouSureYouWantToDeleteYourAccount =>
-      'Are you sure you want to delete your account?';
+      'The account will be automatically deleted if no login is made from your side for 15 consecutive days.';
 
   @override
   String get yes => 'Yes';
