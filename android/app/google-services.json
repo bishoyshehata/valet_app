@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1084910218079:android:8a327082f43eb28426e4ea",
+        "mobilesdk_app_id": "1:1084910218079:android:c490cf36c757e33626e4ea",
         "android_client_info": {
-          "package_name": "com.example.valet_app"
+          "package_name": "com.valetplatform.lagvalet"
         }
       },
       "oauth_client": [],

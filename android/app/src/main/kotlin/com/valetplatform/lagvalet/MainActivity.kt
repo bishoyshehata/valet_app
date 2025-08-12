@@ -1,4 +1,4 @@
-package com.example.valet_app
+package com.valetplatform.lagvalet
 
 import io.flutter.embedding.android.FlutterActivity
 
