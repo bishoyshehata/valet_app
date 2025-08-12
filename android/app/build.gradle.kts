@@ -5,13 +5,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin") // لازم يكون آخر واحد
 }
 
+
 android {
-    namespace = "com.example.valet_app"
+    namespace = "com.valetplatform.lagvalet"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     defaultConfig {
-        applicationId = "com.example.valet_app"
+        applicationId = "com.valetplatform.lagvalet"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -27,7 +28,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
@@ -40,9 +40,7 @@ flutter {
 }
 
 dependencies {
-    val kotlin_version = "2.0.0"
-
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10")
 
     // Firebase BOM
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
